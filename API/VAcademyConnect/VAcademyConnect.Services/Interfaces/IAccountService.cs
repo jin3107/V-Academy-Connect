@@ -1,0 +1,23 @@
+﻿using MayNghien.Infrastructures.Models.Responses;
+using MayNghien.Infrastructures.Models.Requests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VAcademyConnect.DTOs.Authentication.Requests;
+using VAcademyConnect.DTOs.Authentication.Responses;
+
+namespace VAcademyConnect.Services.Interfaces
+{
+    public interface IAccountService
+    {
+        Task<AppResponse<LogInResponse>> LoginAsync(LogInRequest request);
+        Task<AppResponse<RegisterResponse>> RegisterAsync(RegisterRequest request);
+        Task<AppResponse<VerifyEmailResponse>> VerifyEmailAsync(VerifyEmailRequest request);
+        Task<AppResponse<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request);
+        Task<AppResponse<bool>> UpdateProfileAsync(UpdateProfileRequest request);
+
+        Task LogoutAsync();
+    }
+}

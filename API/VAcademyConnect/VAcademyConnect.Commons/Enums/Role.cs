@@ -8,6 +8,7 @@ namespace VAcademyConnect.Commons.Enums
 {
     public enum Role
     {
+        SuperAdmin,
         TenantAdmin,
         Teacher,
         Student

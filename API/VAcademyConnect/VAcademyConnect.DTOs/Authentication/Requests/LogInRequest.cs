@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Authentication.Requests
 {
-    public class LoginRequest
+    public class LogInRequest
     {
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]

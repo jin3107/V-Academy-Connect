@@ -1,10 +1,24 @@
-﻿namespace VAcademyConnect.API
+﻿using VAcademyConnect.Repositories.Implements;
+using VAcademyConnect.Repositories.Interfaces;
+using VAcademyConnect.Services.Implements;
+using VAcademyConnect.Services.Interfaces;
+
+namespace VAcademyConnect.API
 {
     public class Startup
     {
         public void Mapping(WebApplicationBuilder builder)
         {
+            #region Repositories
+            builder.Services.AddScoped<ITenantRepository, TenantRepository>();
+            builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+            builder.Services.AddScoped<ITenantSubscriptionRepository, TenantSubscriptionRepository>();
+            #endregion
 
+            #region Services
+            builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ITenantService, TenantService>();
+            #endregion
         }
     }
 }

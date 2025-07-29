@@ -12,7 +12,7 @@ using VAcademyConnect.Models.Data;
 namespace VAcademyConnect.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250726162945_DbInit")]
+    [Migration("20250729122855_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -403,7 +403,6 @@ namespace VAcademyConnect.Models.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CreatedBy")
@@ -424,7 +423,7 @@ namespace VAcademyConnect.Models.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("Rating")
+                    b.Property<int?>("Rating")
                         .HasColumnType("int");
 
                     b.Property<string>("StudentId")

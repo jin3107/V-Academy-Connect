@@ -33,8 +33,5 @@ namespace VAcademyConnect.DTOs.Authentication.Requests
 
         [Required(ErrorMessage = "Tenant name is required.")]
         public string TenantName { get; set; }
-
-        [Required(ErrorMessage = "Subscription plan is required.")]
-        public Guid SubscriptionPlanId { get; set; }
     }
 }

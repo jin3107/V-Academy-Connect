@@ -20,7 +20,7 @@ namespace VAcademyConnect.Repositories.Implements
         public async Task<Subscription?> GetTrialPlanAsync()
         {
             var trialPlan = await _context.Subscriptions
-                .FirstOrDefaultAsync(s => s.TrialDays > 0);
+                .Where(s => s.TrialDays > 0 && s.Name == "Standard").FirstOrDefaultAsync();
             return trialPlan;
         }
     }

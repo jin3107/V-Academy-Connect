@@ -28,7 +28,7 @@ namespace VAcademyConnect.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> SignUp(RegisterRequest signUp)
+        public async Task<IActionResult> Register(RegisterRequest signUp)
         {
             var result = await _accountService.RegisterAsync(signUp);
             return Ok(result);

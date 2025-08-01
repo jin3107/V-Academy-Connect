@@ -1,0 +1,51 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using VAcademyConnect.DTOs.Requests;
+using VAcademyConnect.Services.Interfaces;
+
+namespace VAcademyConnect.API.Controllers
+{
+    [Route("subscriptions")]
+    [ApiController]
+    [Authorize(Roles = "SuperAdmin, Admin")]
+    public class SubscriptionsController : ControllerBase
+    {
+        private readonly ISubscriptionService _subscriptionService;
+
+        public SubscriptionsController(ISubscriptionService subscriptionService)
+        {
+            _subscriptionService = subscriptionService;
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _subscriptionService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(SubscriptionRequest request)
+        {
+            var result = await _subscriptionService.CreateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(SubscriptionRequest request)
+        {
+            var result = await _subscriptionService.UpdateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _subscriptionService.DeleteAsync(id);
+            return Ok(result);
+        }
+    }
+}

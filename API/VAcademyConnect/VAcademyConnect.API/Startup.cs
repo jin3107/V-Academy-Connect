@@ -18,6 +18,7 @@ namespace VAcademyConnect.API
             #region Services
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITenantService, TenantService>();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
             #endregion
         }
     }

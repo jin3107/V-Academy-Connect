@@ -20,7 +20,7 @@ namespace VAcademyConnect.API.Controllers
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> LogIn(LogInRequest logIn)
+        public async Task<IActionResult> LogIn([FromBody] LogInRequest logIn)
         {
             var result = await _accountService.LoginAsync(logIn);
             return Ok(result);
@@ -28,10 +28,34 @@ namespace VAcademyConnect.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(RegisterRequest signUp)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest signUp)
         {
             var result = await _accountService.RegisterAsync(signUp);
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request)
+        {
+            var result = await _accountService.VerifyEmailAsync(request);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var result = await _accountService.ChangePasswordAsync(request);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _accountService.LogoutAsync();
+            return Ok();
         }
     }
 }

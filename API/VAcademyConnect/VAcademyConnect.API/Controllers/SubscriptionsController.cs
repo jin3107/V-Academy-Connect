@@ -20,21 +20,21 @@ namespace VAcademyConnect.API.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var result = await _subscriptionService.GetByIdAsync(id);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SubscriptionRequest request)
+        public async Task<IActionResult> Create([FromBody] SubscriptionRequest request)
         {
             var result = await _subscriptionService.CreateAsync(request);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(SubscriptionRequest request)
+        public async Task<IActionResult> Update([FromBody] SubscriptionRequest request)
         {
             var result = await _subscriptionService.UpdateAsync(request);
             return Ok(result);
@@ -42,7 +42,7 @@ namespace VAcademyConnect.API.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var result = await _subscriptionService.DeleteAsync(id);
             return Ok(result);

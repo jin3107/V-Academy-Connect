@@ -44,9 +44,37 @@ namespace VAcademyConnect.Services.Implements
             _subscriptionRepository = subscriptionRepository;
         }
 
-        public Task<AppResponse<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
+        public async Task<AppResponse<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<ChangePasswordResponse>();
+            try
+            {
+                var user = await _userManager.FindByNameAsync(request.Email);
+                if (user == null)
+                    return result.BuildError("Email did not found.");
+
+                var removePassword = await _userManager.RemovePasswordAsync(user);
+                if (!removePassword.Succeeded)
+                    return result.BuildError(removePassword.Errors.First().Description);
+
+                var addPassword = await _userManager.AddPasswordAsync(user, request.NewPassword);
+                if (!addPassword.Succeeded)
+                    return result.BuildError(addPassword.Errors.First().Description);
+
+                var response = new ChangePasswordResponse
+                {
+                    Email = user!.Email!,
+                    NewPassword = request.NewPassword,
+                    ConfirmNePassword = request.ConfirmNewPassword,
+                    PhoneNumber = user!.PhoneNumber ?? string.Empty
+                };
+                result.BuildResult(response, "Password has been changed successfuly.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
 
         public async Task<AppResponse<LogInResponse>> LoginAsync(LogInRequest request)
@@ -76,6 +104,9 @@ namespace VAcademyConnect.Services.Implements
                 var tokenString = GenerateAccessToken(claims);
                 var response = new LogInResponse
                 {
+                    UserId = Guid.Parse(user!.Id),
+                    TenantId = user!.TenantId ?? Guid.Empty,
+                    PhoneNumber = user!.PhoneNumber ?? string.Empty,
                     Email = user!.Email!,
                     Role = roles!.FirstOrDefault()!,
                     Token = tokenString
@@ -243,14 +274,28 @@ namespace VAcademyConnect.Services.Implements
             throw new NotImplementedException();
         }
 
-        public Task<AppResponse<VerifyEmailResponse>> VerifyEmailAsync(VerifyEmailRequest request)
+        public async Task<AppResponse<VerifyEmailResponse>> VerifyEmailAsync(VerifyEmailRequest request)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<VerifyEmailResponse>();
+            try
+            {
+                var user = await _userManager.FindByNameAsync(request.Email);
+                if (user == null)
+                    return result.BuildError("Email did not found.");
+
+                var response = new VerifyEmailResponse { Email = user!.Email! };
+                result.BuildResult(response);
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
 
-        public Task LogoutAsync()
+        public async Task LogoutAsync()
         {
-            throw new NotImplementedException();
+            await _signInManager.SignOutAsync();
         }
     }
 }

@@ -57,5 +57,18 @@ namespace VAcademyConnect.API.Controllers
             await _accountService.LogoutAsync();
             return Ok();
         }
+
+        [HttpPost("google")]
+        public async Task<IActionResult> LoginByGoogle([FromBody] GoogleLoginRequest request)
+        {
+            if (string.IsNullOrEmpty(request.IdToken))
+                return BadRequest("IdToken không được để trống.");
+
+            var result = await _accountService.LoginByGoogleAsync(request);
+            if (result == null)
+                return BadRequest("Đăng nhập thất bại.");
+
+            return Ok(result);
+        }
     }
 }

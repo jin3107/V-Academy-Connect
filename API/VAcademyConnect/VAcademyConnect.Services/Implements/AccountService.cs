@@ -1,8 +1,10 @@
-﻿using MayNghien.Infrastructures.Models.Responses;
+﻿using Google.Apis.Auth;
+using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -296,6 +298,94 @@ namespace VAcademyConnect.Services.Implements
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<AppResponse<LogInResponse>> LoginByGoogleAsync(GoogleLoginRequest request)
+        {
+            var result = new AppResponse<LogInResponse>();
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[]
+                    {
+                        _contextAccessor.HttpContext!.RequestServices
+                            .GetRequiredService<IConfiguration>()["Authentication:Google:ClientId"]
+                    }
+                };
+
+                GoogleJsonWebSignature.Payload payload;
+                try
+                {
+                    payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+                }
+                catch (Exception)
+                {
+                    return result.BuildError("Invalid Google token");
+                }
+
+                var user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                {
+                    var tenant = await CreateTenant(new RegisterRequest
+                    {
+                        Email = payload.Email,
+                        PhoneNumber = "",
+                    });
+
+                    var createResult = await CreateUser(new RegisterRequest
+                    {
+                        Email = payload.Email,
+                        PhoneNumber = "",
+                        Password = Guid.NewGuid().ToString(),
+                    }, tenant.Id);
+
+                    if (!createResult.Succeeded)
+                        return result.BuildError(string.Join(", ", createResult.Errors.Select(e => e.Description)));
+
+                    user = await _userManager.FindByEmailAsync(payload.Email);
+                    await AssignRole(user!, "TenantAdmin");
+                }
+
+                var roles = await _userManager.GetRolesAsync(user!);
+                if (!roles.Any())
+                    return result.BuildError("User has no role assigned.");
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user!.UserName!),
+                    new Claim(ClaimTypes.Email, user.Email ?? ""),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim("phone", user.PhoneNumber ?? "")
+                };
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                await _signInManager.SignOutAsync();
+                await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+                var token = GenerateAccessToken(claims);
+
+                var response = new LogInResponse
+                {
+                    UserId = Guid.Parse(user.Id),
+                    TenantId = user.TenantId ?? Guid.Empty,
+                    Email = user.Email!,
+                    Role = roles.FirstOrDefault()!,
+                    Token = token
+                };
+
+                return result.BuildResult(response);
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
     }
 }

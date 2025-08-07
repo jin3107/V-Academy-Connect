@@ -159,7 +159,8 @@ namespace VAcademyConnect.Services.Implements
                 TenantId = tenantId,
                 EmailConfirmed = true,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                PhoneNumber = request.PhoneNumber
+                PhoneNumber = request.PhoneNumber,
+                Role = Role.TenantAdmin
             };
             return await _userManager.CreateAsync(user, request.Password);
         }
@@ -169,7 +170,7 @@ namespace VAcademyConnect.Services.Implements
             var tenant = new Tenant
             {
                 Id = Guid.NewGuid(),
-                Name = request.Email,
+                Name = request.TenantName,
                 ContactEmail = request.Email,
                 ContactPhone = request.PhoneNumber,
                 Status = Status.Active,

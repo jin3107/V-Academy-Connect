@@ -1,0 +1,86 @@
+import { Form, Input, Button, Checkbox, message } from "antd";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router";
+import type { LogInRequest } from "../../interfaces";
+import { logInAsync } from "../../apis/accountAPI";
+import './style.scss'
+
+
+const LogIn = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const onFinish = async (values: LogInRequest) => {
+    try {
+      setLoading(true);
+      await logInAsync(values);
+      message.success('Login successful!');
+      navigate('/home');
+    } catch (error) {
+      console.error('Login failed: ', error);
+      message.error('Login failed. PLease check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-form-wrapper">
+        <div className="login-logo">
+          <div className="login-circle"></div>
+        </div>
+        <h1 className="login-title">Welcome back</h1>
+        <p className="login-subtitle">Please enter your details to login.</p>
+
+        <Form
+          name="login"
+          initialValues={{ rememberMe: false }}
+          onFinish={onFinish}
+          layout="vertical"
+          className="login-form"
+        >
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please enter your email!' },
+              { type: 'email', message: 'Please enter a valid email!' }
+            ]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
+          
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[ { required: true, message: 'Please enter your password!' } ]}
+          >
+            <Input.Password placeholder="Enter your password" />
+          </Form.Item>
+
+          <Form.Item name="rememberMe" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} className="login-button">
+              Login
+            </Button>
+          </Form.Item>
+
+          <div className="login-divider">
+            <span>OR</span>
+          </div>
+
+          <div className="register-link">
+            Don't have an account?
+            <Link to="/register"> Register</Link>
+          </div>
+        </Form>
+      </div>
+    </div>
+  )
+}
+
+export default LogIn;

@@ -1,12 +1,8 @@
 export default interface LogInResponse {
-  data: {
-    email: string;
-    token: string;
-    phoneNumber: string;
-    userId: string;  
-    tenantId: string;
-    role: string;
-  },
-  message: string,
-  isSuccess: boolean,
+  email: string;
+  token: string;
+  phoneNumber: string;
+  userId: string;  
+  tenantId: string;
+  role: string;
 };

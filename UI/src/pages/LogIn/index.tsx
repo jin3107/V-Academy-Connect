@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router";
 import type { LogInRequest } from "../../interfaces";
 import { logInAsync } from "../../apis/accountAPI";
 import './style.scss'
-import { FormInput } from "../../components";
+import { AuthFormInput } from "../../components";
 
 
 const LogIn = () => {
@@ -60,7 +60,7 @@ const LogIn = () => {
             <Input.Password placeholder="Enter your password" />
           </Form.Item> */}
 
-          <FormInput
+          <AuthFormInput
             label="Email"
             name="email"
             required
@@ -72,7 +72,7 @@ const LogIn = () => {
             ]}
           />
 
-          <FormInput
+          <AuthFormInput
             label="Password"
             name="password"
             required

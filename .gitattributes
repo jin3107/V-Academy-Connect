@@ -61,10 +61,3 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
-
-*.ts  linguist-language=TypeScript
-*.tsx linguist-language=TypeScript
-
-dist/* linguist-vendored
-build/* linguist-vendored
-*.min.js linguist-vendored

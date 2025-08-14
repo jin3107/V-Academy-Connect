@@ -1,9 +1,10 @@
-import { Form, Input, Button, Checkbox, message } from "antd";
+import { Form, Button, Checkbox, message } from "antd";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import type { LogInRequest } from "../../interfaces";
 import { logInAsync } from "../../apis/accountAPI";
 import './style.scss'
+import { FormInput } from "../../components";
 
 
 const LogIn = () => {
@@ -40,7 +41,7 @@ const LogIn = () => {
           layout="vertical"
           className="login-form"
         >
-          <Form.Item
+          {/* <Form.Item
             label="Email"
             name="email"
             rules={[
@@ -49,15 +50,36 @@ const LogIn = () => {
             ]}
           >
             <Input placeholder="Enter your email" />
-          </Form.Item>
-          
-          <Form.Item
+          </Form.Item> */}
+
+          {/* <Form.Item
             label="Password"
             name="password"
             rules={[ { required: true, message: 'Please enter your password!' } ]}
           >
             <Input.Password placeholder="Enter your password" />
-          </Form.Item>
+          </Form.Item> */}
+
+          <FormInput
+            label="Email"
+            name="email"
+            required
+            message="Please enter your email!"
+            type="email"
+            placeholder="Enter your email"
+            rules={[
+              { type: "email", message: "Please enter a valid email!" }
+            ]}
+          />
+
+          <FormInput
+            label="Password"
+            name="password"
+            required
+            message="Please enter your password!"
+            type="password"
+            placeholder="Enter your password"
+          />
 
           <Form.Item name="rememberMe" valuePropName="checked">
             <Checkbox>Remember me</Checkbox>

@@ -1,4 +1,13 @@
-export type { default as LogInRequest } from './LogInRequest';
-export type { default as LogInResponse } from './LogInResponse';
-export type { default as RegisterRequest } from './RegisterRequest';
-export type { default as RegisterResponse } from './RegisterResponse';
+//#region Requests
+export type { LogInRequest } from './Authentication/Requests';
+export type { RegisterRequest } from './Authentication/Requests';
+export type { VerifyEmailRequest } from './Authentication/Requests';
+export type { ChangePasswordRequest } from './Authentication/Requests'
+//#endregion
+
+//#region Responses
+export type { LogInResponse } from './Authentication/Responses';
+export type { RegisterResponse } from './Authentication/Responses';
+export type { VerifyEmailResponse } from './Authentication/Responses';
+export type { ChangePasswordResponse } from './Authentication/Responses';
+//#endregion

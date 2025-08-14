@@ -81,8 +81,15 @@ const LogIn = () => {
             placeholder="Enter your password"
           />
 
-          <Form.Item name="rememberMe" valuePropName="checked">
-            <Checkbox>Remember me</Checkbox>
+          <Form.Item>
+            <div className="login-options">
+              <Form.Item name="rememberMe" valuePropName="checked" noStyle>
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
+              <Link to="/verify-email" className="forgot-password">
+                Forgot Password?
+              </Link>
+            </div>
           </Form.Item>
 
           <Form.Item>

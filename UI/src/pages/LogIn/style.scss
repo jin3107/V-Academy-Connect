@@ -129,3 +129,21 @@
     padding: 30px 20px;
   }
 }
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .forgot-password {
+    font-size: 14px;
+    color: colors.$primary;
+    text-decoration: none;
+    @include fonts.inter(400);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import type { VerifyEmailRequest } from "../../interfaces";
-import { verifyEmail } from "../../apis/accountAPI";
+import { verifyEmailAsync } from "../../apis/accountAPI";
 import { Form, Button, message } from "antd"
 import './style.scss'
 import { AuthFormInput } from "../../components";
+import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 
 
 const VerifyEmail = () => {
@@ -14,7 +15,7 @@ const VerifyEmail = () => {
   const onFinish = async (values: VerifyEmailRequest) => {
     try {
       setLoading(true);
-      await verifyEmail(values);
+      await verifyEmailAsync(values);
       navigate('/verify-email');
     } catch (error) {
       console.log('Verify email failed: ', error);
@@ -50,6 +51,7 @@ const VerifyEmail = () => {
               { type: "email", message: "Please enter a valid email!" }
             ]}
             placeholder="Enter your email"
+            prefix={<span className="input-prefix"><MailOutlined /></span>}
           />
 
           <AuthFormInput
@@ -63,6 +65,7 @@ const VerifyEmail = () => {
               { pattern: /^[0-9]+$/, message: "Phone number must contain only digits!" }
             ]}
             placeholder="Enter your phone number"
+            prefix={<span className="input-prefix"><PhoneOutlined /></span>}
           />
 
           <Form.Item>

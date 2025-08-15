@@ -9,10 +9,14 @@ export const registerAsync = async (data: RegisterRequest) => {
   return await axios.post<RegisterResponse>('/accounts/register', data).then(res => res.data);
 }
 
-export const verifyEmail = async (data: VerifyEmailRequest) => {
+export const logOutAsync = async () => {
+  return await axios.post('/accounts/logout').then(res => res.data);
+}
+
+export const verifyEmailAsync = async (data: VerifyEmailRequest) => {
   return await axios.post<VerifyEmailResponse>('/accounts/verify-email', data).then(res => res.data);
 }
 
-export const changePassword = async (data: ChangePasswordRequest) => {
+export const changePasswordAsync = async (data: ChangePasswordRequest) => {
   return await axios.post<ChangePasswordResponse>('/accounts/change-password', data).then(res => res.data);
 }

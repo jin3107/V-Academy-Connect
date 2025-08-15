@@ -5,6 +5,7 @@ import type { RegisterRequest } from "../../interfaces";
 import { registerAsync } from "../../apis/accountAPI";
 import { AuthFormInput } from "../../components";
 import './style.scss'
+import { LockOutlined, MailOutlined, PhoneOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -52,6 +53,7 @@ const Register = () => {
               type="text"
               message="Please enter your name!"
               placeholder="Enter your name"
+              prefix={<span className="input-prefix"><UserOutlined /></span>}
               required
             />
 
@@ -61,6 +63,7 @@ const Register = () => {
               type="email"
               placeholder="Enter your email"
               required
+              prefix={<span className="input-prefix"><MailOutlined /></span>}
               rules={[
                 { type: 'email', message: 'Please enter a valid email!' }
               ]}
@@ -73,6 +76,7 @@ const Register = () => {
               name="phoneNumber"
               type="text"
               placeholder="Enter your phone number"
+              prefix={<span className="input-prefix"><PhoneOutlined /></span>}
               rules={[
                 { type: 'email', message: 'Please enter a valid phone number!' },
                 { len: 10, message: 'Phone number must be exactly 10 digits!' },
@@ -86,6 +90,7 @@ const Register = () => {
               name="tenantName"
               type="text"
               placeholder="Enter your tenant name"
+              prefix={<span className="input-prefix"><TeamOutlined /></span>}
               required
             />
           </div>
@@ -96,6 +101,7 @@ const Register = () => {
                 name="password"
                 type="password"
                 placeholder="Enter your password"
+                prefix={<span className="input-prefix"><LockOutlined /></span>}
                 required
               />
 
@@ -104,6 +110,7 @@ const Register = () => {
                 name="confirmPassword"
                 type="password"
                 placeholder="Confirm your password"
+                prefix={<span className="input-prefix"><LockOutlined /></span>}
                 required
               />
           </div>

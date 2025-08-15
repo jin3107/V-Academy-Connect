@@ -5,6 +5,7 @@ import type { LogInRequest } from "../../interfaces";
 import { logInAsync } from "../../apis/accountAPI";
 import './style.scss'
 import { AuthFormInput } from "../../components";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 
 const LogIn = () => {
@@ -41,25 +42,6 @@ const LogIn = () => {
           layout="vertical"
           className="login-form"
         >
-          {/* <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: 'Please enter your email!' },
-              { type: 'email', message: 'Please enter a valid email!' }
-            ]}
-          >
-            <Input placeholder="Enter your email" />
-          </Form.Item> */}
-
-          {/* <Form.Item
-            label="Password"
-            name="password"
-            rules={[ { required: true, message: 'Please enter your password!' } ]}
-          >
-            <Input.Password placeholder="Enter your password" />
-          </Form.Item> */}
-
           <AuthFormInput
             label="Email"
             name="email"
@@ -67,6 +49,7 @@ const LogIn = () => {
             message="Please enter your email!"
             type="email"
             placeholder="Enter your email"
+            prefix={<span className="input-prefix"><UserOutlined /></span>}
             rules={[
               { type: "email", message: "Please enter a valid email!" }
             ]}
@@ -79,6 +62,7 @@ const LogIn = () => {
             message="Please enter your password!"
             type="password"
             placeholder="Enter your password"
+            prefix={<span className="input-prefix"><LockOutlined /></span>}
           />
 
           <Form.Item>

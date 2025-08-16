@@ -16,7 +16,12 @@ const VerifyEmail = () => {
     try {
       setLoading(true);
       await verifyEmailAsync(values);
-      navigate('/verify-email');
+      navigate('/change-password', { 
+        state: { 
+          email: values.email, 
+          phoneNumber: values.phoneNumber 
+        } 
+      });
     } catch (error) {
       console.log('Verify email failed: ', error);
       message.error('Verify email failed. Please check your credentials.');

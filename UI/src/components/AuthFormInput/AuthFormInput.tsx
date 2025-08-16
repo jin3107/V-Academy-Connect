@@ -10,6 +10,7 @@ interface AuthFormInputProps {
   message?: string;
   rules?: Rule[];
   prefix?: React.ReactNode;
+  readonly?: boolean;
 }
 
 const AuthFormInput = ({ 
@@ -20,7 +21,8 @@ const AuthFormInput = ({
   required = false, 
   message,
   rules = [],
-  prefix
+  prefix,
+  readonly = false
 }: AuthFormInputProps) => {
   // Tạo rules cho validation
   const validationRules: Rule[] = [];
@@ -39,9 +41,9 @@ const AuthFormInput = ({
   return (
     <Form.Item label={label} name={name} rules={validationRules}>
       {type === 'password' ? (
-        <Input.Password placeholder={placeholder} prefix={prefix} />
+        <Input.Password placeholder={placeholder} prefix={prefix} readOnly={readonly} />
       ) : (
-        <Input type={type} placeholder={placeholder} prefix={prefix} />
+        <Input type={type} placeholder={placeholder} prefix={prefix} readOnly={readonly} />
       )}
     </Form.Item>
   );

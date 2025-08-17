@@ -1,3 +1,2 @@
 export { default as AuthFormInput } from "./AuthFormInput/AuthFormInput";
-
-export { default as PrivateRoute } from './PrivateRoute';
+export { default as PrivateRoute } from './Routes/PrivateRoute';

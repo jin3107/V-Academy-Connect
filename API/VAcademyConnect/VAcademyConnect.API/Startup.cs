@@ -13,6 +13,7 @@ namespace VAcademyConnect.API
             builder.Services.AddScoped<ITenantRepository, TenantRepository>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             builder.Services.AddScoped<ITenantSubscriptionRepository, TenantSubscriptionRepository>();
+            builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             #endregion
 
             #region Services

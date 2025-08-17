@@ -23,7 +23,15 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> LogIn([FromBody] LogInRequest logIn)
         {
             var result = await _accountService.LoginAsync(logIn);
-            return Ok(result);
+            return Ok(result.Data);
+        }
+
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var result = await _accountService.RefreshTokenAsync(request);
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -31,7 +39,7 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest signUp)
         {
             var result = await _accountService.RegisterAsync(signUp);
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -39,7 +47,7 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request)
         {
             var result = await _accountService.VerifyEmailAsync(request);
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -47,7 +55,7 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
             var result = await _accountService.ChangePasswordAsync(request);
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -68,7 +76,7 @@ namespace VAcademyConnect.API.Controllers
             if (result == null)
                 return BadRequest("Đăng nhập thất bại.");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
     }
 }

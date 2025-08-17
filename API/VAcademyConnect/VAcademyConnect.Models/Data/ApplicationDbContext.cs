@@ -29,6 +29,7 @@ namespace VAcademyConnect.Models.Data
         public DbSet<PaymentCheck> PaymentChecks { get; set; }
         public DbSet<ScoreStatistic> ScoreStatistics { get; set; }
         public DbSet<BackgroundJob> BackgroundJobs { get; set; }
+        public DbSet<RefreshTokenModel> RefreshTokenModels { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

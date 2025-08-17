@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import "./App.css";
 import VerifyEmail from "./pages/VerifyEmail";
 import ChangePassword from "./pages/ChangePassword";
+import { PrivateRoute } from "./components";
 
 function App() {
   return (
@@ -13,10 +14,21 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<LogIn />} />
+
             <Route path="/register" element={<Register />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/home" element={<Home />} />
+
+            {/* <Route path="/home" element={<Home />} /> */}
+            <Route 
+              path="/home"
+              element={
+                <PrivateRoute allowedRoles={["SuperAdmin"]}>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </Router>

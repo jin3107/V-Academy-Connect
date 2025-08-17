@@ -18,6 +18,7 @@ namespace VAcademyConnect.Services.Interfaces
         Task<AppResponse<VerifyEmailResponse>> VerifyEmailAsync(VerifyEmailRequest request);
         Task<AppResponse<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request);
         Task<AppResponse<bool>> UpdateProfileAsync(UpdateProfileRequest request);
+        Task<AppResponse<RefreshTokenResponse>> RefreshTokenAsync(RefreshTokenRequest request);
 
         Task LogoutAsync();
     }

@@ -15,7 +15,11 @@ const LogIn = () => {
   const onFinish = async (values: LogInRequest) => {
     try {
       setLoading(true);
-      await logInAsync(values);
+
+      const response = await logInAsync(values);
+      const token = response.token;
+      localStorage.setItem("token", token);
+      
       message.success('Login successful!');
       navigate('/home');
     } catch (error) {

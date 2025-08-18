@@ -1,6 +1,10 @@
 export default interface ChangePasswordRepsonse {
-  email: string,
-  phoneNumber: string,
-  newPassword: string,
-  confirmNewPassword: string
+  data: {
+    email: string,
+    phoneNumber: string,
+    newPassword: string,
+    confirmNewPassword: string;
+  },
+  isSuccess: boolean,
+  message: string,
 }

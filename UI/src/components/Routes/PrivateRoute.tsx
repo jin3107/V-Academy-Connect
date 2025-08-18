@@ -23,7 +23,6 @@ const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
 
   try {
     const decoded: DecodedToken = jwtDecode(token);
-    console.log("Decoded token:", decoded);
 
     // Kiểm tra token hết hạn
     if (decoded.exp * 1000 < Date.now()) {

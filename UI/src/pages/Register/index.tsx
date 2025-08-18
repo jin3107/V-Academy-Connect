@@ -78,7 +78,6 @@ const Register = () => {
               placeholder="Enter your phone number"
               prefix={<span className="input-prefix"><PhoneOutlined /></span>}
               rules={[
-                { type: 'email', message: 'Please enter a valid phone number!' },
                 { len: 10, message: 'Phone number must be exactly 10 digits!' },
                 { pattern: /^[0-9]+$/, message: 'Phone number must contain only digits!' }
               ]}

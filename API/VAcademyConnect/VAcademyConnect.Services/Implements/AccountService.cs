@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using VAcademyConnect.Commons.Enums;
@@ -32,9 +33,19 @@ namespace VAcademyConnect.Services.Implements
         private readonly ITenantRepository _tenantRepository;
         private readonly ITenantSubscriptionRepository _tenantSubscriptionRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IConfiguration _config;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor contextAccessor, ITenantRepository tenantRepository, IConfiguration config, ITenantSubscriptionRepository tenantSubscriptionRepository, ISubscriptionRepository subscriptionRepository)
+        public AccountService(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
+            IHttpContextAccessor contextAccessor,
+            ITenantRepository tenantRepository,
+            IConfiguration config,
+            ITenantSubscriptionRepository tenantSubscriptionRepository,
+            ISubscriptionRepository subscriptionRepository,
+            IRefreshTokenRepository refreshTokenRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -44,6 +55,7 @@ namespace VAcademyConnect.Services.Implements
             _config = config;
             _tenantSubscriptionRepository = tenantSubscriptionRepository;
             _subscriptionRepository = subscriptionRepository;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<AppResponse<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
@@ -103,7 +115,8 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("User has no role assigned.");
 
                 var claims = await GetClaims(request, user!);
-                var tokenString = GenerateAccessToken(claims);
+                var (accessToken, refreshToken) = await GenerateTokens(user!, claims);
+
                 var response = new LogInResponse
                 {
                     UserId = Guid.Parse(user!.Id),
@@ -111,7 +124,8 @@ namespace VAcademyConnect.Services.Implements
                     PhoneNumber = user!.PhoneNumber ?? string.Empty,
                     Email = user!.Email!,
                     Role = roles!.FirstOrDefault()!,
-                    Token = tokenString
+                    Token = accessToken,
+                    RefreshToken = refreshToken
                 };
 
                 return result.BuildResult(response);
@@ -212,19 +226,24 @@ namespace VAcademyConnect.Services.Implements
                 var trialSubscription = TenantSubscriptionMapper.ToTrialSubscription(newTenant.Id, trialPlan);
                 await _tenantSubscriptionRepository.AddAsync(trialSubscription);
 
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Email, user!.Email!),
+                    new Claim(ClaimTypes.Role, "TenantAdmin"),
+                };
+
+                var (accessToken, refreshToken) = await GenerateTokens(user!, claims);
+
                 var response = new RegisterResponse
                 {
                     Email = request.Email,
-                    Token = GenerateAccessToken(new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Email, user!.Email!),
-                        new Claim(ClaimTypes.Role, "TenantAdmin"),
-                    }),
+                    Token = accessToken,
                     PhoneNumber = request.PhoneNumber,
                     Name = request.Name,
                     TenantName = request.TenantName,
                     SubscriptionPlanId = trialPlan.Id
                 };
+
                 await _signInManager.SignInAsync(user!, isPersistent: false);
                 return result.BuildResult(response, "User registered successfully!");
             }
@@ -270,6 +289,34 @@ namespace VAcademyConnect.Services.Implements
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        private async Task<(string accessToken, string refreshToken)> GenerateTokens(ApplicationUser user, IEnumerable<Claim> claims)
+        {
+            var accessToken = GenerateAccessToken(claims);
+            var refreshToken = GenerateRefreshToken();
+            
+            var refreshTokenModel = new RefreshTokenModel
+            {
+                UserId = Guid.Parse(user.Id),
+                RefreshToken = refreshToken,
+                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false
+            };
+            
+            await _refreshTokenRepository.AddAsync(refreshTokenModel);
+            
+            return (accessToken, refreshToken);
         }
 
         public Task<AppResponse<bool>> UpdateProfileAsync(UpdateProfileRequest request)
@@ -369,7 +416,7 @@ namespace VAcademyConnect.Services.Implements
                 await _signInManager.SignOutAsync();
                 await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme, principal);
 
-                var token = GenerateAccessToken(claims);
+                var (accessToken, refreshToken) = await GenerateTokens(user!, claims);
 
                 var response = new LogInResponse
                 {
@@ -377,10 +424,57 @@ namespace VAcademyConnect.Services.Implements
                     TenantId = user.TenantId ?? Guid.Empty,
                     Email = user.Email!,
                     Role = roles.FirstOrDefault()!,
-                    Token = token
+                    Token = accessToken,
+                    RefreshToken = refreshToken
                 };
 
                 return result.BuildResult(response);
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        public async Task<AppResponse<RefreshTokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
+        {
+            var result = new AppResponse<RefreshTokenResponse>();
+            try
+            {
+                // Validate the refresh token from database
+                var storedToken = await _refreshTokenRepository.GetByTokenAsync(request.RefreshToken!);
+                if (storedToken == null)
+                    return result.BuildError("Invalid refresh token");
+
+                if (storedToken.RefreshTokenExpiryTime <= DateTime.UtcNow)
+                {
+                    storedToken.IsRevoked = true;
+                    _refreshTokenRepository.Edit(storedToken);
+                    return result.BuildError("Refresh token has expired");
+                }
+
+                // Get user and validate
+                var user = await _userManager.FindByIdAsync(storedToken.UserId.ToString()!);
+                if (user == null)
+                    return result.BuildError("User not found");
+
+                // Generate new tokens
+                var claims = await GetClaims(new LogInRequest { Email = user.Email! }, user);
+                var (newAccessToken, newRefreshToken) = await GenerateTokens(user, claims);
+
+                // Revoke old refresh token
+                storedToken.IsRevoked = true;
+                _refreshTokenRepository.Edit(storedToken);
+
+                var response = new RefreshTokenResponse
+                {
+                    AccessToken = newAccessToken,
+                    RefreshToken = newRefreshToken,
+                    Expiration = DateTime.UtcNow.AddHours(1)
+                };
+
+                return result.BuildResult(response, "Token refreshed successfully");
             }
             catch (Exception ex)
             {

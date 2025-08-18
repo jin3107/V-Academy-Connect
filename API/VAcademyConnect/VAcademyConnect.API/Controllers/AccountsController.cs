@@ -26,6 +26,14 @@ namespace VAcademyConnect.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var result = await _accountService.RefreshTokenAsync(request);
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest signUp)

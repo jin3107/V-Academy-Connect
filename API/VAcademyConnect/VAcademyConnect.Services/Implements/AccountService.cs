@@ -311,7 +311,9 @@ namespace VAcademyConnect.Services.Implements
                 UserId = Guid.Parse(user.Id),
                 RefreshToken = refreshToken,
                 RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7),
-                IsRevoked = false
+                IsRevoked = false,
+                CreatedOn = DateTime.UtcNow,
+                CreatedBy = user.Email
             };
             
             await _refreshTokenRepository.AddAsync(refreshTokenModel);

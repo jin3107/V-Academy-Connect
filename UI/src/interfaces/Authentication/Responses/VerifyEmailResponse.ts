@@ -1,4 +1,8 @@
 export default interface VerifyEmailResponse {
-  email: string,
-  phoneNumber: string
+  data: {
+    email: string,
+    phoneNumber: string
+  }
+  isSuccess: boolean,
+  message: string,
 }

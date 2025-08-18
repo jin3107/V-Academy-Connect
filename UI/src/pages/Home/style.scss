@@ -1,0 +1,107 @@
+@use '../../scss/colors' as colors;
+@use '../../scss/fonts' as fonts;
+@use '../../scss/variables' as variables;
+@use 'sass:color';
+
+.home-layout {
+  min-height: 100vh;
+}
+
+.home-sider {
+  .logo {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    color: white;
+    
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #00FF00;
+      margin-right: 8px;
+    }
+    
+    .logo-text {
+      @include fonts.inter(600);
+      font-size: 18px;
+      color: white;
+    }
+  }
+}
+
+.home-header {
+  background: white;
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  
+  .trigger-button {
+    font-size: 18px;
+    padding: 0 24px;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0 8px;
+    
+    .user-name {
+      margin-left: 8px;
+      @include fonts.inter(500);
+    }
+  }
+}
+
+.home-content {
+  padding: 24px;
+  background: #f5f5f5;
+  
+  .content-wrapper {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    
+    .stat-card {
+      flex: 1;
+      background: #f9f9f9;
+      padding: 24px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+@include variables.mobile {
+  .home-content {
+    padding: 16px;
+    
+    .dashboard-stats {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}

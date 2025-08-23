@@ -12,8 +12,8 @@ using VAcademyConnect.Models.Data;
 namespace VAcademyConnect.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250816144719_Add Table RefreshToken model")]
-    partial class AddTableRefreshTokenmodel
+    [Migration("20250823141920_DbInit")]
+    partial class DbInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -538,7 +538,7 @@ namespace VAcademyConnect.Models.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool?>("IsRevoked")
+                    b.Property<bool>("IsRevoked")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ModifiedBy")
@@ -640,6 +640,70 @@ namespace VAcademyConnect.Models.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("ScoreStatistics");
+                });
+
+            modelBuilder.Entity("VAcademyConnect.Models.Entities.Staff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("VAcademyConnect.Models.Entities.Subscription", b =>
@@ -1002,6 +1066,16 @@ namespace VAcademyConnect.Models.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("VAcademyConnect.Models.Entities.Staff", b =>
+                {
+                    b.HasOne("VAcademyConnect.Models.Entities.Tenant", "Tenant")
+                        .WithMany("Staffs")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("VAcademyConnect.Models.Entities.TenantSubscription", b =>
                 {
                     b.HasOne("VAcademyConnect.Models.Entities.Subscription", "Subscription")
@@ -1080,6 +1154,8 @@ namespace VAcademyConnect.Models.Migrations
                     b.Navigation("BackgroundJobs");
 
                     b.Navigation("Classes");
+
+                    b.Navigation("Staffs");
 
                     b.Navigation("TenantSubscription");
                 });

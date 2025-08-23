@@ -16,6 +16,7 @@ namespace VAcademyConnect.Models.Entities
         public Status Status { get; set; }
 
         public TenantSubscription? TenantSubscription { get; set; }
+        public ICollection<Staff>? Staffs { get; set; }
         public ICollection<ApplicationUser>? ApplicationUsers { get; set; }
         public ICollection<Class>? Classes { get; set; }
         public ICollection<BackgroundJob>? BackgroundJobs { get; set; }

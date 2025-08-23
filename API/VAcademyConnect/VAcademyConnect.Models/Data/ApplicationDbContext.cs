@@ -17,6 +17,7 @@ namespace VAcademyConnect.Models.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<TenantSubscription> TenantSubscriptions { get; set; }
         public DbSet<Class> Classes { get; set; }

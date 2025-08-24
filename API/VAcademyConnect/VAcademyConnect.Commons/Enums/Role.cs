@@ -10,7 +10,6 @@ namespace VAcademyConnect.Commons.Enums
     {
         SuperAdmin,
         TenantAdmin,
-        Teacher,
-        Student
+        Staff,
     }
 }

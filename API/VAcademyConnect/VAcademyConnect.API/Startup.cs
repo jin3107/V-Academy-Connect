@@ -14,12 +14,14 @@ namespace VAcademyConnect.API
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             builder.Services.AddScoped<ITenantSubscriptionRepository, TenantSubscriptionRepository>();
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            builder.Services.AddScoped<IStaffRepository, StaffRepository>();
             #endregion
 
             #region Services
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITenantService, TenantService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddScoped<IStaffService, StaffService>();
             #endregion
         }
     }

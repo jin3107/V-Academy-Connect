@@ -1,5 +1,5 @@
 import { Form, Button, Checkbox, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
 import type { LogInRequest } from "../../interfaces";
 import { logInAsync } from "../../apis/accountAPI";
@@ -11,6 +11,10 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 const LogIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, [])
 
   const onFinish = async (values: LogInRequest) => {
     try {

@@ -32,19 +32,14 @@ namespace VAcademyConnect.Services.Implements
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private IConfiguration _config;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
         public StaffService(IStaffRepository staffRepository, IHttpContextAccessor contextAccessor,
-            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration config, IRefreshTokenRepository refreshTokenRepository)
+            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _staffRepository = staffRepository;
             _contextAccessor = contextAccessor;
             _userManager = userManager;
             _roleManager = roleManager;
-            _config = config;
-            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<AppResponse<StaffResponse>> CreateAsync(StaffRequest request)
@@ -86,59 +81,12 @@ namespace VAcademyConnect.Services.Implements
                     new Claim(ClaimTypes.Role, request.Role),
                 };
 
-                var (accessToken, refreshToken) = await GenerateTokens(identityUser, claims);
-
                 var response = StaffMapper.ToResponse(createStaff);
-                response.Token = accessToken;
                 return result.BuildResult(response, "Staff created successfully.");
             }
             catch (Exception ex)
             {
                 return result.BuildError(ex.Message + " " + ex.StackTrace);
-            }
-        }
-
-        private async Task<(string accessToken, string refreshToken)> GenerateTokens(ApplicationUser user, IEnumerable<Claim> claims)
-        {
-            var accessToken = GenerateAccessToken(claims);
-            var refreshToken = GenerateRefreshToken();
-
-            var refreshTokenModel = new RefreshTokenModel
-            {
-                UserId = Guid.Parse(user.Id),
-                RefreshToken = refreshToken,
-                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7),
-                IsRevoked = false,
-                CreatedOn = DateTime.UtcNow,
-                CreatedBy = user.Email
-            };
-
-            await _refreshTokenRepository.AddAsync(refreshTokenModel);
-
-            return (accessToken, refreshToken);
-        }
-
-        private string GenerateAccessToken(IEnumerable<Claim> claims)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken
-            (
-                _config["Jwt:Issuer"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: credentials
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
             }
         }
 
@@ -264,9 +212,7 @@ namespace VAcademyConnect.Services.Implements
                 };
 
                 await _staffRepository.EditAsync(staff);
-                var (accessToken, refreshToken) = await GenerateTokens(identityUser, claims);
                 var response = StaffMapper.ToResponse(staff);
-                response.Token = accessToken;
 
                 return result.BuildResult(response, "Staff updated successfully");
             }

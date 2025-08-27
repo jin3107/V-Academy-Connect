@@ -111,7 +111,7 @@ namespace VAcademyConnect.Services.Implements
             return (result, identityUser);
         }
 
-        public async Task<AppResponse<string>> Delete(Guid id)
+        public async Task<AppResponse<string>> DeleteAsync(Guid id)
         {
             var result = new AppResponse<string>();
             try

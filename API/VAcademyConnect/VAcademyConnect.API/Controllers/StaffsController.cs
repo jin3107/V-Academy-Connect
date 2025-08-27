@@ -20,23 +20,31 @@ namespace VAcademyConnect.API.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var result = await _staffService.GetByIdAsync(id);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(StaffRequest request)
+        public async Task<IActionResult> Create([FromBody] StaffRequest request)
         {
             var result = await _staffService.CreateAsync(request);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(StaffRequest request)
+        public async Task<IActionResult> Update([FromBody] StaffRequest request)
         {
             var result = await _staffService.UpdateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var result = await _staffService.DeleteAsync(id);
             return Ok(result);
         }
     }

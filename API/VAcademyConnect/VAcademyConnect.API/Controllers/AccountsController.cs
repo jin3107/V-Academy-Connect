@@ -78,5 +78,13 @@ namespace VAcademyConnect.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("roles")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var result = await _accountService.GetAllRoles();
+            return Ok(result);
+        }
     }
 }

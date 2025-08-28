@@ -14,4 +14,6 @@ export type { VerifyEmailResponse } from './Authentication/Responses';
 export type { ChangePasswordResponse } from './Authentication/Responses';
 
 export type { StaffResponse } from './Responses';
+export type { RoleResponse } from './Responses';
+
 //#endregion

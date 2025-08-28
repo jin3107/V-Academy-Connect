@@ -6,6 +6,7 @@ import "./App.css";
 import VerifyEmail from "./pages/VerifyEmail";
 import ChangePassword from "./pages/ChangePassword";
 import { PrivateRoute } from "./components";
+import Staff from "./pages/Staff";
 
 function App() {
   return (
@@ -27,6 +28,15 @@ function App() {
                   <Home />
                 </PrivateRoute>
               }
+            />
+
+            <Route
+              path="/staffs"
+              element={
+                <PrivateRoute allowedRoles={["SuperAdmin", "TenantAdmin"]}>
+                  <Staff />
+                </PrivateRoute>
+              } 
             />
 
             <Route path="/" element={<Navigate to="/login" replace />} />

@@ -12,6 +12,7 @@ namespace VAcademyConnect.Services.Interfaces
 {
     public interface IAccountService
     {
+        Task<AppResponse<List<RoleResponse>>> GetAllRoles();
         Task<AppResponse<LogInResponse>> LoginByGoogleAsync(GoogleLoginRequest request);
         Task<AppResponse<LogInResponse>> LoginAsync(LogInRequest request);
         Task<AppResponse<RegisterResponse>> RegisterAsync(RegisterRequest request);

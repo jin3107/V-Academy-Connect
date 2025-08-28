@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -477,6 +478,22 @@ namespace VAcademyConnect.Services.Implements
                 };
 
                 return result.BuildResult(response, "Token refreshed successfully");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        public async Task<AppResponse<List<RoleResponse>>> GetAllRoles()
+        {
+            var result = new AppResponse<List<RoleResponse>>();
+            try
+            {
+                var roles = _roleManager.Roles.ToList();
+                var response = roles.Select(r => RoleMapper.ToResponse(r)).ToList();
+                result.BuildResult(response);
             }
             catch (Exception ex)
             {

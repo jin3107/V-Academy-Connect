@@ -1,78 +1,17 @@
+// /pages/Home/style.scss
 @use '../../scss/colors' as colors;
 @use '../../scss/fonts' as fonts;
 @use '../../scss/variables' as variables;
-@use 'sass:color';
 
-.home-layout {
-  min-height: 100vh;
-}
-
-.home-sider {
-  .logo {
-    height: 64px;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    color: white;
+.home-page {
+  .page-header {
+    margin-bottom: 32px;
     
-    .logo-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: #00FF00;
-      margin-right: 8px;
-    }
-    
-    .logo-text {
-      @include fonts.inter(600);
-      font-size: 18px;
-      color: white;
+    .ant-typography {
+      margin-bottom: 8px !important;
     }
   }
-}
 
-.home-header {
-  background: white;
-  padding: 0 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  
-  .trigger-button {
-    font-size: 18px;
-    padding: 0 24px;
-  }
-  
-  .header-right {
-    display: flex;
-    align-items: center;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 0 8px;
-    
-    .user-name {
-      margin-left: 8px;
-      @include fonts.inter(500);
-    }
-  }
-}
-
-.home-content {
-  padding: 24px;
-  background: #f5f5f5;
-  
-  .content-wrapper {
-    background: white;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
   .dashboard-stats {
     display: flex;
     gap: 24px;
@@ -80,28 +19,166 @@
     
     .stat-card {
       flex: 1;
-      background: #f9f9f9;
+      background: #fafafa;
       padding: 24px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
+      border-radius: 12px;
+      border: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
       
+      // Hover effect
       &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        border-color: #1677ff;
+        background: #fff;
+        
+        .stat-icon {
+          transform: scale(1.1);
+        }
+        
+        .stat-number {
+          color: #1677ff !important;
+        }
+      }
+      
+      // Active effect
+      &:active {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      // Gradient overlay on hover
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #1677ff, #69c0ff);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      
+      &:hover::before {
+        transform: scaleX(1);
+      }
+      
+      .stat-icon {
+        font-size: 24px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        display: block;
+      }
+      
+      .stat-content {
+        .stat-label {
+          color: #8c8c8c !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          margin-bottom: 8px !important;
+          @include fonts.inter(500);
+        }
+        
+        .stat-number {
+          color: #262626 !important;
+          font-size: 28px !important;
+          font-weight: 700 !important;
+          line-height: 1.2 !important;
+          margin: 0 !important;
+          @include fonts.inter(700);
+          transition: color 0.3s ease;
+        }
+      }
+      
+      // Different colors for each card
+      &:nth-child(1) {
+        &:hover {
+          border-color: #52c41a;
+          
+          .stat-number {
+            color: #52c41a !important;
+          }
+          
+          &::before {
+            background: linear-gradient(90deg, #52c41a, #95de64);
+          }
+        }
+      }
+      
+      &:nth-child(2) {
+        &:hover {
+          border-color: #faad14;
+          
+          .stat-number {
+            color: #faad14 !important;
+          }
+          
+          &::before {
+            background: linear-gradient(90deg, #faad14, #ffd666);
+          }
+        }
+      }
+      
+      &:nth-child(3) {
+        &:hover {
+          border-color: #1677ff;
+          
+          .stat-number {
+            color: #1677ff !important;
+          }
+          
+          &::before {
+            background: linear-gradient(90deg, #1677ff, #69c0ff);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@include variables.tablet {
+  .home-page {
+    .dashboard-stats {
+      gap: 16px;
+      
+      .stat-card {
+        padding: 20px;
+        
+        .stat-content .stat-number {
+          font-size: 24px !important;
+        }
       }
     }
   }
 }
 
 @include variables.mobile {
-  .home-content {
-    padding: 16px;
-    
+  .home-page {
     .dashboard-stats {
       flex-direction: column;
       gap: 16px;
+      margin-top: 24px;
+      
+      .stat-card {
+        padding: 20px;
+        
+        &:hover {
+          transform: translateY(-2px);
+        }
+        
+        .stat-content .stat-number {
+          font-size: 24px !important;
+        }
+      }
+    }
+    
+    .page-header {
+      margin-bottom: 24px;
     }
   }
 }

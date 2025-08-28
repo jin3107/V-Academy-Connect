@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
 import {
   DashboardOutlined,
@@ -11,6 +11,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
+import type { MenuProps } from 'antd';
 import "./style.scss";
 
 const { Header, Sider, Content } = Layout;
@@ -23,10 +24,21 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [userName, setUserName] = useState("User");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    // Thông thường sẽ lấy từ context hoặc API
     setUserName("Chuong Huynh");
   }, []);
+
+  // Xác định menu item được chọn dựa trên current path
+  const getSelectedKey = () => {
+    const path = location.pathname;
+    if (path.includes('/home') || path === '/') return ['dashboard'];
+    if (path.includes('/staff')) return ['staff'];
+    if (path.includes('/settings')) return ['settings'];
+    return ['dashboard'];
+  };
 
   const handleLogout = async () => {
     try {
@@ -39,22 +51,61 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }
   };
 
-  const userMenuItems = [
+  const handleMenuClick = ({ key }: { key: string }) => {
+    switch (key) {
+      case "dashboard":
+        navigate("/home");
+        break;
+      case "staff":
+        navigate("/staffs");
+        break;
+      case "settings":
+        navigate("/settings");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const userMenuItems: MenuProps['items'] = [
     {
       key: "profile",
       icon: <UserOutlined />,
       label: "Profile",
+      onClick: () => navigate("/profile")
     },
     {
       key: "settings",
       icon: <SettingOutlined />,
       label: "Settings",
+      onClick: () => navigate("/settings")
+    },
+    {
+      type: 'divider',
     },
     {
       key: "logout",
       icon: <LoginOutlined />,
       label: "Logout",
       onClick: handleLogout,
+    },
+  ];
+
+  const menuItems: MenuProps['items'] = [
+    {
+      key: "dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
+    },
+    {
+      key: "staff",
+      icon: <TeamOutlined />,
+      label: "Staff",
+    },
+    {
+      key: "settings",
+      icon: <SettingOutlined />,
+      label: "Settings",
     },
   ];
 
@@ -73,29 +124,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultOpenKeys={["dashboard"]}
-          onClick={({ key }) => {
-            if (key === "dashboard") navigate("/home");
-            if (key === "staff") navigate("/staffs");
-            if (key === "settings") navigate("/settings");
-          }}
-          items={[
-            {
-              key: "dashboard",
-              icon: <DashboardOutlined />,
-              label: "Dashboard",
-            },
-            {
-              key: "staff",
-              icon: <TeamOutlined />,
-              label: "Staff",
-            },
-            {
-              key: "settings",
-              icon: <SettingOutlined />,
-              label: "Settings",
-            },
-          ]}
+          selectedKeys={getSelectedKey()}
+          items={menuItems}
+          onClick={handleMenuClick}
         />
       </Sider>
       <Layout>
@@ -111,10 +142,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               menu={{ items: userMenuItems }}
               placement="bottomRight"
               arrow
+              trigger={['click']}
             >
               <div className="user-info">
                 <Avatar icon={<UserOutlined />} />
-                {!collapsed && <span className="user-name">{userName}</span>}
+                <span className="user-name">{userName}</span>
               </div>
             </Dropdown>
           </div>

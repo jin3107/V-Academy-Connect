@@ -49,9 +49,9 @@ namespace VAcademyConnect.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("search")]
-        public async Task<IActionResult> Search(SearchRequest request)
+        public async Task<IActionResult> Search([FromBody] SearchRequest request)
         {
             var result = await _staffService.SearchAsync(request);
             return Ok(result);

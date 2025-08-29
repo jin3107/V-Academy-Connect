@@ -1,12 +1,6 @@
 import axios from "../configs/axios";
 import type { StaffRequest, StaffResponse } from "../interfaces";
 
-export const getAllStaffs = async () => {
-  return await axios
-    .get<{ isSuccess: boolean; data: StaffResponse["data"][]; message: string }>("/staffs")
-    .then(res => res.data);
-};
-
 export const createStaff = async (data: StaffRequest) => {
   return await axios
     .post<StaffResponse>("/staffs", data)

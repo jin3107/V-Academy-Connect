@@ -1,8 +1,9 @@
-import MainLayout from "../../components/MainLayout";
-import './style.scss';
+import MainLayout from "../../components/MainLayout"
 
 
-const Staff = () => {
+
+const Staff = async () => {
+
 
 
   return (

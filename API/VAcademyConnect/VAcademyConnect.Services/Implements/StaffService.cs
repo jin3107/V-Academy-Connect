@@ -1,4 +1,5 @@
-﻿using MayNghien.Infrastructures.Models.Requests;
+﻿using LinqKit;
+using MayNghien.Infrastructures.Models.Requests;
 using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,7 @@ using VAcademyConnect.Repositories.Implements;
 using VAcademyConnect.Repositories.Interfaces;
 using VAcademyConnect.Services.Interfaces;
 using VAcademyConnect.Services.Mapping;
+using static MayNghien.Infrastructures.Helpers.SearchHelper;
 
 namespace VAcademyConnect.Services.Implements
 {
@@ -262,9 +264,71 @@ namespace VAcademyConnect.Services.Implements
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        public Task<SearchResponse<StaffResponse>> SearchAsync(SearchRequest request)
+        public async Task<AppResponse<SearchResponse<StaffResponse>>> SearchAsync(SearchRequest request)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<SearchResponse<StaffResponse>>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var query = BuildFilterExpression(request.Filters!);
+                var numOfRecords = await _staffRepository.CountRecordsAsync(query);
+                var staffs = _staffRepository.FindByPredicate(query).AsQueryable();
+                if (request.SortBy != null)
+                    staffs = _staffRepository.AddSort(staffs, request.SortBy);
+                else
+                    staffs = staffs.OrderBy(x => x.Name);
+
+                int pageIndex = request.PageIndex ?? 1;
+                int pageSize = request.PageSize ?? 1;
+                int startIndex = (pageIndex - 1) * pageSize;
+                var staffList = await staffs.Skip(startIndex).Take(pageSize).ToListAsync();
+                var dtoList = staffList.Select(StaffMapper.ToResponse).ToList();
+                var searchResponse = new SearchResponse<StaffResponse>
+                {
+                    TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
+                    TotalRows = numOfRecords,
+                    CurrentPage = pageIndex,
+                    Data = dtoList,
+                    RowsPerPage = pageSize,
+                };
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private ExpressionStarter<Staff> BuildFilterExpression(List<Filter> filters)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<Staff>(true);
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        switch (filter.FieldName)
+                        {
+                            case "Name":
+                                predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                break;
+
+                            default: break;
+                        }
+                    }
+                }
+
+                predicate = predicate.And(x => x.IsDeleted == false);
+                return predicate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
         }
     }
 }

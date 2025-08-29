@@ -1,0 +1,56 @@
+@use "../../scss/colors" as colors;
+@use "../../scss/fonts" as fonts;
+@use "../../scss/variables" as variables;
+@use "sass:color";
+
+.staff-page {
+  .staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .staff-table {
+    .ant-table-thead {
+      tr {
+        th {
+          background: #fafafa;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .ant-table-tbody {
+      tr:hover {
+        td {
+          background: #f0f7ff;
+        }
+      }
+    }
+  }
+}
+
+.staff-form {
+  margin-top: 24px;
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    border-radius: 4px;
+  }
+
+  .ant-form-item-label {
+    label {
+      font-weight: 500;
+    }
+  }
+}

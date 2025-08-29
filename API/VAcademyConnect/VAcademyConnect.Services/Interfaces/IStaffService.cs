@@ -16,6 +16,6 @@ namespace VAcademyConnect.Services.Interfaces
         Task<AppResponse<StaffResponse>> CreateAsync(StaffRequest request);
         Task<AppResponse<StaffResponse>> UpdateAsync(StaffRequest request);
         Task<AppResponse<string>> DeleteAsync(Guid id);
-        Task<SearchResponse<StaffResponse>> SearchAsync(SearchRequest request);
+        Task<AppResponse<SearchResponse<StaffResponse>>> SearchAsync(SearchRequest request);
     }
 }

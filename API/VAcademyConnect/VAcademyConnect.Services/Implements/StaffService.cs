@@ -294,6 +294,8 @@ namespace VAcademyConnect.Services.Implements
                     Data = dtoList,
                     RowsPerPage = pageSize,
                 };
+                result.Data = searchResponse;
+                result.IsSuccess = true;
             }
             catch (Exception ex)
             {

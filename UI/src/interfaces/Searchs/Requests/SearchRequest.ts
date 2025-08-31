@@ -1,4 +1,4 @@
-import type Filter from "./filter";
+import type Filter from "./Filter";
 import type SortBy from "./SortBy";
 
 export default interface SearchRequest {

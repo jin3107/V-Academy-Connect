@@ -1,5 +1,5 @@
 import axios from "../configs/axios";
-import type { StaffRequest, StaffResponse } from "../interfaces";
+import type { StaffRequest, StaffResponse, SearchRequest, SearchResponse } from "../interfaces";
 
 export const createStaff = async (data: StaffRequest) => {
   return await axios
@@ -19,4 +19,10 @@ export const getStaffById = async (id: string) => {
 
 export const deleteStaff = async (id: string) => {
   return await axios.delete(`/staffs/${id}`).then((res) => res.data);
+};
+
+export const searchStaffs = async (searchRequest: SearchRequest) => {
+  return await axios
+    .post<SearchResponse<StaffResponse>>("staffs/search", searchRequest)
+    .then((res) => res.data);
 };

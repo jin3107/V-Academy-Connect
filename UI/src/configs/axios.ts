@@ -35,12 +35,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "", // chỉnh theo BE
+  baseURL: "https://localhost:7241", // chỉnh theo BE
 });
 
 // attach access token vào mỗi request
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

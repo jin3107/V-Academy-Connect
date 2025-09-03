@@ -21,7 +21,7 @@ const LogIn = () => {
       setLoading(true);
 
       const response = await logInAsync(values);
-      const token = response.data.token;
+      const token = response.token;
       localStorage.setItem("token", token);
       
       message.success('Login successful!');

@@ -319,6 +319,18 @@ namespace VAcademyConnect.Services.Implements
                                 predicate = predicate.And(x => x.Name.Contains(filter.Value));
                                 break;
 
+                            case "Email":
+                                predicate = predicate.And(x => x.Email.Contains(filter.Value));
+                                break;
+
+                            case "PhoneNumber":
+                                predicate = predicate.And(x => x.PhoneNumber.Contains(filter.Value));
+                                break;
+
+                            case "Role":
+                                predicate = predicate.And(x => x.Role.Contains(filter.Value));
+                                break;
+
                             default: break;
                         }
                     }

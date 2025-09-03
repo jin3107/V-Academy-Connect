@@ -1,26 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import MainLayout from "../../components/MainLayout";
-import {
-  Button,
-  Input,
-  Table,
-  message,
-  Pagination,
-  Select,
-} from "antd";
-import {
-  PlusOutlined,
-  SearchOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-} from "@ant-design/icons";
+import { Button, Input, Table, message, Select } from "antd";
+import { PlusOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 import { searchStaffs } from "../../apis/staffAPI";
-import type {
-  Filter,
-  SearchRequest,
-  SearchResponse,
-  StaffResponse,
-} from "../../interfaces";
+import type { Filter, SearchRequest, SearchResponse, StaffResponse } from "../../interfaces";
 import "./style.scss";
 
 const { Option } = Select;
@@ -32,67 +15,95 @@ const Staff = () => {
   const [searchField, setSearchField] = useState("Name");
   const [sortField, setSortField] = useState<string | undefined>(undefined);
   const [sortDirection, setSortDirection] = useState<boolean>(true);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  const fetchStaffs = async (page = 1, pageSize = 10, searchValue = "") => {
-    try {
-      setLoading(true);
+  const fetchStaffs = useCallback(
+    async (page = 1, pageSize = 10, searchValue = "") => {
+      try {
+        setLoading(true);
 
-      const filters: Filter[] = [];
-      if (searchValue) {
-        filters.push({
-          fieldName: searchField,
-          value: searchValue,
-          operation: "Contains",
-        });
+        const filters: Filter[] = [];
+        if (searchValue) {
+          filters.push({
+            fieldName: searchField,
+            value: searchValue,
+            operation: "Contains",
+          });
+        }
+
+        const searchRequest: SearchRequest = {
+          filters: filters,
+          sortBy: sortField
+            ? {
+                fieldName: sortField,
+                ascending: sortDirection,
+              }
+            : undefined,
+          pageIndex: page,
+          pageSize: pageSize,
+        };
+
+        // console.log("Search request:", searchRequest);
+
+        const response = await searchStaffs(searchRequest);
+        // console.log("Full API response:", response);
+        
+        if (response.isSuccess) {
+          const searchResponse = response as SearchResponse<StaffResponse>;
+          // console.log("Success response data:", searchResponse.data);
+          // console.log("Items in data.data:", searchResponse.data.data);
+          
+          // Xử lý dữ liệu - có thể là array trực tiếp hoặc có wrapper
+          let staffData: StaffResponse[] = [];
+          
+          if (searchResponse.data && searchResponse.data.data) {
+            staffData = searchResponse.data.data.map((item: StaffResponse | { data: StaffResponse }) => {
+              // console.log("Processing item:", item);
+              if ('data' in item) {
+                return item.data;
+              }
+              else {
+                return item;
+              }
+            });
+          }
+          
+          // console.log("Final staff data:", staffData);
+          // console.log("Staff data length:", staffData.length);
+          
+          setStaffs(staffData);
+          setCurrentPage(searchResponse.data.currentPage);
+          setPageSize(searchResponse.data.rowsPerPage);
+          setTotal(searchResponse.data.totalRows);
+          
+          // console.log("Pagination info:", {
+          //   currentPage: searchResponse.data.currentPage,
+          //   rowsPerPage: searchResponse.data.rowsPerPage,
+          //   totalRows: searchResponse.data.totalRows
+          // });
+          
+        } else {
+          console.error("API Error:", response.message);
+          message.error(response.message || "Failed to fetch staffs");
+        }
+      } catch (error) {
+        console.error("Exception error:", error);
+        message.error("Failed to fetch staffs");
+      } finally {
+        setLoading(false);
       }
-
-      const searchRequest: SearchRequest = {
-        filters: filters,
-        sortBy: sortField
-          ? {
-              fieldName: sortField,
-              ascending: sortDirection,
-            }
-          : undefined,
-        pageIndex: page,
-        pageSize: pageSize,
-      };
-
-      const response = await searchStaffs(searchRequest);
-      if (response.isSuccess) {
-        const searchResponse = response as SearchResponse<StaffResponse>;
-        // Kiểm tra và lọc các phần tử không hợp lệ
-        const validStaffs = searchResponse.data.data.filter(
-          (staff) => staff && staff.data
-        );
-        setStaffs(validStaffs);
-        setPagination({
-          current: searchResponse.data.currentPage,
-          pageSize: searchResponse.data.rowsPerPage,
-          total: searchResponse.data.totalRows,
-        });
-      } else {
-        message.error(response.message || "Failed to fetch staffs");
-      }
-    } catch (error) {
-      console.error("Error fetching staffs:", error);
-      message.error("Failed to fetch staffs");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [searchField, sortField, sortDirection]
+  );
 
   useEffect(() => {
-    fetchStaffs();
-  }, []);
+    fetchStaffs(currentPage, pageSize, searchText);
+  }, [fetchStaffs, currentPage, pageSize, searchText]);
 
   const handleSearch = () => {
-    fetchStaffs(1, pagination.pageSize, searchText);
+    fetchStaffs(1, pageSize, searchText);
   };
 
   const handleSortChange = (field: string) => {
@@ -102,14 +113,18 @@ const Staff = () => {
       setSortField(field);
       setSortDirection(true);
     }
-    fetchStaffs(pagination.current, pagination.pageSize, searchText);
+    fetchStaffs(currentPage, pageSize, searchText);
   };
 
-  const handleTableChange = (pagination: {
-    current: number;
-    pageSize: number;
+  const handleTableChange = (newPagination: {
+    current?: number;
+    pageSize?: number;
   }) => {
-    fetchStaffs(pagination.current, pagination.pageSize, searchText);
+    const newPage = newPagination.current || currentPage;
+    const newPageSize = newPagination.pageSize || pageSize;
+    setCurrentPage(newPage);
+    setPageSize(newPageSize);
+    fetchStaffs(newPage, newPageSize, searchText);
   };
 
   const renderSortIcon = (field: string) => {
@@ -128,9 +143,12 @@ const Staff = () => {
           Name {renderSortIcon("Name")}
         </div>
       ),
-      dataIndex: ["data", "name"],
+      dataIndex: "name",
       key: "name",
-      render: (record: StaffResponse) => record.data?.name || "-",
+      render: (_: unknown, record: StaffResponse) => {
+        const name = record.name || "-";
+        return name;
+      },
     },
     {
       title: (
@@ -141,10 +159,12 @@ const Staff = () => {
           Email {renderSortIcon("Email")}
         </div>
       ),
-      dataIndex: ["data", "email"],
+      dataIndex: "email",
       key: "email",
-      render: (record: StaffResponse) =>
-        record.data?.email || "-",
+      render: (_: unknown, record: StaffResponse) => {
+        const email = record.email || "-";
+        return email;
+      },
     },
     {
       title: (
@@ -155,10 +175,12 @@ const Staff = () => {
           Phone Number {renderSortIcon("PhoneNumber")}
         </div>
       ),
-      dataIndex: ["data", "phoneNumber"],
+      dataIndex: "phoneNumber",
       key: "phoneNumber",
-      render: (record: StaffResponse) =>
-        record.data?.phoneNumber || "-",
+      render: (_: unknown, record: StaffResponse) => {
+        const phone = record.phoneNumber || "-";
+        return phone;
+      },
     },
     {
       title: (
@@ -166,29 +188,28 @@ const Staff = () => {
           Role {renderSortIcon("Role")}
         </div>
       ),
-      dataIndex: ["data", "role"],
+      dataIndex: "role",
       key: "role",
-      render: (record: StaffResponse) => record.data?.role || "-",
+      render: (_: unknown, record: StaffResponse) => {
+        const role = record.role || "-";
+        return role;
+      },
     },
     {
       title: "Actions",
       key: "actions",
       render: (_: unknown, record: StaffResponse) => (
         <div className="action-buttons">
-          {record.data && (
-            <>
-              <Button type="link" onClick={() => console.log("Edit", record)}>
-                Edit
-              </Button>
-              <Button
-                type="link"
-                danger
-                onClick={() => console.log("Delete", record)}
-              >
-                Delete
-              </Button>
-            </>
-          )}
+          <Button type="link" onClick={() => console.log("Edit", record)}>
+            Edit
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() => console.log("Delete", record)}
+          >
+            Delete
+          </Button>
         </div>
       ),
     },
@@ -235,32 +256,26 @@ const Staff = () => {
           className="staff-table"
           columns={columns}
           dataSource={staffs}
-          rowKey={(record) => record.data?.email || Math.random().toString()}
-          pagination={false}
+          rowKey={(record) => {
+            const key = record.id || record.email || Math.random().toString();
+            // console.log("Row key:", key, "for record:", record);
+            return key;
+          }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: total,
+            showSizeChanger: true,
+            showTotal: (total) => `Total ${total} items`,
+          }}
           loading={loading}
-          onChange={(pagination) =>
+          onChange={(newPagination) =>
             handleTableChange({
-              current: pagination.current || 1,
-              pageSize: pagination.pageSize || 10
+              current: newPagination.current || 1,
+              pageSize: newPagination.pageSize || 10,
             })
           }
         />
-
-        <div
-          className="pagination-container"
-          style={{ marginTop: 16, textAlign: "right" }}
-        >
-          <Pagination
-            current={pagination.current}
-            pageSize={pagination.pageSize}
-            total={pagination.total}
-            onChange={(page, pageSize) =>
-              fetchStaffs(page, pageSize, searchText)
-            }
-            showSizeChanger
-            showTotal={(total) => `Total ${total} items`}
-          />
-        </div>
       </div>
     </MainLayout>
   );

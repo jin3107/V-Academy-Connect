@@ -7,6 +7,9 @@ import type { Filter, SearchRequest, SearchResponse } from "../../interfaces";
 import "./style.scss";
 
 const { Option } = Select;
+import { Typography } from "antd";
+const { Text } = Typography;
+
 interface StaffData {
   id?: string;
   name: string;
@@ -56,10 +59,7 @@ const Staff = () => {
         
         if (response.isSuccess) {
           const searchResponse = response as unknown as SearchResponse<StaffData>;
-          
-          // Xử lý dữ liệu - có thể là array trực tiếp hoặc có wrapper
           let staffData: StaffData[] = [];
-          
           if (searchResponse.data && searchResponse.data.data) {
             staffData = searchResponse.data.data.map((item: StaffData | { data: StaffData }) => {
               if ('data' in item) {
@@ -130,78 +130,45 @@ const Staff = () => {
 
   const columns = [
     {
-      title: (
-        <div className="column-header" onClick={() => handleSortChange("Name")}>
-          Name {renderSortIcon("Name")}
-        </div>
-      ),
+      title: <div className="column-header" onClick={() => handleSortChange("Name")}>Name {renderSortIcon("Name")}</div>,
       dataIndex: "name",
       key: "name",
-      render: (_: unknown, record: StaffData) => {
-        const name = record.name || "-";
-        return name;
-      },
+      width: 220,
+      ellipsis: true,
+      render: (_: unknown, r: StaffData) => <Text ellipsis={{ tooltip: r.name }}>{r.name || "-"}</Text>,
     },
     {
-      title: (
-        <div
-          className="column-header"
-          onClick={() => handleSortChange("Email")}
-        >
-          Email {renderSortIcon("Email")}
-        </div>
-      ),
+      title: <div className="column-header" onClick={() => handleSortChange("Email")}>Email {renderSortIcon("Email")}</div>,
       dataIndex: "email",
       key: "email",
-      render: (_: unknown, record: StaffData) => {
-        const email = record.email || "-";
-        return email;
-      },
+      width: 260,
+      ellipsis: true,
+      render: (_: unknown, r: StaffData) => <Text ellipsis={{ tooltip: r.email }}>{r.email || "-"}</Text>,
     },
     {
-      title: (
-        <div
-          className="column-header"
-          onClick={() => handleSortChange("PhoneNumber")}
-        >
-          Phone Number {renderSortIcon("PhoneNumber")}
-        </div>
-      ),
+      title: <div className="column-header" onClick={() => handleSortChange("PhoneNumber")}>Phone Number {renderSortIcon("PhoneNumber")}</div>,
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      render: (_: unknown, record: StaffData) => {
-        const phone = record.phoneNumber || "-";
-        return phone;
-      },
+      width: 160,
+      ellipsis: true,
     },
     {
-      title: (
-        <div className="column-header" onClick={() => handleSortChange("Role")}>
-          Role {renderSortIcon("Role")}
-        </div>
-      ),
+      title: <div className="column-header" onClick={() => handleSortChange("Role")}>Role {renderSortIcon("Role")}</div>,
       dataIndex: "role",
       key: "role",
-      render: (_: unknown, record: StaffData) => {
-        const role = record.role || "-";
-        return role;
-      },
+      width: 140,
+      ellipsis: true,
     },
     {
       title: "Actions",
       key: "actions",
+      width: 200,
+      fixed: "right" as const,
       render: (_: unknown, record: StaffData) => (
-        <div className="action-buttons">
-          <Button type="link" onClick={() => console.log("Edit", record)}>
-            Edit
-          </Button>
-          <Button
-            type="link"
-            danger
-            onClick={() => console.log("Delete", record)}
-          >
-            Delete
-          </Button>
+        <div className="action-buttons" style={{ whiteSpace: "nowrap" }}>
+          <Button type="link" onClick={() => console.log("Detail", record)}>Detail</Button>
+          <Button type="link" onClick={() => console.log("Edit", record)}>Edit</Button>
+          <Button type="link" danger onClick={() => console.log("Delete", record)}>Delete</Button>
         </div>
       ),
     },
@@ -249,7 +216,7 @@ const Staff = () => {
           columns={columns}
           dataSource={staffs}
           rowKey={(record) => {
-            const key = record.id || record.email || Math.random().toString();
+            const key = record.id || record.email
             return key;
           }}
           pagination={{

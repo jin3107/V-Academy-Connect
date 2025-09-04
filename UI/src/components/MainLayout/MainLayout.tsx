@@ -1,24 +1,17 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
 import {
-  DashboardOutlined,
-  LoginOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  UserOutlined,
+  DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
+  SettingOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
-import type { MenuProps } from 'antd';
+import type { MenuProps } from "antd";
 import "./style.scss";
 
 const { Header, Sider, Content } = Layout;
 
-interface MainLayoutProps {
-  children: ReactNode;
-}
+interface MainLayoutProps { children: ReactNode; }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -26,88 +19,39 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    // Thông thường sẽ lấy từ context hoặc API
-    setUserName("Chuong Huynh");
-  }, []);
+  useEffect(() => { setUserName("Chuong Huynh"); }, []);
 
-  // Xác định menu item được chọn dựa trên current path
-  const getSelectedKey = () => {
+  const selectedKey = useMemo(() => {
     const path = location.pathname;
-    if (path.includes('/home') || path === '/') return ['dashboard'];
-    if (path.includes('/staff')) return ['staff'];
-    if (path.includes('/settings')) return ['settings'];
-    return ['dashboard'];
-  };
+    if (path === "/" || path.startsWith("/home")) return ["dashboard"];
+    if (path.startsWith("/staff")) return ["staff"];
+    if (path.startsWith("/settings")) return ["settings"];
+    return ["dashboard"];
+  }, [location.pathname]);
 
   const handleLogout = async () => {
-    try {
-      await logOutAsync();
-    } catch (error) {
-      console.log("Logout failed: ", error);
+    try { await logOutAsync(); } catch (err) {
+      console.log("Logout failed: ", err);
     } finally {
       localStorage.removeItem("token");
       navigate("/login");
     }
   };
 
-  const handleMenuClick = ({ key }: { key: string }) => {
-    switch (key) {
-      case "dashboard":
-        navigate("/home");
-        break;
-      case "staff":
-        navigate("/staffs");
-        break;
-      case "settings":
-        navigate("/settings");
-        break;
-      default:
-        break;
-    }
+  const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
+    if (key === "dashboard") navigate("/home");
+    else if (key === "staff") navigate("/staffs");
+    else if (key === "settings") navigate("/settings");
   };
 
-  const userMenuItems: MenuProps['items'] = [
-    {
-      key: "profile",
-      icon: <UserOutlined />,
-      label: "Profile",
-      onClick: () => navigate("/profile")
-    },
-    {
-      key: "settings",
-      icon: <SettingOutlined />,
-      label: "Settings",
-      onClick: () => navigate("/settings")
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: "logout",
-      icon: <LoginOutlined />,
-      label: "Logout",
-      onClick: handleLogout,
-    },
+  const userMenuItems: MenuProps["items"] = [
+    { key: "profile",  icon: <UserOutlined/>,    label: "Profile",  onClick: () => navigate("/profile") },
+    { key: "settings", icon: <SettingOutlined/>, label: "Settings", onClick: () => navigate("/settings") },
+    { type: "divider" },
+    { key: "logout",   icon: <LoginOutlined/>,   label: "Logout",   onClick: handleLogout },
   ];
 
-  const menuItems: MenuProps['items'] = [
-    {
-      key: "dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-    },
-    {
-      key: "staff",
-      icon: <TeamOutlined />,
-      label: "Staff",
-    },
-    {
-      key: "settings",
-      icon: <SettingOutlined />,
-      label: "Settings",
-    },
-  ];
+  const siderWidth = collapsed ? 80 : 220;
 
   return (
     <Layout className="main-layout">
@@ -115,7 +59,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        width={220}
         className="main-sider"
+        style={{
+          position: "fixed",
+          left: 0, top: 0, bottom: 0,
+          height: "100vh",
+          overflowY: "auto",
+        }}
       >
         <div className="logo">
           <div className="logo-circle"></div>
@@ -124,26 +75,27 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={getSelectedKey()}
-          items={menuItems}
+          selectedKeys={selectedKey}
+          items={[
+            { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
+            { key: "staff",     icon: <TeamOutlined />,      label: "Staff" },
+            { key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
+          ]}
           onClick={handleMenuClick}
         />
       </Sider>
-      <Layout>
+
+      {/* Khối phải tịnh tiến theo bề rộng Sider */}
+      <Layout style={{ marginLeft: siderWidth, transition: "margin-left .2s ease" }}>
         <Header className="main-header">
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            icon={collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
             onClick={() => setCollapsed(!collapsed)}
             className="trigger-button"
           />
           <div className="header-right">
-            <Dropdown
-              menu={{ items: userMenuItems }}
-              placement="bottomRight"
-              arrow
-              trigger={['click']}
-            >
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow trigger={["click"]}>
               <div className="user-info">
                 <Avatar icon={<UserOutlined />} />
                 <span className="user-name">{userName}</span>
@@ -151,7 +103,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             </Dropdown>
           </div>
         </Header>
-        <Content className="main-content">
+
+        {/* Content tự cuộn, không làm Sider cuộn */}
+        <Content className="main-content" style={{ overflow: "auto" }}>
           <div className="content-wrapper">{children}</div>
         </Content>
       </Layout>

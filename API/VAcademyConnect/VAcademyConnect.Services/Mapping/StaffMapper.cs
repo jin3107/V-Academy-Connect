@@ -17,7 +17,6 @@ namespace VAcademyConnect.Services.Mapping
             {
                 Name = entity.Name,
                 DateOfBirth = entity.DateOfBirth,
-                Age = entity.Age,
                 Gender = entity.Gender,
                 Address = entity.Address,
                 Email = entity.Email,
@@ -33,7 +32,6 @@ namespace VAcademyConnect.Services.Mapping
             {
                 Name = request.Name,
                 DateOfBirth = request.DateOfBirth,
-                Age = request.Age,
                 Gender = request.Gender,
                 Address = request.Address,
                 Email = request.Email,

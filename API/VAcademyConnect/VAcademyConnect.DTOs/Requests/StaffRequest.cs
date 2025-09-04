@@ -18,9 +18,6 @@ namespace VAcademyConnect.DTOs.Requests
         [Required(ErrorMessage = "Date of Birth is required")]
         public DateTime DateOfBirth { get; set; }
 
-        [Range(16, 100, ErrorMessage = "Age must be between 16 and 100")]
-        public int Age { get; set; }
-
         [Required(ErrorMessage = "Gender is required")]
         public Genders Gender { get; set; }
 

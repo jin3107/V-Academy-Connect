@@ -3,14 +3,21 @@ import MainLayout from "../../components/MainLayout";
 import { Button, Input, Table, message, Select } from "antd";
 import { PlusOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 import { searchStaffs } from "../../apis/staffAPI";
-import type { Filter, SearchRequest, SearchResponse, StaffResponse } from "../../interfaces";
+import type { Filter, SearchRequest, SearchResponse } from "../../interfaces";
 import "./style.scss";
 
 const { Option } = Select;
+interface StaffData {
+  id?: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  role: string;
+}
 
 const Staff = () => {
   const [loading, setLoading] = useState(false);
-  const [staffs, setStaffs] = useState<StaffResponse[]>([]);
+  const [staffs, setStaffs] = useState<StaffData[]>([]);
   const [searchText, setSearchText] = useState("");
   const [searchField, setSearchField] = useState("Name");
   const [sortField, setSortField] = useState<string | undefined>(undefined);
@@ -45,22 +52,16 @@ const Staff = () => {
           pageSize: pageSize,
         };
 
-        // console.log("Search request:", searchRequest);
-
         const response = await searchStaffs(searchRequest);
-        // console.log("Full API response:", response);
         
         if (response.isSuccess) {
-          const searchResponse = response as SearchResponse<StaffResponse>;
-          // console.log("Success response data:", searchResponse.data);
-          // console.log("Items in data.data:", searchResponse.data.data);
+          const searchResponse = response as unknown as SearchResponse<StaffData>;
           
           // Xử lý dữ liệu - có thể là array trực tiếp hoặc có wrapper
-          let staffData: StaffResponse[] = [];
+          let staffData: StaffData[] = [];
           
           if (searchResponse.data && searchResponse.data.data) {
-            staffData = searchResponse.data.data.map((item: StaffResponse | { data: StaffResponse }) => {
-              // console.log("Processing item:", item);
+            staffData = searchResponse.data.data.map((item: StaffData | { data: StaffData }) => {
               if ('data' in item) {
                 return item.data;
               }
@@ -70,19 +71,10 @@ const Staff = () => {
             });
           }
           
-          // console.log("Final staff data:", staffData);
-          // console.log("Staff data length:", staffData.length);
-          
           setStaffs(staffData);
           setCurrentPage(searchResponse.data.currentPage);
           setPageSize(searchResponse.data.rowsPerPage);
           setTotal(searchResponse.data.totalRows);
-          
-          // console.log("Pagination info:", {
-          //   currentPage: searchResponse.data.currentPage,
-          //   rowsPerPage: searchResponse.data.rowsPerPage,
-          //   totalRows: searchResponse.data.totalRows
-          // });
           
         } else {
           console.error("API Error:", response.message);
@@ -145,7 +137,7 @@ const Staff = () => {
       ),
       dataIndex: "name",
       key: "name",
-      render: (_: unknown, record: StaffResponse) => {
+      render: (_: unknown, record: StaffData) => {
         const name = record.name || "-";
         return name;
       },
@@ -161,7 +153,7 @@ const Staff = () => {
       ),
       dataIndex: "email",
       key: "email",
-      render: (_: unknown, record: StaffResponse) => {
+      render: (_: unknown, record: StaffData) => {
         const email = record.email || "-";
         return email;
       },
@@ -177,7 +169,7 @@ const Staff = () => {
       ),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      render: (_: unknown, record: StaffResponse) => {
+      render: (_: unknown, record: StaffData) => {
         const phone = record.phoneNumber || "-";
         return phone;
       },
@@ -190,7 +182,7 @@ const Staff = () => {
       ),
       dataIndex: "role",
       key: "role",
-      render: (_: unknown, record: StaffResponse) => {
+      render: (_: unknown, record: StaffData) => {
         const role = record.role || "-";
         return role;
       },
@@ -198,7 +190,7 @@ const Staff = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_: unknown, record: StaffResponse) => (
+      render: (_: unknown, record: StaffData) => (
         <div className="action-buttons">
           <Button type="link" onClick={() => console.log("Edit", record)}>
             Edit
@@ -258,7 +250,6 @@ const Staff = () => {
           dataSource={staffs}
           rowKey={(record) => {
             const key = record.id || record.email || Math.random().toString();
-            // console.log("Row key:", key, "for record:", record);
             return key;
           }}
           pagination={{

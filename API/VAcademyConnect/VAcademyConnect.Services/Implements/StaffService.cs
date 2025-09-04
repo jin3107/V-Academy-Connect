@@ -186,7 +186,6 @@ namespace VAcademyConnect.Services.Implements
                 staff.Email = request.Email;
                 staff.PhoneNumber = request.PhoneNumber;
                 staff.DateOfBirth = request.DateOfBirth;
-                staff.Age = request.Age;
                 staff.Gender = request.Gender;
                 staff.Address = request.Address;
                 staff.Role = request.Role;

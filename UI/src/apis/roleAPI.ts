@@ -1,6 +1,8 @@
 import axios from '../configs/axios';
+import type { AppResponse } from '../helpers';
 import type { RoleResponse } from '../interfaces/Responses';
 
-export const getAllRoles = async () => {
-  return await axios.get<RoleResponse>('accounts/roles').then(res => res.data);
+export const getAllRoles = async () : Promise<AppResponse<RoleResponse[]>> => {
+  const response = await axios.get<AppResponse<RoleResponse[]>>('/accounts/roles');
+  return response.data;
 };

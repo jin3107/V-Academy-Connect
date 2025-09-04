@@ -1,4 +1,3 @@
-// /pages/Home/index.tsx
 import { Typography } from "antd";
 import MainLayout from "../../components/MainLayout/MainLayout";
 import './style.scss';

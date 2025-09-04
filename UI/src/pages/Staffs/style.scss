@@ -131,31 +131,8 @@
           background: #fafafa;
           font-weight: 600;
           white-space: nowrap;
-          
-          &:nth-child(1) { 
-            width: 20%;
-            min-width: 150px;
-          }
-          
-          &:nth-child(2) {  
-            width: 25%;
-            min-width: 200px;
-          }
-          
-          &:nth-child(3) { // Phone
-            width: 20%;
-            min-width: 150px;
-          }
-          
-          &:nth-child(4) { // Role
-            width: 15%;
-            min-width: 100px;
-          }
-          
-          &:nth-child(5) {
-            width: 20%;
-            min-width: 150px;
-          }
+          position: relative;
+          user-select: none;
           
           .column-header {
             display: flex;
@@ -277,6 +254,8 @@
 @media (max-width: 640px) {
   .staff-table {
     .ant-table-container {
+      -webkit-overflow-scrolling: touch;
+      
       .ant-table-body {
         // Alternative: Card-like view for mobile
         &.mobile-card-view {

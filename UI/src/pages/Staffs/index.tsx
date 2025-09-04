@@ -18,7 +18,7 @@ interface StaffData {
   role: string;
 }
 
-const Staff = () => {
+const Staffs = () => {
   const [loading, setLoading] = useState(false);
   const [staffs, setStaffs] = useState<StaffData[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -133,7 +133,7 @@ const Staff = () => {
       title: <div className="column-header" onClick={() => handleSortChange("Name")}>Name {renderSortIcon("Name")}</div>,
       dataIndex: "name",
       key: "name",
-      width: 220,
+      width: 120,
       ellipsis: true,
       render: (_: unknown, r: StaffData) => <Text ellipsis={{ tooltip: r.name }}>{r.name || "-"}</Text>,
     },
@@ -141,7 +141,7 @@ const Staff = () => {
       title: <div className="column-header" onClick={() => handleSortChange("Email")}>Email {renderSortIcon("Email")}</div>,
       dataIndex: "email",
       key: "email",
-      width: 260,
+      width: 100,
       ellipsis: true,
       render: (_: unknown, r: StaffData) => <Text ellipsis={{ tooltip: r.email }}>{r.email || "-"}</Text>,
     },
@@ -149,20 +149,20 @@ const Staff = () => {
       title: <div className="column-header" onClick={() => handleSortChange("PhoneNumber")}>Phone Number {renderSortIcon("PhoneNumber")}</div>,
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      width: 160,
+      width: 70,
       ellipsis: true,
     },
     {
       title: <div className="column-header" onClick={() => handleSortChange("Role")}>Role {renderSortIcon("Role")}</div>,
       dataIndex: "role",
       key: "role",
-      width: 140,
+      width: 50,
       ellipsis: true,
     },
     {
       title: "Actions",
       key: "actions",
-      width: 200,
+      width: 150,
       fixed: "right" as const,
       render: (_: unknown, record: StaffData) => (
         <div className="action-buttons" style={{ whiteSpace: "nowrap" }}>
@@ -239,4 +239,4 @@ const Staff = () => {
   );
 };
 
-export default Staff;
+export default Staffs;

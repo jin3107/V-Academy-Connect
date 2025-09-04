@@ -6,7 +6,7 @@ import "./App.css";
 import VerifyEmail from "./pages/VerifyEmail";
 import ChangePassword from "./pages/ChangePassword";
 import { PrivateRoute } from "./components";
-import Staff from "./pages/Staff";
+import Staffs from "./pages/Staffs";
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
               path="/staffs"
               element={
                 <PrivateRoute allowedRoles={["SuperAdmin", "TenantAdmin"]}>
-                  <Staff />
+                  <Staffs />
                 </PrivateRoute>
               } 
             />

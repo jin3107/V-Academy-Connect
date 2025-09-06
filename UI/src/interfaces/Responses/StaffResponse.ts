@@ -1,11 +1,21 @@
+import dayjs from "dayjs";
+
+export enum Gender {
+  Male = 0,
+  Female = 1
+};
+
 export default interface StaffResponse {
-  data: {
-    id?: string,
-    name: string,
-    email: string,
-    phoneNumber: string,
-    role: string
-  },
-  isSuccess: boolean,
-  message: string,
+  id?: string,
+  name: string,
+  email: string,
+  phoneNumber: string,
+  role: string,
+  gender?: Gender,
+  dateOfBirth?: dayjs.Dayjs,
+  address?: string,
+
+  createdOn?: dayjs.Dayjs,
+  createdBy?: string,
+  password?: string
 }

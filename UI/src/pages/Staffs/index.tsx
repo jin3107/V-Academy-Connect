@@ -57,7 +57,6 @@ interface StaffData {
   role: string;
 }
 
-// Dạng trả về từ BE có thể có CreateBy (C hoa)
 type BackendStaffResponse = StaffResponse & { createBy?: string };
 
 const Staffs = () => {
@@ -156,7 +155,7 @@ const Staffs = () => {
     const raw = response.data as BackendStaffResponse;
     const mapped: StaffResponse = {
       ...raw,
-      createdBy: raw.createdBy ?? raw.createBy, // ✅ fix tên trường
+      createdBy: raw.createdBy ?? raw.createBy, 
       dateOfBirth: toDayjs(raw.dateOfBirth),
       createdOn: toDayjs(raw.createdOn),
     };
@@ -198,9 +197,6 @@ const Staffs = () => {
           ...common, 
           password: values.password ?? ""
         } as unknown as StaffRequest;
-
-        console.log('create payload: ', payloadCreate);
-
         const res = await createStaff(payloadCreate);
         if (!res.isSuccess) {
           message.error(res.message || "Create failed");
@@ -218,9 +214,6 @@ const Staffs = () => {
           password: values.password ?? "",
           id: selectedId,
         } as unknown as StaffRequest;
-
-        console.log('update payload: ', payloadUpdate);
-
         const res = await updateStaff(payloadUpdate);
         if (!res.isSuccess) {
           message.error(res.message || "Update failed");
@@ -265,7 +258,6 @@ const Staffs = () => {
         };
 
         const response = await searchStaffs(searchRequest);
-
         if (response.isSuccess) {
           const searchResponse = response as unknown as SearchResponse<StaffData>;
           let staffData: StaffData[] = [];
@@ -489,8 +481,6 @@ const Staffs = () => {
           destroyOnHidden
           afterOpenChange={async (visible) => {
             if (!visible) return;
-
-            // Chỉ đụng Form/roles khi KHÔNG phải detail -> tránh warning useForm
             if (mode !== "detail") {
               form.resetFields();
               await loadRoles();

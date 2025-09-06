@@ -1,6 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
 import MainLayout from "../../components/MainLayout";
-import { Button, Input, Table, message, Select, Modal, Form, DatePicker } from "antd";
+import {
+  Button,
+  Input,
+  Table,
+  message,
+  Select,
+  Modal,
+  Form,
+  DatePicker,
+  Popconfirm,
+  Descriptions,
+  Spin,
+} from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -11,21 +23,31 @@ import {
   SortDescendingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { createStaff, searchStaffs } from "../../apis/staffAPI";
+import {
+  createStaff,
+  searchStaffs,
+  getStaffById,
+  updateStaff,
+  deleteStaff,
+} from "../../apis/staffAPI";
 import type {
   Filter,
   RoleResponse,
   SearchRequest,
   SearchResponse,
   StaffRequest,
+  StaffResponse,
 } from "../../interfaces";
 import "./style.scss";
-
+import { getAllRoles } from "../../apis/roleAPI";
+import { Typography } from "antd";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 const { Option } = Select;
-import { Typography } from "antd";
-import { getAllRoles } from "../../apis/roleAPI";
 const { Text } = Typography;
+
+type Mode = "create" | "detail" | "update";
 
 interface StaffData {
   id?: string;
@@ -35,7 +57,11 @@ interface StaffData {
   role: string;
 }
 
+// Dạng trả về từ BE có thể có CreateBy (C hoa)
+type BackendStaffResponse = StaffResponse & { createBy?: string };
+
 const Staffs = () => {
+  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [staffs, setStaffs] = useState<StaffData[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -46,10 +72,18 @@ const Staffs = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
+  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<Mode>("create");
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
-  const [form] = Form.useForm<StaffRequest>();
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [form] = Form.useForm<StaffResponse>(); // Form dùng StaffResponse
 
+  // Detail data (hiển thị đẹp ở chế độ detail)
+  const [detailData, setDetailData] = useState<StaffResponse | null>(null);
+
+  // ===== Roles =====
   const [roleOptions, setRoleOptions] = useState<{ label: string; value: string }[]>([]);
   const [roleLoading, setRoleLoading] = useState(false);
 
@@ -58,45 +92,155 @@ const Staffs = () => {
     { label: "Female", value: 1 },
   ];
 
-  const openCreate = () => setOpen(true);
+  // ===== Helpers =====
+  const toDayjs = (v: string | Dayjs | undefined): Dayjs | undefined => {
+    if (!v) return undefined;
+    return typeof v === "string" ? dayjs(v) : v;
+  };
 
+  const fmtDate = (v?: string | Dayjs, withTime = false) => {
+    if (!v) return "-";
+    const d = typeof v === "string" ? dayjs(v) : v;
+    return d ? d.format(withTime ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD") : "-";
+  };
+
+  const fmtGender = (g?: number) => {
+    if (g === 0) return "Male";
+    if (g === 1) return "Female";
+    return "-";
+  };
+
+  // ===== Openers =====
+  const openCreate = () => {
+    setMode("create");
+    setSelectedId(undefined);
+    setOpen(true);
+  };
+
+  const openDetail = (id?: string) => {
+    if (!id) return;
+    setMode("detail");
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const openUpdate = (id?: string) => {
+    if (!id) return;
+    setMode("update");
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  // ===== Loaders =====
   const loadRoles = async () => {
     setRoleLoading(true);
     const response = await getAllRoles();
     setRoleLoading(false);
-    if (!response.isSuccess) return message.error(response.message || "Failed to load roles");
-    setRoleOptions(
-      (response.data || []).map((r: RoleResponse) => ({ label: r.name, value: r.name }))
-    );
+    if (!response.isSuccess) {
+      message.error(response.message || "Failed to load roles");
+      return;
+    }
+    setRoleOptions((response.data || []).map((r: RoleResponse) => ({ label: r.name, value: r.name })));
   };
 
-  const onCreate = async (values: StaffRequest) => {
+  const loadDetail = async (id: string) => {
+    setDetailLoading(true);
+    const response = await getStaffById(id);
+    setDetailLoading(false);
+    if (!response.isSuccess) {
+      message.error(response.message || "Failed to load staff");
+      return;
+    }
+
+    // Map CreateBy -> createdBy, convert date fields
+    const raw = response.data as BackendStaffResponse;
+    const mapped: StaffResponse = {
+      ...raw,
+      createdBy: raw.createdBy ?? raw.createBy, // ✅ fix tên trường
+      dateOfBirth: toDayjs(raw.dateOfBirth),
+      createdOn: toDayjs(raw.createdOn),
+    };
+    setDetailData(mapped);
+
+    // nếu là Update thì fill vào Form
+    if (mode === "update") {
+      form.setFieldsValue({
+        id: mapped.id,
+        name: mapped.name,
+        email: mapped.email,
+        phoneNumber: mapped.phoneNumber,
+        role: mapped.role,
+        gender: mapped.gender,
+        dateOfBirth: mapped.dateOfBirth,
+        address: mapped.address,
+        createdOn: mapped.createdOn,
+        createdBy: mapped.createdBy,
+      } as Partial<StaffResponse>);
+    }
+  };
+
+  // ===== Submit (Create / Update) =====
+  const onFinish = async (values: StaffResponse) => {
     try {
       setSubmitting(true);
-      const payload: StaffRequest = {
-        ...values,
-        dateOfBirth: values.dateOfBirth.toISOString(), // Dayjs -> ISO string
-        gender: Number(values.gender),
-      } as unknown as StaffRequest; // đảm bảo khớp kiểu FE -> BE
+      const common = {
+        name: values.name,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        role: values.role,
+        gender: typeof values.gender === "number" ? values.gender : Number(values.gender ?? 0),
+        dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).toISOString() : null,
+        address: values.address ?? "",
+      };
 
-      const response = await createStaff(payload);
-      if (!response.isSuccess) {
-        message.error(response.message || "Create failed");
-        return;
+      if (mode === "create") {
+        const payloadCreate: StaffRequest = {
+          ...common, 
+          password: values.password ?? ""
+        } as unknown as StaffRequest;
+
+        console.log('create payload: ', payloadCreate);
+
+        const res = await createStaff(payloadCreate);
+        if (!res.isSuccess) {
+          message.error(res.message || "Create failed");
+        } else {
+          message.success(res.message || "Created");
+          setOpen(false);
+          fetchStaffs(currentPage, pageSize, searchText);
+        }
+      } else if (mode === "update") {
+        if (!selectedId) 
+          return message.error('Missing staff id');
+        
+        const payloadUpdate = {
+          ...common,
+          password: values.password ?? "",
+          id: selectedId,
+        } as unknown as StaffRequest;
+
+        console.log('update payload: ', payloadUpdate);
+
+        const res = await updateStaff(payloadUpdate);
+        if (!res.isSuccess) {
+          message.error(res.message || "Update failed");
+        } else {
+          message.success(res.message || "Updated");
+          setOpen(false);
+          fetchStaffs(currentPage, pageSize, searchText);
+        }
       }
-      message.success(response.message || "Created");
-      setOpen(false);
-      fetchStaffs(currentPage, pageSize, searchText);
     } catch (err) {
-      console.error("Create failed: ", err);
+      console.error(err);
       message.error("Unexpected error");
     } finally {
       setSubmitting(false);
     }
   };
 
+  // ===== Table data loader =====
   const fetchStaffs = useCallback(
-    async (page = 1, pageSize = 10, searchValue = "") => {
+    async (page = 1, pageSizeArg = 10, searchValue = "") => {
       try {
         setLoading(true);
         const filters: Filter[] = [];
@@ -117,7 +261,7 @@ const Staffs = () => {
               }
             : undefined,
           pageIndex: page,
-          pageSize,
+          pageSize: pageSizeArg,
         };
 
         const response = await searchStaffs(searchRequest);
@@ -126,20 +270,15 @@ const Staffs = () => {
           const searchResponse = response as unknown as SearchResponse<StaffData>;
           let staffData: StaffData[] = [];
           if (searchResponse.data && searchResponse.data.data) {
-            staffData = searchResponse.data.data.map(
-              (item: StaffData | { data: StaffData }) => {
-                if ("data" in item) return item.data;
-                return item;
-              }
+            staffData = searchResponse.data.data.map((item: StaffData | { data: StaffData }) =>
+              "data" in item ? item.data : item
             );
           }
-
           setStaffs(staffData);
           setCurrentPage(searchResponse.data.currentPage);
           setPageSize(searchResponse.data.rowsPerPage);
           setTotal(searchResponse.data.totalRows);
         } else {
-          console.error("API Error:", response.message);
           message.error(response.message || "Failed to fetch staffs");
         }
       } catch (error) {
@@ -156,6 +295,7 @@ const Staffs = () => {
     fetchStaffs(currentPage, pageSize, searchText);
   }, [fetchStaffs, currentPage, pageSize, searchText]);
 
+  // ===== Handlers =====
   const handleSearch = () => {
     fetchStaffs(1, pageSize, searchText);
   };
@@ -178,11 +318,10 @@ const Staffs = () => {
     fetchStaffs(newPage, newPageSize, searchText);
   };
 
-  const renderSortIcon = (field: string) => {
-    if (sortField !== field) return null;
-    return sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />;
-  };
+  const renderSortIcon = (field: string) =>
+    sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
+  // ===== Columns =====
   const columns = [
     {
       title: (
@@ -220,7 +359,7 @@ const Staffs = () => {
       ),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      width: 70,
+      width: 90,
       ellipsis: true,
     },
     {
@@ -231,30 +370,44 @@ const Staffs = () => {
       ),
       dataIndex: "role",
       key: "role",
-      width: 50,
+      width: 80,
       ellipsis: true,
     },
     {
       title: "Actions",
       key: "actions",
-      width: 150,
+      width: 260,
       fixed: "right" as const,
       render: (_: unknown, record: StaffData) => (
         <div className="action-buttons" style={{ whiteSpace: "nowrap" }}>
-          <Button type="link" onClick={() => console.log("Detail", record)}>
+          <Button type="link" onClick={() => openDetail(record.id)}>
             Detail
           </Button>
-          <Button type="link" onClick={() => console.log("Edit", record)}>
+          <Button type="link" onClick={() => openUpdate(record.id)}>
             Edit
           </Button>
-          <Button type="link" danger onClick={() => console.log("Delete", record)}>
-            Delete
-          </Button>
+          <Popconfirm
+            title="Delete this staff?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={async () => {
+              if (!record.id) return;
+              const res = await deleteStaff(record.id);
+              if (!res.isSuccess) return message.error(res.message || "Delete failed");
+              message.success(res.message || "Deleted");
+              fetchStaffs(currentPage, pageSize, searchText);
+            }}
+          >
+            <Button type="link" danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },
   ];
 
+  // ===== Render =====
   return (
     <MainLayout>
       <div className="staff-page">
@@ -314,69 +467,112 @@ const Staffs = () => {
         />
 
         <Modal
-          title="Create Staff"
+          title={
+            mode === "create"
+              ? "Create Staff"
+              : mode === "update"
+              ? "Update Staff"
+              : "Staff Detail"
+          }
           open={open}
           onCancel={() => setOpen(false)}
-          footer={[
-            <Button key="cancel" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              loading={submitting}
-              onClick={() => form.submit()}
-            >
-              Submit
-            </Button>,
-          ]}
+          footer={
+            mode === "detail"
+              ? [<Button key="close" onClick={() => setOpen(false)}>Close</Button>]
+              : [
+                  <Button key="cancel" onClick={() => setOpen(false)}>Cancel</Button>,
+                  <Button key="submit" type="primary" loading={submitting} onClick={() => form.submit()}>
+                    {mode === "create" ? "Submit" : "Save"}
+                  </Button>,
+                ]
+          }
           destroyOnHidden
-          afterOpenChange={(visible) => {
-            if (visible) {
-              form.resetFields(); // Form đã mount
-              loadRoles();
+          afterOpenChange={async (visible) => {
+            if (!visible) return;
+
+            // Chỉ đụng Form/roles khi KHÔNG phải detail -> tránh warning useForm
+            if (mode !== "detail") {
+              form.resetFields();
+              await loadRoles();
+            }
+
+            // Load detail cho detail/update
+            if ((mode === "detail" || mode === "update") && selectedId) {
+              await loadDetail(selectedId);
             }
           }}
         >
-          <Form form={form} layout="vertical" onFinish={onCreate} preserve={false}>
-            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-              <Input prefix={<span className="input-prefix"><UserOutlined /></span>} />
-            </Form.Item>
+          {mode === "detail" ? (
+            <Spin spinning={detailLoading}>
+              <Descriptions column={1} bordered size="middle">
+                <Descriptions.Item label="Name">{detailData?.name ?? "-"}</Descriptions.Item>
+                <Descriptions.Item label="Email">{detailData?.email ?? "-"}</Descriptions.Item>
+                <Descriptions.Item label="Phone Number">{detailData?.phoneNumber ?? "-"}</Descriptions.Item>
+                <Descriptions.Item label="Role">{detailData?.role ?? "-"}</Descriptions.Item>
+                <Descriptions.Item label="Password">{detailData?.password ?? "-"}</Descriptions.Item>
 
-            <Form.Item name="email" label="Email" rules={[{ required: true }, { type: "email" }]}>
-              <Input prefix={<span className="input-prefix"><MailOutlined /></span>} />
-            </Form.Item>
+                {/* Chỉ hiển thị Gender nếu có */}
+                {typeof detailData?.gender !== "undefined" && (
+                  <Descriptions.Item label="Gender">
+                    {fmtGender(detailData?.gender as number)}
+                  </Descriptions.Item>
+                )}
 
-            <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true }]}>
-              <Input prefix={<span className="input-prefix"><PhoneOutlined /></span>} />
-            </Form.Item>
+                <Descriptions.Item label="Date of Birth">
+                  {fmtDate(detailData?.dateOfBirth as Dayjs | string)}
+                </Descriptions.Item>
+                <Descriptions.Item label="Address">{detailData?.address ?? "-"}</Descriptions.Item>
+                <Descriptions.Item label="Created On">
+                  {fmtDate(detailData?.createdOn as Dayjs | string, true)}
+                </Descriptions.Item>
+                <Descriptions.Item label="Created By">
+                  {detailData?.createdBy ?? "-"}
+                </Descriptions.Item>
+              </Descriptions>
+            </Spin>
+          ) : (
+            <Form form={form} layout="vertical" onFinish={onFinish} preserve={false}>
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input prefix={<span className="input-prefix"><UserOutlined /></span>} />
+              </Form.Item>
 
-            <Form.Item name="password" label="Password" rules={[{ required: true, min: 6 }]}>
-              <Input.Password prefix={<span className="input-prefix"><LockOutlined /></span>} />
-            </Form.Item>
+              <Form.Item name="email" label="Email" rules={[{ required: true }, { type: "email" }]}>
+                <Input prefix={<span className="input-prefix"><MailOutlined /></span>} />
+              </Form.Item>
 
-            <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-              <Select
-                options={roleOptions}
-                loading={roleLoading}
-                placeholder="Select role"
-                showSearch
-                optionFilterProp="label"
-              />
-            </Form.Item>
+              <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true }]}>
+                <Input prefix={<span className="input-prefix"><PhoneOutlined /></span>} />
+              </Form.Item>
 
-            <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
-              <Select options={genders} />
-            </Form.Item>
+              {(mode === "create" || mode === "update") && (
+                <Form.Item name="password" label="Password" rules={[{ required: true, min: 6 }]}>
+                  <Input.Password prefix={<span className="input-prefix"><LockOutlined /></span>} />
+                </Form.Item>
+              )}
 
-            <Form.Item name="dateOfBirth" label="Date of Birth" rules={[{ required: true }]}>
-              <DatePicker style={{ width: "100%" }} />
-            </Form.Item>
+              <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+                <Select
+                  options={roleOptions}
+                  loading={roleLoading}
+                  placeholder="Select role"
+                  showSearch
+                  optionFilterProp="label"
+                />
+              </Form.Item>
 
-            <Form.Item name="address" label="Address" rules={[{ required: true }]}>
-              <Input.TextArea rows={2} />
-            </Form.Item>
-          </Form>
+              <Form.Item name="gender" label="Gender" rules={[{ required: mode === "create" }]}>
+                <Select options={genders} />
+              </Form.Item>
+
+              <Form.Item name="dateOfBirth" label="Date of Birth" rules={[{ required: true }]}>
+                <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+
+              <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+                <Input.TextArea rows={2} />
+              </Form.Item>
+            </Form>
+          )}
         </Modal>
       </div>
     </MainLayout>

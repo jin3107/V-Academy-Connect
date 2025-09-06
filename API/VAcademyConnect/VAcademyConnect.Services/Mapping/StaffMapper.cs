@@ -50,6 +50,13 @@ namespace VAcademyConnect.Services.Mapping
                 Email = entity.Email,
                 PhoneNumber = entity.PhoneNumber,
                 Role = entity.Role,
+
+                Gender = entity.Gender,
+                Address = entity.Address,
+                DateOfBirth = entity.DateOfBirth,
+                CreateBy = entity.CreatedBy,
+                CreatedOn = entity.CreatedOn,
+                Password = entity.Password
             };
         }
     }

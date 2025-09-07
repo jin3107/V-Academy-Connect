@@ -1,0 +1,7 @@
+export { default as LogIn } from './LogIn'
+export { default as Register } from './Register'
+export { default as VerifyEmail } from './VerifyEmail'
+export { default as ChangePassword } from './ChangePassword'
+export { default as Home } from './Home'
+export { default as Staffs } from './Staffs'
+export { default as Subscriptions } from './Subscriptions'

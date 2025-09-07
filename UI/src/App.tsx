@@ -1,12 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import LogIn from "./pages/LogIn";
-import Register from "./pages/Register";
-import Home from "./pages/Home";
 import "./App.css";
-import VerifyEmail from "./pages/VerifyEmail";
-import ChangePassword from "./pages/ChangePassword";
 import { PrivateRoute } from "./components";
-import Staffs from "./pages/Staffs";
+import { 
+  LogIn, Register, ChangePassword, VerifyEmail, Staffs,
+  Home, Subscriptions
+ } from "./pages";
 
 function App() {
   return (
@@ -20,7 +18,6 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/change-password" element={<ChangePassword />} />
 
-            {/* <Route path="/home" element={<Home />} /> */}
             <Route 
               path="/home"
               element={
@@ -37,6 +34,15 @@ function App() {
                   <Staffs />
                 </PrivateRoute>
               } 
+            />
+
+            <Route 
+              path="/subscriptions"
+              element={
+                <PrivateRoute allowedRoles={["SuperAdmin"]}>
+                  <Subscriptions />
+                </PrivateRoute>
+              }
             />
 
             <Route path="/" element={<Navigate to="/login" replace />} />

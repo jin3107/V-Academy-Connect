@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
 import {
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
-  SettingOutlined, TeamOutlined, UserOutlined,
+  SettingOutlined, ShoppingOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
 import type { MenuProps } from "antd";
@@ -24,8 +24,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const selectedKey = useMemo(() => {
     const path = location.pathname;
     if (path === "/" || path.startsWith("/home")) return ["dashboard"];
-    if (path.startsWith("/staff")) return ["staff"];
+    if (path.startsWith("/staffs")) return ["staffs"];
     if (path.startsWith("/settings")) return ["settings"];
+    if (path.startsWith("/subscriptions")) return ["subscriptions"]
     return ["dashboard"];
   }, [location.pathname]);
 
@@ -40,7 +41,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "dashboard") navigate("/home");
-    else if (key === "staff") navigate("/staffs");
+    else if (key === "staffs") navigate("/staffs");
+    else if (key === "subscriptions") navigate("/subscriptions");
     else if (key === "settings") navigate("/settings");
   };
 
@@ -78,7 +80,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           selectedKeys={selectedKey}
           items={[
             { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
-            { key: "staff",     icon: <TeamOutlined />,      label: "Staff" },
+            { key: "staffs",     icon: <TeamOutlined />,      label: "Staffs" },
+            { key: "subscriptions",     icon: <ShoppingOutlined />,      label: "Subscriptions" },
             { key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
           ]}
           onClick={handleMenuClick}

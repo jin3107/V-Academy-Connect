@@ -40,8 +40,8 @@ namespace VAcademyConnect.Services.Mapping
                 Id = entity.Id,
                 Name = entity.Name,
                 Price = entity.Price,
-                BillingCycle = entity.BillingCycle,
-                TrialDays = entity.TrialDays
+                TrialDays = entity.TrialDays,
+                BillingCycleName = entity.BillingCycle.ToString()
             };
         }
     }

@@ -1,42 +1,20 @@
 import { useEffect, useState, useCallback } from "react";
 import MainLayout from "../../components/MainLayout";
-import {
-  Button,
-  Input,
-  Table,
-  message,
-  Select,
-  Modal,
-  Form,
-  DatePicker,
-  Popconfirm,
-  Descriptions,
-  Spin,
+import { 
+  Button, Input, Table, message, Select,
+  Modal, Form, DatePicker, Popconfirm, Descriptions, Spin,
 } from "antd";
 import {
-  LockOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-  UserOutlined,
+  LockOutlined, MailOutlined, PhoneOutlined, PlusOutlined, SearchOutlined,
+  SortAscendingOutlined, SortDescendingOutlined, UserOutlined,
 } from "@ant-design/icons";
 import {
-  createStaff,
-  searchStaffs,
-  getStaffById,
-  updateStaff,
-  deleteStaff,
+  createStaff, searchStaffs, getStaffById,
+  updateStaff, deleteStaff,
 } from "../../apis/staffAPI";
 import type {
-  Filter,
-  RoleResponse,
-  SearchRequest,
-  SearchResponse,
-  StaffRequest,
-  StaffResponse,
+  Filter, RoleResponse, SearchRequest, SearchResponse,
+  StaffRequest, StaffResponse,
 } from "../../interfaces";
 import "./style.scss";
 import { getAllRoles } from "../../apis/roleAPI";

@@ -1,4 +1,6 @@
-﻿using MayNghien.Infrastructures.Models.Responses;
+﻿using LinqKit;
+using MayNghien.Infrastructures.Models.Requests;
+using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +12,11 @@ using System.Threading.Tasks;
 using VAcademyConnect.DTOs.Requests;
 using VAcademyConnect.DTOs.Responses;
 using VAcademyConnect.Models.Entities;
+using VAcademyConnect.Repositories.Implements;
 using VAcademyConnect.Repositories.Interfaces;
 using VAcademyConnect.Services.Interfaces;
 using VAcademyConnect.Services.Mapping;
+using static MayNghien.Infrastructures.Helpers.SearchHelper;
 
 namespace VAcademyConnect.Services.Implements
 {
@@ -106,6 +110,75 @@ namespace VAcademyConnect.Services.Implements
                 result.BuildError(ex.Message + " " + ex.StackTrace);
             }
             return result;
+        }
+
+        public async Task<AppResponse<SearchResponse<SubscriptionResponse>>> SearchAsync(SearchRequest request)
+        {
+            var result = new AppResponse<SearchResponse<SubscriptionResponse>>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var query = BuildFilterExpression(request.Filters!);
+                var numOfRecords = await _subscriptionRepository.CountRecordsAsync(query);
+                var staffs = _subscriptionRepository.FindByPredicate(query).AsQueryable();
+                if (request.SortBy != null)
+                    staffs = _subscriptionRepository.AddSort(staffs, request.SortBy);
+                else
+                    staffs = staffs.OrderBy(x => x.Name);
+
+                int pageIndex = request.PageIndex ?? 1;
+                int pageSize = request.PageSize ?? 1;
+                int startIndex = (pageIndex - 1) * pageSize;
+                var staffList = await staffs.Skip(startIndex).Take(pageSize).ToListAsync();
+                var dtoList = staffList.Select(SubscriptionMapper.ToResponse).ToList();
+                var searchResponse = new SearchResponse<SubscriptionResponse>
+                {
+                    TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
+                    TotalRows = numOfRecords,
+                    CurrentPage = pageIndex,
+                    Data = dtoList,
+                    RowsPerPage = pageSize,
+                };
+                result.Data = searchResponse;
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private ExpressionStarter<Subscription> BuildFilterExpression(List<Filter> filters)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<Subscription>(true);
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        switch (filter.FieldName)
+                        {
+                            case "Name":
+                                predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                break;
+
+                            default: break;
+                        }
+                    }
+                }
+
+                predicate = predicate.And(x => x.IsDeleted == false);
+                return predicate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
         }
 
         public async Task<AppResponse<SubscriptionResponse>> UpdateAsync(SubscriptionRequest request)

@@ -16,5 +16,6 @@ namespace VAcademyConnect.Services.Interfaces
         Task<AppResponse<SubscriptionResponse>> GetByIdAsync(Guid id);
         Task<AppResponse<SubscriptionResponse>> UpdateAsync(SubscriptionRequest request);
         Task<AppResponse<string>> DeleteAsync(Guid id);
+        Task<AppResponse<SearchResponse<SubscriptionResponse>>> SearchAsync(SearchRequest request);
     }
 }

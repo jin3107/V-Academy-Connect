@@ -450,7 +450,11 @@ const Subscriptions = () => {
             </Spin>
           ) : (
             <Form form={form} layout="vertical" onFinish={onFinish} preserve={false}>
-              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Form.Item 
+                name="name" 
+                label="Name" 
+                rules={[{ required: true, message: "Name is required"}]}
+              >
                 <Input prefix={<span className="input-prefix"></span>} />
               </Form.Item>
 
@@ -476,7 +480,11 @@ const Subscriptions = () => {
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
 
-              <Form.Item name="billingCycle" label="Billing Cycle" rules={[{ required: true }]}>
+              <Form.Item
+                name="billingCycle" 
+                label="Billing Cycle" 
+                rules={[{ required: true, message: "Billing Cycle is required" }]}
+              >
                 <Select options={billingCycle} />
               </Form.Item>
             </Form>

@@ -500,25 +500,44 @@ const Staffs = () => {
             </Spin>
           ) : (
             <Form form={form} layout="vertical" onFinish={onFinish} preserve={false}>
-              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Form.Item 
+                name="name" 
+                label="Name" 
+                rules={[{ required: true, message: "Name is required" }]}
+              >
                 <Input prefix={<span className="input-prefix"><UserOutlined /></span>} />
               </Form.Item>
 
-              <Form.Item name="email" label="Email" rules={[{ required: true }, { type: "email" }]}>
+              <Form.Item 
+                name="email" 
+                label="Email" 
+                rules={[{ required: true, message: "Emailame is required" }, { type: "email" }]}
+              >
                 <Input prefix={<span className="input-prefix"><MailOutlined /></span>} />
               </Form.Item>
 
-              <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true }]}>
+              <Form.Item 
+                name="phoneNumber" 
+                label="Phone Number" 
+                rules={[{ required: true, message: "Phone Number is required" }]}
+              >
                 <Input prefix={<span className="input-prefix"><PhoneOutlined /></span>} />
               </Form.Item>
 
               {(mode === "create" || mode === "update") && (
-                <Form.Item name="password" label="Password" rules={[{ required: true, min: 6 }]}>
+                <Form.Item 
+                  name="password" 
+                  label="Password" 
+                  rules={[{ required: true, min: 6, message: "Password is required" }]}>
                   <Input.Password prefix={<span className="input-prefix"><LockOutlined /></span>} />
                 </Form.Item>
               )}
 
-              <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+              <Form.Item 
+                name="role" 
+                label="Role" 
+                rules={[{ required: true, message: "Role is required" }]}
+              >
                 <Select
                   options={roleOptions}
                   loading={roleLoading}
@@ -528,15 +547,27 @@ const Staffs = () => {
                 />
               </Form.Item>
 
-              <Form.Item name="gender" label="Gender" rules={[{ required: mode === "create" }]}>
+              <Form.Item 
+                name="gender" 
+                label="Gender" 
+                rules={[{ required: mode === "create", message: "Gender is required" }]}
+              >
                 <Select options={genders} />
               </Form.Item>
 
-              <Form.Item name="dateOfBirth" label="Date of Birth" rules={[{ required: true }]}>
+              <Form.Item 
+                name="dateOfBirth" 
+                label="Date of Birth" 
+                rules={[{ required: true, message: "Date Of Birth is required" }]}
+              >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
 
-              <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+              <Form.Item 
+                name="address" 
+                label="Address" 
+                rules={[{ required: true, message: "Address is required" }]}
+              >
                 <Input.TextArea rows={2} />
               </Form.Item>
             </Form>

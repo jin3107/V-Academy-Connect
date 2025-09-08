@@ -14,7 +14,9 @@ namespace VAcademyConnect.DTOs.Responses
         public decimal Price { get; set; }
         public int TrialDays { get; set; }
 
-        // Cần hiển thị Enum dưới dạng text
-        public string? BillingCycleName { get; set; }
+        public BillingCycle BillingCycle { get; set; }
+        public string BillingCycleName { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string? CreateBy { get; set; }
     }
 }

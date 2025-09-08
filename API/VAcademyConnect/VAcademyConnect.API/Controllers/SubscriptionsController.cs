@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MayNghien.Infrastructures.Models.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VAcademyConnect.DTOs.Requests;
+using VAcademyConnect.Services.Implements;
 using VAcademyConnect.Services.Interfaces;
 
 namespace VAcademyConnect.API.Controllers
@@ -45,6 +47,14 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var result = await _subscriptionService.DeleteAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("search")]
+        public async Task<IActionResult> Search([FromBody] SearchRequest request)
+        {
+            var result = await _subscriptionService.SearchAsync(request);
             return Ok(result);
         }
     }

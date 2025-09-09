@@ -315,19 +315,23 @@ namespace VAcademyConnect.Services.Implements
                         switch (filter.FieldName)
                         {
                             case "Name":
-                                predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Name.Contains(filter.Value));
                                 break;
 
                             case "Email":
-                                predicate = predicate.And(x => x.Email.Contains(filter.Value));
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Email.Contains(filter.Value));
                                 break;
 
                             case "PhoneNumber":
-                                predicate = predicate.And(x => x.PhoneNumber.Contains(filter.Value));
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.PhoneNumber.Contains(filter.Value));
                                 break;
 
                             case "Role":
-                                predicate = predicate.And(x => x.Role.Contains(filter.Value));
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Role.Contains(filter.Value));
                                 break;
 
                             default: break;

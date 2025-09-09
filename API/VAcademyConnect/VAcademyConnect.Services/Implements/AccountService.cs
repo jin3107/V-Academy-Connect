@@ -282,11 +282,11 @@ namespace VAcademyConnect.Services.Implements
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken
-            (
-                _config["Jwt:Issuer"],
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddSeconds(int.Parse(_config["Jwt:AccessTokenExpiresIn"] ?? "3600")),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

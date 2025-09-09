@@ -123,17 +123,17 @@ namespace VAcademyConnect.Services.Implements
 
                 var query = BuildFilterExpression(request.Filters!);
                 var numOfRecords = await _subscriptionRepository.CountRecordsAsync(query);
-                var staffs = _subscriptionRepository.FindByPredicate(query).AsQueryable();
+                var subscriptions = _subscriptionRepository.FindByPredicate(query).AsQueryable();
                 if (request.SortBy != null)
-                    staffs = _subscriptionRepository.AddSort(staffs, request.SortBy);
+                    subscriptions = _subscriptionRepository.AddSort(subscriptions, request.SortBy);
                 else
-                    staffs = staffs.OrderBy(x => x.Name);
+                    subscriptions = subscriptions.OrderBy(x => x.Name);
 
                 int pageIndex = request.PageIndex ?? 1;
                 int pageSize = request.PageSize ?? 1;
                 int startIndex = (pageIndex - 1) * pageSize;
-                var staffList = await staffs.Skip(startIndex).Take(pageSize).ToListAsync();
-                var dtoList = staffList.Select(SubscriptionMapper.ToResponse).ToList();
+                var subscriptionList = await subscriptions.Skip(startIndex).Take(pageSize).ToListAsync();
+                var dtoList = subscriptionList.Select(SubscriptionMapper.ToResponse).ToList();
                 var searchResponse = new SearchResponse<SubscriptionResponse>
                 {
                     TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
@@ -164,7 +164,8 @@ namespace VAcademyConnect.Services.Implements
                         switch (filter.FieldName)
                         {
                             case "Name":
-                                predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Name.Contains(filter.Value));
                                 break;
 
                             default: break;

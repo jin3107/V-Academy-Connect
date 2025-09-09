@@ -3,12 +3,12 @@ using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -192,7 +192,7 @@ namespace VAcademyConnect.Services.Implements
                 CreatedBy = request.Email,
                 CreatedOn = DateTime.UtcNow
             };
-            _tenantRepository.Add(tenant);
+            await _tenantRepository.AddAsync(tenant);
             return tenant;
         }
 
@@ -491,7 +491,7 @@ namespace VAcademyConnect.Services.Implements
             var result = new AppResponse<List<RoleResponse>>();
             try
             {
-                var roles = _roleManager.Roles.ToList();
+                var roles = await _roleManager.Roles.ToListAsync();
                 var response = roles.Select(r => RoleMapper.ToResponse(r)).ToList();
                 result.BuildResult(response);
             }

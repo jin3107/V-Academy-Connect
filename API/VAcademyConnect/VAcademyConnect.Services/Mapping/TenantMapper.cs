@@ -41,7 +41,8 @@ namespace VAcademyConnect.Services.Mapping
                 Name = entity.Name,
                 ContactEmail = entity.ContactEmail,
                 ContactPhone = entity.ContactPhone,
-                Status = entity.Status
+                Status = entity.Status,
+                StatusName = entity.Status.ToString(),
             };
         }
     }

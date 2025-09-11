@@ -267,11 +267,6 @@ namespace VAcademyConnect.Services.Implements
             var roles = await _userManager.GetRolesAsync(identityUser);
             foreach (var role in roles)
             {
-                claims.Add(new Claim("Roles", role));
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-            foreach (var role in roles)
-            {
                 claims.Add(new Claim(ClaimTypes.Role, role));
                 claims.Add(new Claim(ClaimTypes.Name, user.Email));
             }

@@ -14,12 +14,6 @@ namespace VAcademyConnect.DTOs.Responses
         public string ContactEmail { get; set; }
         public string ContactPhone { get; set; }
         public Status Status { get; set; }
-
         public string StatusName { get; set; }
-
-        public Guid? TenantSubscriptionId { get; set; }
-        public string? SubscriptionName { get; set; }
-        public DateTime? SubscribedAt { get; set; }
-        public DateTime? ExpiredAt { get; set; }
     }
 }

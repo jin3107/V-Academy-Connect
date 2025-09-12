@@ -208,5 +208,34 @@ namespace VAcademyConnect.Services.Implements
             }
             return result;
         }
+
+        public async Task<AppResponse<TenantResponse>> CreateAsync(TenantRequest request)
+        {
+            var result = new AppResponse<TenantResponse>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var newTenant = TenantMapper.ToEntity(request);
+                newTenant.Id = Guid.NewGuid();
+                newTenant.Name = request.Name;
+                newTenant.ContactEmail = request.ContactEmail;
+                newTenant.ContactPhone = request.ContactPhone;
+                newTenant.Status = request.Status;
+                newTenant.CreatedOn = DateTime.UtcNow;
+                newTenant.CreatedBy = user.Email;
+
+                await _tenantRepository.AddAsync(newTenant);
+                var response = TenantMapper.ToResponse(newTenant);
+                result.BuildResult(response, "Tenant has been created successfully.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
     }
 }

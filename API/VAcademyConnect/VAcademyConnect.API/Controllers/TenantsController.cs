@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VAcademyConnect.DTOs.Requests;
 using VAcademyConnect.Services.Implements;
 using VAcademyConnect.Services.Interfaces;
 
@@ -17,6 +18,36 @@ namespace VAcademyConnect.API.Controllers
         public TenantsController(ITenantService tenantService)
         {
             _tenantService = tenantService;
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var result = await _tenantService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] TenantRequest request)
+        {
+            var result = await _tenantService.CreateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] TenantRequest request)
+        {
+            var result = await _tenantService.UpdateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var result = await _tenantService.DeleteAsync(id);
+            return Ok(result);
         }
 
         [HttpPost]

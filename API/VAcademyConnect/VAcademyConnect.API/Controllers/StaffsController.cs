@@ -28,14 +28,14 @@ namespace VAcademyConnect.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] StaffRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateStaffRequest request)
         {
             var result = await _staffService.CreateAsync(request);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] StaffRequest request)
+        public async Task<IActionResult> Update([FromBody] UpdateStaffRequest request)
         {
             var result = await _staffService.UpdateAsync(request);
             return Ok(result);

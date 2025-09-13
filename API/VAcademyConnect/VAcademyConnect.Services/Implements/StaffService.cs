@@ -44,7 +44,7 @@ namespace VAcademyConnect.Services.Implements
             _roleManager = roleManager;
         }
 
-        public async Task<AppResponse<StaffResponse>> CreateAsync(StaffRequest request)
+        public async Task<AppResponse<StaffResponse>> CreateAsync(CreateStaffRequest request)
         {
             var result = new AppResponse<StaffResponse>();
             try
@@ -92,7 +92,7 @@ namespace VAcademyConnect.Services.Implements
             }
         }
 
-        private async Task<(IdentityResult Result, ApplicationUser? User)> CreateUser(StaffRequest request, Guid staffId)
+        private async Task<(IdentityResult Result, ApplicationUser? User)> CreateUser(CreateStaffRequest request, Guid staffId)
         {
             var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
             if (request == null)
@@ -100,7 +100,7 @@ namespace VAcademyConnect.Services.Implements
 
             var identityUser = new ApplicationUser
             {
-                UserName = request.Email,
+                UserName = request.Name,
                 Email = request.Email,
                 TenantId = user!.TenantId,
                 EmailConfirmed = true,
@@ -161,16 +161,16 @@ namespace VAcademyConnect.Services.Implements
             }
         }
 
-        public async Task<AppResponse<StaffResponse>> UpdateAsync(StaffRequest request)
+        public async Task<AppResponse<StaffResponse>> UpdateAsync(UpdateStaffRequest request)
         {
             var result = new AppResponse<StaffResponse>();
             try
             {
-                var currentUser = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
-                if (currentUser == null)
+                var userName = _contextAccessor.HttpContext?.User.Identity?.Name;
+                if (userName == null)
                     return result.BuildError("Unauthorized");
 
-                if (request.Id == null)
+                if (request.Id == null || request.Id == new Guid())
                     return result.BuildError("Staff ID is required");
 
                 var staff = await _staffRepository.GetAsync(request.Id.Value);
@@ -182,21 +182,19 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("Email or phone number already in use");
 
                 var currentEmail = staff.Email;
-                staff.Name = request.Name;
                 staff.Email = request.Email;
                 staff.PhoneNumber = request.PhoneNumber;
                 staff.DateOfBirth = request.DateOfBirth;
                 staff.Gender = request.Gender;
                 staff.Address = request.Address;
                 staff.Role = request.Role;
-                staff.ModifiedBy = currentUser.Email;
+                staff.ModifiedBy = userName;
                 staff.ModifiedOn = DateTime.UtcNow;
 
                 var identityUser = await _userManager.FindByEmailAsync(currentEmail);
                 if (identityUser == null)
                     return result.BuildError("Associated user account not found");
 
-                identityUser.UserName = request.Email;
                 identityUser.Email = request.Email;
                 identityUser.PhoneNumber = request.PhoneNumber;
 
@@ -235,13 +233,13 @@ namespace VAcademyConnect.Services.Implements
             return userByPhoneNumber != null;
         }
 
-        private async Task<Staff> CreateStaff(StaffRequest request)
+        private async Task<Staff> CreateStaff(CreateStaffRequest request)
         {
             var currentUser = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
             if (request == null)
                 throw new ArgumentNullException(nameof(request), "Request for Staff is invalid");
 
-            var staff = StaffMapper.ToEntity(request);
+            var staff = StaffMapper.ToCreateEntity(request);
             staff.Id = Guid.NewGuid();
             staff.CreatedBy = currentUser?.Email;
             staff.CreatedOn = DateTime.UtcNow;

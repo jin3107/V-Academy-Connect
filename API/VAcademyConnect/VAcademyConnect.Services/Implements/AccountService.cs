@@ -97,13 +97,13 @@ namespace VAcademyConnect.Services.Implements
             var result = new AppResponse<LogInResponse>();
             try
             {
-                var user = await _userManager.FindByEmailAsync(request.Email);
+                var user = await _userManager.FindByNameAsync(request.UserName);
                 if (user == null)
                 {
-                    if (request.Email == "tanchuonghuynh3@gmail.com")
+                    if (request.UserName == "tanchuonghuynh3@gmail.com")
                     {
-                        await CreatAdminUserAsync(request.Email);
-                        user = await _userManager.FindByNameAsync(request.Email);
+                        await CreatAdminUserAsync(request.UserName);
+                        user = await _userManager.FindByNameAsync(request.UserName);
                     }
                     else
                         return result.BuildError("User not found");
@@ -121,10 +121,11 @@ namespace VAcademyConnect.Services.Implements
                 var response = new LogInResponse
                 {
                     UserId = Guid.Parse(user!.Id),
-                    TenantId = user!.TenantId ?? Guid.Empty,
-                    PhoneNumber = user!.PhoneNumber ?? string.Empty,
-                    Email = user!.Email!,
-                    Role = roles!.FirstOrDefault()!,
+                    TenantId = user.TenantId ?? Guid.Empty,
+                    PhoneNumber = user.PhoneNumber ?? string.Empty,
+                    UserName = user.UserName!,
+                    Email = user.Email!,
+                    Role = roles.FirstOrDefault()!,
                     Token = accessToken,
                     RefreshToken = refreshToken
                 };
@@ -169,7 +170,7 @@ namespace VAcademyConnect.Services.Implements
         {
             var user = new ApplicationUser
             {
-                UserName = request.Email,
+                UserName = request.Name,
                 Email = request.Email,
                 TenantId = tenantId,
                 EmailConfirmed = true,
@@ -260,15 +261,14 @@ namespace VAcademyConnect.Services.Implements
             var claims = new List<Claim>
             {
                 new Claim("TenantId", identityUser.TenantId.ToString()!),
-                new Claim("Email", user.Email),
-                new Claim(ClaimTypes.Name, user.Email)
+                new Claim(ClaimTypes.Name, user.UserName)
             };
 
             var roles = await _userManager.GetRolesAsync(identityUser);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
-                claims.Add(new Claim(ClaimTypes.Name, user.Email));
+                claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             }
             return claims;
         }
@@ -420,6 +420,7 @@ namespace VAcademyConnect.Services.Implements
                 {
                     UserId = Guid.Parse(user.Id),
                     TenantId = user.TenantId ?? Guid.Empty,
+                    UserName = user.UserName!,
                     Email = user.Email!,
                     Role = roles.FirstOrDefault()!,
                     Token = accessToken,
@@ -458,7 +459,7 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("User not found");
 
                 // Generate new tokens
-                var claims = await GetClaims(new LogInRequest { Email = user.Email! }, user);
+                var claims = await GetClaims(new LogInRequest { UserName = user.Email! }, user);
                 var (newAccessToken, newRefreshToken) = await GenerateTokens(user, claims);
 
                 // Revoke old refresh token

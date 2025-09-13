@@ -20,6 +20,8 @@ namespace VAcademyConnect.DTOs.Responses
         public DateTime? DateOfBirth { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string? CreateBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public string? ModifiedBy { get; set; }
 
         public string? Password { get; set; }
     }

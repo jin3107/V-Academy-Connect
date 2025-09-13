@@ -13,8 +13,8 @@ namespace VAcademyConnect.Services.Interfaces
     public interface IStaffService
     {
         Task<AppResponse<StaffResponse>> GetByIdAsync(Guid id);
-        Task<AppResponse<StaffResponse>> CreateAsync(StaffRequest request);
-        Task<AppResponse<StaffResponse>> UpdateAsync(StaffRequest request);
+        Task<AppResponse<StaffResponse>> CreateAsync(CreateStaffRequest request);
+        Task<AppResponse<StaffResponse>> UpdateAsync(UpdateStaffRequest request);
         Task<AppResponse<string>> DeleteAsync(Guid id);
         Task<AppResponse<SearchResponse<StaffResponse>>> SearchAsync(SearchRequest request);
     }

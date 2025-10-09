@@ -41,22 +41,58 @@ namespace VAcademyConnect.Services.Mapping
             {
                 Id = entity.Id,
                 TenantId = entity.TenantId,
+                TenantName = entity.Tenant?.Name,
                 SubscriptionId = entity.SubscriptionId,
+                SubscriptionName = entity.Subscription?.Name,
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 IsTrial = entity.IsTrial
             };
         }
 
-        public static TenantSubscription ToTrialSubscription(Guid tenantId, Subscription trialPlan)
+        /// <summary>
+        /// Tạo trial subscription Standard cho tenant mới (30 ngày miễn phí)
+        /// </summary>
+        public static TenantSubscription ToTrialSubscription(Guid tenantId, Subscription standardPlan)
         {
             return new TenantSubscription
             {
                 TenantId = tenantId,
-                SubscriptionId = trialPlan.Id,
+                SubscriptionId = standardPlan.Id,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(trialPlan.TrialDays),
+                EndDate = DateTime.UtcNow.AddDays(30), // 30 ngày trial
                 IsTrial = true
+            };
+        }
+
+        /// <summary>
+        /// Tạo subscription Free khi Standard hết hạn (không có EndDate)
+        /// </summary>
+        public static TenantSubscription ToFreeSubscription(Guid tenantId, Subscription freePlan)
+        {
+            return new TenantSubscription
+            {
+                TenantId = tenantId,
+                SubscriptionId = freePlan.Id,
+                StartDate = DateTime.UtcNow,
+                EndDate = null, // Free plan không có hạn
+                IsTrial = false
+            };
+        }
+
+        // Gia hạn subscription Standard (không phải trial)
+        public static TenantSubscription ToRenewedStandardSubscription(Guid tenantId, Subscription standardPlan, string createdBy, int months = 1)
+        {
+            return new TenantSubscription
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                SubscriptionId = standardPlan.Id,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddMonths(months),
+                IsTrial = false,
+                CreatedBy = createdBy,
+                CreatedOn = DateTime.UtcNow
             };
         }
     }

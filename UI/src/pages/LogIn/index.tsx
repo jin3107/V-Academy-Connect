@@ -51,16 +51,13 @@ const LogIn = () => {
           className="login-form"
         >
           <AuthFormInput
-            label="Email"
-            name="email"
+            label="Username or Email"
+            name="username"
             required
-            message="Please enter your email!"
-            type="email"
-            placeholder="Enter your email"
+            message="Please enter your username or email!"
+            type="text"
+            placeholder="Enter your username or email"
             prefix={<span className="input-prefix"><UserOutlined /></span>}
-            rules={[
-              { type: "email", message: "Please enter a valid email!" }
-            ]}
           />
 
           <AuthFormInput

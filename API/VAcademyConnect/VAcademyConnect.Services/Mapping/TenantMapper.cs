@@ -35,15 +35,60 @@ namespace VAcademyConnect.Services.Mapping
 
         public static TenantResponse ToResponse(Tenant entity)
         {
-            return new TenantResponse
+            var now = DateTime.UtcNow;
+            bool isExpired = false;
+            bool isExpiringSoon = false;
+            DateTime? expirationDate = null;
+            string? planName = null;
+            bool hasActiveSubscription = false;
+            bool isFreeplan = false;
+
+            if (entity.TenantSubscription != null)
+            {
+                expirationDate = entity.TenantSubscription.EndDate;
+                planName = entity.TenantSubscription.Subscription?.Name;
+                isFreeplan = planName?.ToLower() == "free";
+                
+                if (expirationDate.HasValue)
+                {
+                    // Standard plan có EndDate
+                    isExpired = expirationDate.Value < now;
+                    isExpiringSoon = !isExpired && expirationDate.Value <= now.AddDays(7);
+                    hasActiveSubscription = !isExpired;
+                }
+                else
+                {
+                    // Free plan không có EndDate - luôn active nhưng có giới hạn
+                    hasActiveSubscription = true;
+                    isExpired = false;
+                    isExpiringSoon = false;
+                }
+            }
+
+            // Status của entity đã được xử lý trong CheckAndUpdateTenantStatus
+            // Free plan -> Active (nhưng có giới hạn)
+            // Standard plan còn hạn -> Active  
+            // Standard plan hết hạn -> đã chuyển về Free plan -> Active
+            
+            var response = new TenantResponse
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 ContactEmail = entity.ContactEmail,
                 ContactPhone = entity.ContactPhone,
                 Status = entity.Status,
-                StatusName = entity.Status.ToString()
+                StatusName = entity.Status.ToString(),
+                SubscriptionStatus = new TenantSubscriptionStatusResponse
+                {
+                    HasActiveSubscription = hasActiveSubscription,
+                    IsExpiringSoon = isExpiringSoon,
+                    IsExpired = isExpired,
+                    ExpirationDate = expirationDate,
+                    SubscriptionPlanName = planName ?? "No Subscription plan",
+                    Status = entity.Status.ToString()
+                }
             };
+            return response;
         }
     }
 }

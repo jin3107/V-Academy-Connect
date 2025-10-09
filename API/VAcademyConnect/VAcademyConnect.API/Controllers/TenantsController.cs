@@ -28,25 +28,10 @@ namespace VAcademyConnect.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TenantRequest request)
-        {
-            var result = await _tenantService.CreateAsync(request);
-            return Ok(result);
-        }
-
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] TenantRequest request)
         {
             var result = await _tenantService.UpdateAsync(request);
-            return Ok(result);
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
-            var result = await _tenantService.DeleteAsync(id);
             return Ok(result);
         }
 
@@ -55,6 +40,14 @@ namespace VAcademyConnect.API.Controllers
         public async Task<IActionResult> Search([FromBody] SearchRequest request)
         {
             var result = await _tenantService.SearchAsync(request);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("{tenantId}/renew-subscription")]
+        public async Task<IActionResult> RenewSubscription([FromRoute] Guid tenantId, [FromQuery] int months = 1)
+        {
+            var result = await _tenantService.RenewStandardSubscriptionAsync(tenantId, months);
             return Ok(result);
         }
     }

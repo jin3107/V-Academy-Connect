@@ -97,40 +97,57 @@ namespace VAcademyConnect.Services.Implements
             var result = new AppResponse<LogInResponse>();
             try
             {
-                var user = await _userManager.FindByNameAsync(request.UserName);
+                ApplicationUser? user = null;
+                user = await _userManager.FindByNameAsync(request.UserName);
                 if (user == null)
                 {
-                    if (request.UserName == "tanchuonghuynh3@gmail.com")
+                    user = await _userManager.FindByEmailAsync(request.UserName);
+                    if (user == null && request.UserName == "tanchuonghuynh3@gmail.com")
                     {
                         await CreatAdminUserAsync(request.UserName);
-                        user = await _userManager.FindByNameAsync(request.UserName);
+                        user = await _userManager.FindByEmailAsync(request.UserName);
                     }
-                    else
-                        return result.BuildError("User not found");
                 }
-                if (!await _userManager.CheckPasswordAsync(user!, request.Password))
-                    return result.BuildError("Invalid credentials");
 
-                var roles = await _userManager.GetRolesAsync(user!);
+                if (user == null)
+                    return result.BuildError("User not found. Please check your username or email.");
+                if (!await _userManager.CheckPasswordAsync(user, request.Password))
+                    return result.BuildError("Invalid credentials. Please check your password.");
+
+                var roles = await _userManager.GetRolesAsync(user);
                 if (!roles.Any())
                     return result.BuildError("User has no role assigned.");
 
-                var claims = await GetClaims(request, user!);
-                var (accessToken, refreshToken) = await GenerateTokens(user!, claims);
+                var claims = await GetClaims(new LogInRequest { UserName = user.Email! }, user);
+                var (accessToken, refreshToken) = await GenerateTokens(user, claims);
+                if (user.TenantId.HasValue)
+                {
+                    var tenant = await _tenantRepository.FindByAsync(t => t.Id == user.TenantId)
+                        .Include(t => t.TenantSubscription).FirstOrDefaultAsync();
+                    if (tenant != null)
+                    {
+                        if (tenant.Status == Status.Inactive || 
+                            (tenant.TenantSubscription?.EndDate != null && tenant.TenantSubscription.EndDate < DateTime.UtcNow))
+                        {
+                            if (!roles.Any(r => r == "SuperAdmin" || r == "Admin"))
+                                return result.BuildError("Your tenant account is inactive or subscription has expired. Please contact administrator.");
+                        }
+                    }
+                }
 
                 var response = new LogInResponse
                 {
-                    UserId = Guid.Parse(user!.Id),
+                    UserId = Guid.Parse(user.Id),
                     TenantId = user.TenantId ?? Guid.Empty,
                     PhoneNumber = user.PhoneNumber ?? string.Empty,
-                    UserName = user.UserName!,
+                    UserName = user.Email!,
                     Email = user.Email!,
                     Role = roles.FirstOrDefault()!,
                     Token = accessToken,
                     RefreshToken = refreshToken
                 };
 
-                return result.BuildResult(response);
+                return result.BuildResult(response, "Login successful. Welcome back!");
             }
             catch (Exception ex)
             {
@@ -221,11 +238,18 @@ namespace VAcademyConnect.Services.Implements
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 await AssignRole(user!, "TenantAdmin");
 
-                var trialPlan = await _subscriptionRepository.GetTrialPlanAsync();
-                if (trialPlan == null)
-                    return result.BuildError("Trial subscription plan not found.");
+                // Tìm Standard plan để tạo trial 30 ngày
+                var standardPlan = await _subscriptionRepository.FindByAsync(s => s.Name == "Standard" && !s.IsDeleted)
+                    .FirstOrDefaultAsync();
+                    
+                if (standardPlan == null)
+                    return result.BuildError("Standard subscription plan not found.");
 
-                var trialSubscription = TenantSubscriptionMapper.ToTrialSubscription(newTenant.Id, trialPlan);
+                // Tạo trial subscription Standard (30 ngày miễn phí)
+                var trialSubscription = TenantSubscriptionMapper.ToTrialSubscription(newTenant.Id, standardPlan);
+                trialSubscription.CreatedBy = request.Email;
+                trialSubscription.CreatedOn = DateTime.UtcNow;
+                
                 await _tenantSubscriptionRepository.AddAsync(trialSubscription);
 
                 var claims = new List<Claim>
@@ -243,11 +267,11 @@ namespace VAcademyConnect.Services.Implements
                     PhoneNumber = request.PhoneNumber,
                     Name = request.Name,
                     TenantName = request.TenantName,
-                    SubscriptionPlanId = trialPlan.Id
+                    SubscriptionPlanId = standardPlan.Id
                 };
 
                 await _signInManager.SignInAsync(user!, isPersistent: false);
-                return result.BuildResult(response, "User registered successfully!");
+                return result.BuildResult(response, "User registered successfully with 30-day Standard trial!");
             }
             catch (Exception ex)
             {
@@ -261,7 +285,7 @@ namespace VAcademyConnect.Services.Implements
             var claims = new List<Claim>
             {
                 new Claim("TenantId", identityUser.TenantId.ToString()!),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Email, user.UserName)
             };
 
             var roles = await _userManager.GetRolesAsync(identityUser);

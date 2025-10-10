@@ -18,7 +18,7 @@ interface SubscriptionData {
   id?: string,
   name: string,
   price: number,
-  billingCycleName: string, // Fixed typo: billingClycleName -> billingCycleName
+  billingCycleName: string,
   trialDays: number
 }
 

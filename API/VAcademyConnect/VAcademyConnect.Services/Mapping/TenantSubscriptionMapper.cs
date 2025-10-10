@@ -46,13 +46,13 @@ namespace VAcademyConnect.Services.Mapping
                 SubscriptionName = entity.Subscription?.Name,
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
-                IsTrial = entity.IsTrial
+                IsTrial = entity.IsTrial,
+                CreatedOn = entity.CreatedOn,
+                CreateBy = entity.CreatedBy
             };
         }
 
-        /// <summary>
-        /// Tạo trial subscription Standard cho tenant mới (30 ngày miễn phí)
-        /// </summary>
+        // Tạo trial subscription Standard cho tenant mới (30 ngày miễn phí)
         public static TenantSubscription ToTrialSubscription(Guid tenantId, Subscription standardPlan)
         {
             return new TenantSubscription
@@ -65,9 +65,7 @@ namespace VAcademyConnect.Services.Mapping
             };
         }
 
-        /// <summary>
-        /// Tạo subscription Free khi Standard hết hạn (không có EndDate)
-        /// </summary>
+        // Tạo subscription Free khi Standard hết hạn (không có EndDate)
         public static TenantSubscription ToFreeSubscription(Guid tenantId, Subscription freePlan)
         {
             return new TenantSubscription

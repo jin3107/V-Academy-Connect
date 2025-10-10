@@ -18,5 +18,8 @@ namespace VAcademyConnect.DTOs.Responses
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public bool IsTrial { get; set; }
+
+        public DateTime? CreatedOn { get; set; }
+        public string? CreateBy { get; set; }
     }
 }

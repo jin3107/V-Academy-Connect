@@ -1,8 +1,4 @@
-export enum Status {
-  Actice = 0,
-  Suspended = 1,
-  Inactive = 2
-}
+import type { Status } from "../../commons";
 
 export default interface TenantRequest {
   name: string,

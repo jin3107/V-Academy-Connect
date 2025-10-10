@@ -1,13 +1,13 @@
 import axios from "../configs/axios";
 import type { AppResponse } from "../helpers";
-import type { StaffRequest, StaffResponse, SearchRequest, SearchResponse } from "../interfaces";
+import type { CreateStaffRequest, UpdateStaffRequest, StaffResponse, SearchRequest, SearchResponse } from "../interfaces";
 
-export const createStaff = async (data: StaffRequest) : Promise<AppResponse<StaffResponse>> => {
+export const createStaff = async (data: CreateStaffRequest) : Promise<AppResponse<StaffResponse>> => {
   const response = await axios.post<AppResponse<StaffResponse>>("/staffs", data);
   return response.data;
 };
 
-export const updateStaff = async (data: StaffRequest) : Promise<AppResponse<StaffResponse>> => {
+export const updateStaff = async (data: UpdateStaffRequest) : Promise<AppResponse<StaffResponse>> => {
   const response = await axios.put<AppResponse<StaffResponse>>("/staffs", data);
   return response.data;
 };

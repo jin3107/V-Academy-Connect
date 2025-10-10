@@ -5,7 +5,7 @@ export enum Gender {
   Female = 1
 };
 
-export default interface StaffRequest {
+export default interface CreateStaffRequest {
   name: string,
   dateOfBirth: dayjs.Dayjs,
   gender: Gender,

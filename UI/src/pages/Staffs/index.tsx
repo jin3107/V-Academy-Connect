@@ -14,7 +14,7 @@ import {
 } from "../../apis/staffAPI";
 import type {
   Filter, RoleResponse, SearchRequest, SearchResponse,
-  StaffRequest, StaffResponse,
+  CreateStaffRequest, UpdateStaffRequest, StaffResponse,
 } from "../../interfaces";
 import "./style.scss";
 import { getAllRoles } from "../../apis/roleAPI";
@@ -171,10 +171,10 @@ const Staffs = () => {
       };
 
       if (mode === "create") {
-        const payloadCreate: StaffRequest = {
+        const payloadCreate: CreateStaffRequest = {
           ...common, 
           password: values.password ?? ""
-        } as unknown as StaffRequest;
+        } as unknown as CreateStaffRequest;
         const res = await createStaff(payloadCreate);
         if (!res.isSuccess) {
           message.error(res.message || "Create failed");
@@ -191,7 +191,7 @@ const Staffs = () => {
           ...common,
           password: values.password ?? "",
           id: selectedId,
-        } as unknown as StaffRequest;
+        } as unknown as UpdateStaffRequest;
         const res = await updateStaff(payloadUpdate);
         if (!res.isSuccess) {
           message.error(res.message || "Update failed");

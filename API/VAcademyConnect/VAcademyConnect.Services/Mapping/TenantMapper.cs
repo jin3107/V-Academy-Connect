@@ -85,8 +85,10 @@ namespace VAcademyConnect.Services.Mapping
                     IsExpired = isExpired,
                     ExpirationDate = expirationDate,
                     SubscriptionPlanName = planName ?? "No Subscription plan",
-                    Status = entity.Status.ToString()
-                }
+                    Status = entity.Status.ToString(),
+                },
+                CreatedOn = entity.CreatedOn,
+                CreateBy = entity.CreatedBy
             };
             return response;
         }

@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
 import {
+  ClusterOutlined,
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
   SettingOutlined, ShoppingOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
@@ -43,6 +44,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (key === "dashboard") navigate("/home");
     else if (key === "staffs") navigate("/staffs");
     else if (key === "subscriptions") navigate("/subscriptions");
+    else if (key === "tenants") navigate("/tenants");
     else if (key === "settings") navigate("/settings");
   };
 
@@ -82,6 +84,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
             { key: "staffs",     icon: <TeamOutlined />,      label: "Staffs" },
             { key: "subscriptions",     icon: <ShoppingOutlined />,      label: "Subscriptions" },
+            { key: "tenants",     icon: <ClusterOutlined />,      label: "Tenants" },
             { key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
           ]}
           onClick={handleMenuClick}

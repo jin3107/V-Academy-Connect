@@ -1,4 +1,5 @@
 import type TenantSubscriptionResponse from "./TenantSubscriptionResponse";
+import dayjs from "dayjs";
 
 export enum Status {
   Active = 0,
@@ -12,6 +13,10 @@ export default interface TenantResponse {
   contactEmail: string,
   contactPhone: string,
   status: Status,
-  //statusName: string
-  tenantSubscriptionResponse: TenantSubscriptionResponse
+  statusName?: string,
+  subscriptionStatus?: TenantSubscriptionResponse,
+  tenantSubscriptionResponse?: TenantSubscriptionResponse
+
+  createdBy?: string,
+  createdOn?: dayjs.Dayjs
 }

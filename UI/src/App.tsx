@@ -5,6 +5,7 @@ import {
   LogIn, Register, ChangePassword, VerifyEmail, Staffs,
   Home, Subscriptions
  } from "./pages";
+import Tenant from "./pages/Tenant";
 
 function App() {
   return (
@@ -41,6 +42,15 @@ function App() {
               element={
                 <PrivateRoute allowedRoles={["SuperAdmin"]}>
                   <Subscriptions />
+                </PrivateRoute>
+              }
+            />
+
+            <Route 
+              path="/tenants"
+              element={
+                <PrivateRoute allowedRoles={["SuperAdmin"]}>
+                  <Tenant />
                 </PrivateRoute>
               }
             />

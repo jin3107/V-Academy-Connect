@@ -47,7 +47,7 @@ namespace VAcademyConnect.API.Controllers
         [Route("{tenantId}/renew-subscription")]
         public async Task<IActionResult> RenewSubscription([FromRoute] Guid tenantId, [FromQuery] int months = 1)
         {
-            var result = await _tenantService.RenewStandardSubscriptionAsync(tenantId, months);
+            var result = await _tenantService.RenewStandardSubscriptionAsync(tenantId);
             return Ok(result);
         }
     }

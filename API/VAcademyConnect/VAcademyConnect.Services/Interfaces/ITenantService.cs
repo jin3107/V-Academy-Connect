@@ -16,7 +16,6 @@ namespace VAcademyConnect.Services.Interfaces
         Task<AppResponse<TenantResponse>> UpdateAsync(TenantRequest request);
         Task<AppResponse<SearchResponse<TenantResponse>>> SearchAsync(SearchRequest request);
         
-        // Gia hạn subscription Standard cho tenant (chỉ admin)
-        Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId, int months = 1);
+        Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId);
     }
 }

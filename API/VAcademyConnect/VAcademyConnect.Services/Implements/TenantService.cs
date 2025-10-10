@@ -350,7 +350,7 @@ namespace VAcademyConnect.Services.Implements
         }
 
         // Gia hạn subscription Standard cho tenant (chỉ admin mới được gọi)
-        public async Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId, int months = 1)
+        public async Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId)
         {
             var result = new AppResponse<TenantResponse>();
             try
@@ -379,7 +379,7 @@ namespace VAcademyConnect.Services.Implements
 
                 currentTenantSubscription.SubscriptionId = standardPlan.Id;
                 currentTenantSubscription.StartDate = DateTime.UtcNow;
-                currentTenantSubscription.EndDate = DateTime.UtcNow.AddMonths(months);
+                currentTenantSubscription.EndDate = DateTime.UtcNow.AddMonths(1);
                 currentTenantSubscription.IsTrial = false;
                 currentTenantSubscription.ModifiedOn = DateTime.UtcNow;
                 currentTenantSubscription.ModifiedBy = user.Email;
@@ -402,7 +402,7 @@ namespace VAcademyConnect.Services.Implements
                     .FirstOrDefaultAsync();
 
                 var response = TenantMapper.ToResponse(tenant!);
-                result.BuildResult(response, $"Subscription renewed successfully for {months} month(s). Tenant is now active.");
+                result.BuildResult(response, $"Subscription renewed successfully for 1 month(s). Tenant is now active.");
             }
             catch (Exception ex)
             {

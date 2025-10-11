@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:3000", "https://localhost:5173", 
+            .WithOrigins("http://localhost:5173", "http://localhost:3000", "https://localhost:5173",
                 "https://localhost:7241")
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts => 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 {
     opts.User.RequireUniqueEmail = false;
     opts.Password.RequireDigit = false;
@@ -60,7 +60,7 @@ builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options => 
+}).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;

@@ -9,8 +9,10 @@ using VAcademyConnect.Commons.Enums;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class TenantRequest : BaseDto
+    public class TenantRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Tenant name is required.")]
         public string Name { get; set; }
 

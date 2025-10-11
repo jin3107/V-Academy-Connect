@@ -211,13 +211,12 @@ namespace VAcademyConnect.Services.Implements
                 if (user == null)
                     return result.BuildError("Unauthorize");
 
-                var tenant = await _tenantRepository.FindByAsync(t => t.Id == request.Id!.Value)
-                    .Include(t => t.TenantSubscription)
-                    .ThenInclude(ts => ts!.Subscription)
-                    .FirstOrDefaultAsync();
+                var tenant = await _tenantRepository.FindByAsync(t => t.Id == request.Id)
+                    .Include(ts => ts.TenantSubscription).ThenInclude(t => t!.Subscription).FirstOrDefaultAsync();
+                //var tenant = await _tenantRepository.GetAsync(request.Id!.Value); // chưa include subscription và tenantsubscription
 
                 if (tenant == null || tenant.IsDeleted == true)
-                    return result.BuildError($"Tenant with ID {request.Id!.Value} was not found or has been deleted.");
+                    return result.BuildError($"Tenant with ID {request.Id} was not found or has been deleted.");
 
                 // Kiểm tra quyền thay đổi status
                 if (!await ValidateStatusChange(tenant, request.Status))
@@ -244,7 +243,7 @@ namespace VAcademyConnect.Services.Implements
                 await _tenantRepository.EditAsync(tenant);
                 var updatedResponse = TenantMapper.ToResponse(tenant);
                 
-                string message = $"Tenant with ID {request.Id!.Value} has been updated successfully.";
+                string message = $"Tenant has been updated successfully.";
                 if (tenant.Status == Status.Active && tenant.TenantSubscription?.EndDate != null)
                 {
                     message += $" Subscription is valid until {tenant.TenantSubscription.EndDate.Value:yyyy-MM-dd}.";

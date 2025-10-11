@@ -6,7 +6,13 @@ import {
 } from "antd";
 import { 
   SearchOutlined, SortAscendingOutlined, 
-  SortDescendingOutlined, ReloadOutlined 
+  SortDescendingOutlined, ReloadOutlined, 
+  ClusterOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ExclamationCircleOutlined
 } from "@ant-design/icons";
 import type { Filter, SearchRequest, SearchResponse, 
   TenantRequest, TenantReponse
@@ -72,9 +78,33 @@ const Tenant = () => {
   const [detailData, setDetailData] = useState<TenantReponse | null>(null);
 
   const statusOptions = [
-    { label: "Active", value: Status.Active },
-    { label: "Suspended", value: Status.Suspended },
-    { label: "Inactive", value: Status.Inactive },
+  {
+    label: (
+      <>
+        <CheckCircleOutlined style={{ color: "#52c41a", marginRight: 6 }} />
+        Active
+      </>
+    ),
+    value: Status.Active,
+    },
+    {
+      label: (
+        <>
+          <CloseCircleOutlined style={{ color: "#f5222d", marginRight: 6 }} />
+          Suspended
+        </>
+      ),
+      value: Status.Suspended,
+    },
+    {
+      label: (
+        <>
+          <ExclamationCircleOutlined style={{ color: "#faad14", marginRight: 6 }} />
+          Inactive
+        </>
+      ),
+      value: Status.Inactive,
+    },
   ];
 
   const toDayjs = (v: string | Dayjs | Date | undefined): Dayjs | undefined => {
@@ -97,9 +127,16 @@ const Tenant = () => {
 
   const getStatusColor = (statusValue?: Status | number) => {
     if (statusValue === Status.Active || statusValue === 0) return "success";
-    if (statusValue === Status.Suspended || statusValue === 1) return "warning";
-    if (statusValue === Status.Inactive || statusValue === 2) return "error";
+    if (statusValue === Status.Suspended || statusValue === 1) return "error";
+    if (statusValue === Status.Inactive || statusValue === 2) return "warning";
     return "default";
+  };
+
+  const getStatusIcon = (statusValue?: Status | number) => {
+    if (statusValue === Status.Active || statusValue === 0) return <CheckCircleOutlined />;
+    if (statusValue === Status.Suspended || statusValue === 1) return <CloseCircleOutlined />;
+    if (statusValue === Status.Inactive || statusValue === 2) return <ExclamationCircleOutlined />;
+    return undefined;
   };
 
   const openDetail = (id?: string) => {
@@ -127,7 +164,6 @@ const Tenant = () => {
     }
 
     const raw = response.data as BackendTenantResponse;
-    // Backend trả về subscriptionStatus, map thành tenantSubscriptionResponse
     const subscription = raw.subscriptionStatus || raw.tenantSubscriptionResponse;
     const mapped: TenantReponse = {
       ...raw,
@@ -280,23 +316,7 @@ const Tenant = () => {
 
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
-
-  const renderSubscriptionStatus = (subscription?: TenantData['subscriptionStatus']) => {
-    if (!subscription) return <Tag>No Subscription</Tag>;
-
-    if (subscription.isExpired) {
-      return <Tag color="error">Expired</Tag>;
-    }
-    if (subscription.isExpiringSoon) {
-      return <Tag color="warning">Expiring Soon</Tag>;
-    }
-    if (subscription.hasActiveSubscription) {
-      return <Tag color="success">Active</Tag>;
-    }
-    return <Tag>Inactive</Tag>;
-  };
-
-  const columns = [
+    const columns = [
     {
       title: (
         <div className="column-header" onClick={() => handleSortChange("Name")}>
@@ -349,7 +369,9 @@ const Tenant = () => {
       render: (_: unknown, record: TenantData) => {
         const statusText = record.statusName || fmtStatus(Number(record.status));
         return (
-          <Tag color={getStatusColor(Number(record.status))}>{statusText || "-"}</Tag>
+          <Tag icon={getStatusIcon(Number(record.status))} color={getStatusColor(Number(record.status))}>
+            {statusText || "-"}
+          </Tag>
         );
       },
     },
@@ -484,15 +506,9 @@ const Tenant = () => {
                 <Descriptions.Item label="Contact Email">{detailData?.contactEmail ?? "-"}</Descriptions.Item>
                 <Descriptions.Item label="Contact Phone">{detailData?.contactPhone ?? "-"}</Descriptions.Item>
                 <Descriptions.Item label="Status">
-                  <Tag color={getStatusColor(detailData?.status)}>
+                  <Tag icon={getStatusIcon(detailData?.status)} color={getStatusColor(detailData?.status)}>
                     {detailData?.statusName || fmtStatus(detailData?.status)}
                   </Tag>
-                </Descriptions.Item>
-                <Descriptions.Item label="Subscription Plan">
-                  {detailData?.tenantSubscriptionResponse?.subscriptionPlanName ?? "-"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Subscription Status">
-                  {renderSubscriptionStatus(detailData?.tenantSubscriptionResponse)}
                 </Descriptions.Item>
                 <Descriptions.Item label="Has Active Subscription">
                   {detailData?.tenantSubscriptionResponse?.hasActiveSubscription ? "Yes" : "No"}
@@ -521,7 +537,7 @@ const Tenant = () => {
                 label="Name"
                 rules={[{ required: true, message: "Name is required" }]}
               >
-                <Input prefix={<span className="input-prefix"></span>} />
+                <Input prefix={<span className="input-prefix"><ClusterOutlined /></span>} />
               </Form.Item>
 
               <Form.Item
@@ -532,7 +548,7 @@ const Tenant = () => {
                   { type: "email", message: "Please enter a valid email" }
                 ]}
               >
-                <Input prefix={<span className="input-prefix"></span>} />
+                <Input prefix={<span className="input-prefix"><MailOutlined /></span>} />
               </Form.Item>
 
               <Form.Item
@@ -540,7 +556,7 @@ const Tenant = () => {
                 label="Contact Phone"
                 rules={[{ required: true, message: "Contact Phone is required" }]}
               >
-                <Input prefix={<span className="input-prefix"></span>} />
+                <Input prefix={<span className="input-prefix"><PhoneOutlined /></span>} />
               </Form.Item>
 
               <Form.Item

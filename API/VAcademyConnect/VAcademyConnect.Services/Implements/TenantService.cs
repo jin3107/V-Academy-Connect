@@ -258,30 +258,6 @@ namespace VAcademyConnect.Services.Implements
             return result;
         }
 
-        //private async Task<string?> ValidateSubscriptionStatus(Tenant tenant)
-        //{
-        //    // Check if status is Inactive
-        //    if (tenant.Status == Status.Inactive)
-        //        return "Cannot set tenant status to Inactive. Please subscribe to a plan to activate the tenant.";
-
-        //    if (tenant.TenantSubscription == null)
-        //        return "No active subscription found. Please subscribe to a plan to update tenant information.";
-
-        //    // If subscription end date is within 30 days or has passed
-        //    if (tenant.TenantSubscription.EndDate.HasValue)
-        //    {
-        //        var now = DateTime.UtcNow;
-        //        if (tenant.TenantSubscription.EndDate.Value <= now)
-        //            return "Your subscription has expired. Please renew your subscription to continue using the service.";
-        //        if (tenant.TenantSubscription.EndDate.Value <= now.AddDays(30))
-        //            return $"Your subscription will expire on " +
-        //                $"{tenant.TenantSubscription.EndDate.Value:yyyy-MM-dd}. " +
-        //                $"Please renew your subscription to avoid service interruption.";
-        //    }
-
-        //    return null;
-        //}
-
         private async Task<bool> CheckAndUpdateTenantStatus(Tenant tenant, bool saveChanges = true)
         {
             try

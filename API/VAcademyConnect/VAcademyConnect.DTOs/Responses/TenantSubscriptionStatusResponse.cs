@@ -9,6 +9,5 @@ namespace VAcademyConnect.DTOs.Responses
         public bool IsExpired { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public string SubscriptionPlanName { get; set; }
-        public string Status { get; set; }
     }
 }

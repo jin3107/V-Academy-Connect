@@ -38,14 +38,6 @@ interface TenantData {
     subscriptionPlanName: string;
     status: string;
   };
-  tenantSubscriptionResponse?: {
-    hasActiveSubscription: boolean;
-    isExpiringSoon: boolean;
-    isExpired: boolean;
-    expirationDate?: string | Date;
-    subscriptionPlanName: string;
-    status: string;
-  };
 }
 
 type BackendTenantResponse = TenantReponse & { 
@@ -163,16 +155,19 @@ const Tenant = () => {
   const onFinish = async (values: TenantReponse) => {
     try {
       setSubmitting(true);
+      const common = {
+        name: values.name,
+        contactEmail: values.contactEmail,
+        contactPhone: values.contactPhone,
+        status: values.status,
+      };
 
       if (mode === "update") {
         if (!selectedId) return message.error('Missing tenant id');
-
-        const payloadUpdate: TenantRequest = {
-          name: values.name,
-          contactEmail: values.contactEmail,
-          contactPhone: values.contactPhone,
-          status: values.status,
-        };
+        const payloadUpdate = {
+          ...common,
+          id: selectedId,
+        } as unknown as TenantRequest;
 
         const response = await updateTenant(payloadUpdate);
         if (!response.isSuccess) {
@@ -236,10 +231,6 @@ const Tenant = () => {
           if (searchResponse.data && searchResponse.data.data) {
             tenantData = searchResponse.data.data.map((item: TenantData | { data: TenantData }) => {
               const tenant = "data" in item ? item.data : item;
-              // Map subscriptionStatus to tenantSubscriptionResponse for compatibility
-              if (tenant.subscriptionStatus && !tenant.tenantSubscriptionResponse) {
-                tenant.tenantSubscriptionResponse = tenant.subscriptionStatus;
-              }
               return tenant;
             });
           }
@@ -290,7 +281,7 @@ const Tenant = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  const renderSubscriptionStatus = (subscription?: TenantData['tenantSubscriptionResponse']) => {
+  const renderSubscriptionStatus = (subscription?: TenantData['subscriptionStatus']) => {
     if (!subscription) return <Tag>No Subscription</Tag>;
 
     if (subscription.isExpired) {
@@ -364,7 +355,7 @@ const Tenant = () => {
     },
     {
       title: "Expiry Date",
-      dataIndex: ["tenantSubscriptionResponse", "expirationDate"],
+      dataIndex: ["subscriptionStatus", "expirationDate"],
       key: "expirationDate",
       width: 120,
       ellipsis: true,

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Responses
 {
-    public class PaymentResponse : BaseDto
+    public class PaymentResponse
     {
+        public Guid Id { get; set; }
         public string? StudentId { get; set; }
         public decimal Amount { get; set; }
         public string? Note { get; set; }

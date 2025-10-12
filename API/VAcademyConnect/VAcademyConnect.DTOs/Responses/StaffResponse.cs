@@ -8,8 +8,9 @@ using VAcademyConnect.Commons.Enums;
 
 namespace VAcademyConnect.DTOs.Responses
 {
-    public class StaffResponse : BaseDto
+    public class StaffResponse
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }

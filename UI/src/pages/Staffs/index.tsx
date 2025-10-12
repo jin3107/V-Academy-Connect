@@ -315,7 +315,7 @@ const Staffs = () => {
       ),
       dataIndex: "email",
       key: "email",
-      width: 100,
+      width: 110,
       ellipsis: true,
       render: (_: unknown, r: StaffData) => (
         <Text ellipsis={{ tooltip: r.email }}>{r.email || "-"}</Text>

@@ -1,9 +1,6 @@
 import dayjs from "dayjs";
+import type { Gender } from "../../commons/enums";
 
-export enum Gender {
-  Male = 0,
-  Female = 1
-};
 
 export default interface CreateStaffRequest {
   name: string,

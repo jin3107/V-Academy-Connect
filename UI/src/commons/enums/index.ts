@@ -1,1 +1,3 @@
-export { Status } from './Status'
+export { Status } from './Status';
+export { Gender } from './Gender';
+export { BillingCycle } from './BillingCycle';

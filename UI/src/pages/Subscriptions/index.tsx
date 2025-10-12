@@ -1,7 +1,7 @@
 import MainLayout from '../../components/MainLayout';
 import './style.scss'
 import { Button, Input, Table, message, Select, Modal, Form, Popconfirm, Descriptions, Spin, InputNumber, } from "antd";
-import { PlusOutlined, SearchOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined, ShoppingOutlined, SortAscendingOutlined, SortDescendingOutlined } from "@ant-design/icons";
 import type { Filter, SearchRequest, SearchResponse, SubscriptionRequest, SubscriptionResponse, } from "../../interfaces";
 import { Typography } from "antd";
 import type { Dayjs } from "dayjs";
@@ -455,7 +455,7 @@ const Subscriptions = () => {
                 label="Name" 
                 rules={[{ required: true, message: "Name is required"}]}
               >
-                <Input prefix={<span className="input-prefix"></span>} />
+                <Input prefix={<span className="input-prefix"><ShoppingOutlined /></span>} />
               </Form.Item>
 
               <Form.Item 

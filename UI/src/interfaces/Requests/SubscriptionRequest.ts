@@ -1,8 +1,4 @@
-export enum BillingCycle {
-  None = 0,
-  Monthly = 1,
-  Yearly = 2
-}
+import type { BillingCycle } from "../../commons/enums";
 
 export default interface SubscriptionRequest {
   name: string,

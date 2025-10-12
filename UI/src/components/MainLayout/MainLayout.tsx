@@ -4,7 +4,7 @@ import { logOutAsync } from "../../apis/accountAPI";
 import {
   ClusterOutlined,
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
-  SettingOutlined, ShoppingOutlined, TeamOutlined, UserOutlined,
+  ShoppingOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
 import type { MenuProps } from "antd";
@@ -45,12 +45,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     else if (key === "staffs") navigate("/staffs");
     else if (key === "subscriptions") navigate("/subscriptions");
     else if (key === "tenants") navigate("/tenants");
-    else if (key === "settings") navigate("/settings");
+    //else if (key === "settings") navigate("/settings");
   };
 
   const userMenuItems: MenuProps["items"] = [
     { key: "profile",  icon: <UserOutlined/>,    label: "Profile",  onClick: () => navigate("/profile") },
-    { key: "settings", icon: <SettingOutlined/>, label: "Settings", onClick: () => navigate("/settings") },
+    //{ key: "settings", icon: <SettingOutlined/>, label: "Settings", onClick: () => navigate("/settings") },
     { type: "divider" },
     { key: "logout",   icon: <LoginOutlined/>,   label: "Logout",   onClick: handleLogout },
   ];
@@ -85,7 +85,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             { key: "staffs",     icon: <TeamOutlined />,      label: "Staffs" },
             { key: "subscriptions",     icon: <ShoppingOutlined />,      label: "Subscriptions" },
             { key: "tenants",     icon: <ClusterOutlined />,      label: "Tenants" },
-            { key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
+            //{ key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
           ]}
           onClick={handleMenuClick}
         />

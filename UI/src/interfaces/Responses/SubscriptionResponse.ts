@@ -1,10 +1,6 @@
 import dayjs from "dayjs";
+import type { BillingCycle } from "../../commons/enums";
 
-export enum BillingCycle {
-  None = 0,
-  Monthlyy = 1,
-  Yearly = 2
-}
 
 export default interface SubscriptionResponse {
   id?: string,

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Responses
 {
-    public class ScoreResponse : BaseDto
+    public class ScoreResponse
     {
+        public Guid Id { get; set; }
         public string? StudentId { get; set; }
         public Guid? ClassId { get; set; }
         public string TestName { get; set; }

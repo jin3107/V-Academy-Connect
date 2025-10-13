@@ -60,7 +60,7 @@ namespace VAcademyConnect.Services.Mapping
                 TenantId = tenantId,
                 SubscriptionId = standardPlan.Id,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30), // 30 ngày trial
+                EndDate = DateTime.UtcNow.AddDays(30),
                 IsTrial = true
             };
         }
@@ -73,7 +73,7 @@ namespace VAcademyConnect.Services.Mapping
                 TenantId = tenantId,
                 SubscriptionId = freePlan.Id,
                 StartDate = DateTime.UtcNow,
-                EndDate = null, // Free plan không có hạn
+                EndDate = null, 
                 IsTrial = false
             };
         }

@@ -213,18 +213,15 @@ namespace VAcademyConnect.Services.Implements
 
                 var tenant = await _tenantRepository.FindByAsync(t => t.Id == request.Id)
                     .Include(ts => ts.TenantSubscription).ThenInclude(t => t!.Subscription).FirstOrDefaultAsync();
-                //var tenant = await _tenantRepository.GetAsync(request.Id!.Value); // chưa include subscription và tenantsubscription
 
                 if (tenant == null || tenant.IsDeleted == true)
                     return result.BuildError($"Tenant with ID {request.Id} was not found or has been deleted.");
 
-                // Kiểm tra quyền thay đổi status
                 if (!await ValidateStatusChange(tenant, request.Status))
                 {
                     return result.BuildError("You do not have permission to change tenant status from Inactive to Active. Only administrators can perform this action.");
                 }
 
-                // Nếu đang chuyển từ Inactive sang Active, kiểm tra subscription
                 if (tenant.Status == Status.Inactive && request.Status == Status.Active)
                 {
                     if (tenant.TenantSubscription == null || tenant.TenantSubscription.EndDate <= DateTime.UtcNow)
@@ -266,7 +263,6 @@ namespace VAcademyConnect.Services.Implements
 
                 if (tenant.TenantSubscription?.EndDate < DateTime.UtcNow && tenant.TenantSubscription?.EndDate != null)
                 {
-                    // Subscription hết hạn - chuyển về Free plan
                     var freePlan = await _subscriptionRepository.FindByAsync(s => s.Name == "Free" && !s.IsDeleted)
                         .FirstOrDefaultAsync();
 
@@ -275,19 +271,17 @@ namespace VAcademyConnect.Services.Implements
                         var oldSubscription = await _tenantSubscriptionRepository.GetAsync(tenant.TenantSubscription.Id);
                         if (oldSubscription != null)
                         {
-                            // Cập nhật subscription hiện tại thành Free plan
                             oldSubscription.SubscriptionId = freePlan.Id;
                             oldSubscription.Subscription = freePlan;
                             oldSubscription.IsTrial = false;
                             oldSubscription.StartDate = DateTime.UtcNow;
-                            oldSubscription.EndDate = null; // Free plan không có hạn
+                            oldSubscription.EndDate = null;
                             oldSubscription.ModifiedOn = DateTime.UtcNow;
                             oldSubscription.ModifiedBy = _contextAccessor.HttpContext?.User.Identity?.Name ?? "System";
 
                             await _tenantSubscriptionRepository.EditAsync(oldSubscription);
                         }
 
-                        // Chuyển tenant về Active (Free plan vẫn được dùng)
                         tenant.Status = Status.Active;
                         tenant.ModifiedOn = DateTime.UtcNow;
                         tenant.ModifiedBy = "System - Switched to Free Plan";
@@ -314,7 +308,6 @@ namespace VAcademyConnect.Services.Implements
             if (user == null)
                 return false;
 
-            // Chỉ cho phép admin thay đổi status từ Inactive sang Active
             if (tenant.Status == Status.Inactive && newStatus == Status.Active)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -324,7 +317,6 @@ namespace VAcademyConnect.Services.Implements
             return true;
         }
 
-        // Gia hạn subscription Standard cho tenant (chỉ admin mới được gọi)
         public async Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId)
         {
             var result = new AppResponse<TenantResponse>();

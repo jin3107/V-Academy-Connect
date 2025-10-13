@@ -213,7 +213,6 @@ namespace VAcademyConnect.Services.Implements
 
                 var tenant = await _tenantRepository.FindByAsync(t => t.Id == request.Id)
                     .Include(ts => ts.TenantSubscription).ThenInclude(t => t!.Subscription).FirstOrDefaultAsync();
-                //var tenant = await _tenantRepository.GetAsync(request.Id!.Value); // chưa include subscription và tenantsubscription
 
                 if (tenant == null || tenant.IsDeleted == true)
                     return result.BuildError($"Tenant with ID {request.Id} was not found or has been deleted.");

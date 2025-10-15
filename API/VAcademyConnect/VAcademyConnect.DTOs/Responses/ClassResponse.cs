@@ -18,6 +18,9 @@ namespace VAcademyConnect.DTOs.Responses
         public string? TeacherName { get; set; }
         public string? TenantName { get; set; }
 
+        public DateTime? CreatedOn { get; set; }
+        public string? CreatedBy { get; set; }
+
         public List<StudentInClassResponse>? Students { get; set; }
     }
 }

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using VAcademyConnect.DTOs.Requests;
 using VAcademyConnect.DTOs.Responses;
 using VAcademyConnect.Models.Entities;
+using VAcademyConnect.Repositories.Implements;
 using VAcademyConnect.Repositories.Interfaces;
 using VAcademyConnect.Services.Interfaces;
 using VAcademyConnect.Services.Mapping;
@@ -70,9 +71,29 @@ namespace VAcademyConnect.Services.Implements
             return result;
         }
 
-        public Task<AppResponse<string>> DeleteAsync(Guid id)
+        public async Task<AppResponse<string>> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<string>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var classes = await _classRepository.GetAsync(id);
+                if (classes == null || classes.IsDeleted == true)
+                    return result.BuildError($"Class with ID {id} was not found or has been deleted.");
+                classes.IsDeleted = true;
+                classes.ModifiedBy = user.Email;
+
+                await _classRepository.EditAsync(classes);
+                result.BuildResult($"Class with ID {id} has been deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
 
         public async Task<AppResponse<ClassResponse>> GetByIdAsync(Guid id)
@@ -178,9 +199,40 @@ namespace VAcademyConnect.Services.Implements
             }
         }
 
-        public Task<AppResponse<ClassResponse>> UpdateAsync(ClassRequest request)
+        public async Task<AppResponse<ClassResponse>> UpdateAsync(ClassRequest request)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<ClassResponse>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var classes = await _classRepository.GetAsync(request.Id);
+                if (classes == null || classes.IsDeleted == true)
+                    return result.BuildError("Class was not found or has been deleted.");
+
+                classes.Name = request.Name;
+                classes.TeacherId = request.TeacherId;
+                classes.TenantId = request.TenantId;
+                classes.Tuition = request.Tuition;
+                classes.ModifiedBy = user.Email;
+                classes.ModifiedOn = DateTime.UtcNow;
+
+                await _classRepository.EditAsync(classes);
+                var response = ClassMapper.ToResponse(classes);
+                if (response.TenantId.HasValue)
+                {
+                    var tenantName = _tenantRepository.FindByAsync(c => c.Id == classes.TenantId).FirstOrDefault();
+                    response.TenantName = tenantName?.Name ?? "None";
+                }
+                result.BuildResult(response, "Class has been updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
     }
 }

@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class ClassRequest : BaseDto
+    public class ClassRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Class name is required.")]
         public string Name { get; set; }
 

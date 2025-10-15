@@ -41,5 +41,20 @@ namespace VAcademyConnect.API.Controllers
             var result = await _classService.SearchAsync(request);
             return Ok(result);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] ClassRequest request)
+        {
+            var result = await _classService.UpdateAsync(request);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var result = await _classService.DeleteAsync(id);
+            return Ok(result);
+        }
     }
 }

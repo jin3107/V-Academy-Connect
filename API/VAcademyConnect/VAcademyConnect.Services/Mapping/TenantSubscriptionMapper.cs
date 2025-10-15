@@ -60,12 +60,12 @@ namespace VAcademyConnect.Services.Mapping
                 TenantId = tenantId,
                 SubscriptionId = standardPlan.Id,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30), // 30 ngày trial
+                EndDate = DateTime.UtcNow.AddDays(30),
                 IsTrial = true
             };
         }
 
-        // Tạo subscription Free khi Standard hết hạn (không có EndDate)
+        // Tạo subscription Free khi Standard hết hạn (ko có EndDate)
         public static TenantSubscription ToFreeSubscription(Guid tenantId, Subscription freePlan)
         {
             return new TenantSubscription
@@ -73,13 +73,14 @@ namespace VAcademyConnect.Services.Mapping
                 TenantId = tenantId,
                 SubscriptionId = freePlan.Id,
                 StartDate = DateTime.UtcNow,
-                EndDate = null, // Free plan không có hạn
+                EndDate = null,
                 IsTrial = false
             };
         }
 
-        // Gia hạn subscription Standard (không phải trial)
-        public static TenantSubscription ToRenewedStandardSubscription(Guid tenantId, Subscription standardPlan, string createdBy, int months = 1)
+        // Gia hạn subscription Standard (ko phải trial)
+        public static TenantSubscription ToRenewedStandardSubscription(Guid tenantId, Subscription standardPlan, 
+            string createdBy, int months = 1)
         {
             return new TenantSubscription
             {

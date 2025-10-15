@@ -64,12 +64,8 @@ namespace VAcademyConnect.Services.Implements
 
                 // Nếu có thay đổi, reload tenant để lấy subscription mới
                 if (statusChanged)
-                {
                     tenant = await _tenantRepository.FindByAsync(sub => sub.Id == id)
-                        .Include(t => t.TenantSubscription)
-                            .ThenInclude(ts => ts!.Subscription)
-                        .FirstOrDefaultAsync();
-                }
+                        .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription).FirstOrDefaultAsync();
 
                 var response = TenantMapper.ToResponse(tenant!);
                 var message = $"Tenant with ID {id} has been found.";
@@ -279,7 +275,7 @@ namespace VAcademyConnect.Services.Implements
                             oldSubscription.Subscription = freePlan;
                             oldSubscription.IsTrial = false;
                             oldSubscription.StartDate = DateTime.UtcNow;
-                            oldSubscription.EndDate = null; // Free plan không có hạn
+                            oldSubscription.EndDate = null;
                             oldSubscription.ModifiedOn = DateTime.UtcNow;
                             oldSubscription.ModifiedBy = _contextAccessor.HttpContext?.User.Identity?.Name ?? "System";
 

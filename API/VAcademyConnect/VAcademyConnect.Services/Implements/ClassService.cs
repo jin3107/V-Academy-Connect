@@ -1,0 +1,186 @@
+﻿using LinqKit;
+using MayNghien.Infrastructures.Models.Requests;
+using MayNghien.Infrastructures.Models.Responses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VAcademyConnect.DTOs.Requests;
+using VAcademyConnect.DTOs.Responses;
+using VAcademyConnect.Models.Entities;
+using VAcademyConnect.Repositories.Interfaces;
+using VAcademyConnect.Services.Interfaces;
+using VAcademyConnect.Services.Mapping;
+using static MayNghien.Infrastructures.Helpers.SearchHelper;
+
+namespace VAcademyConnect.Services.Implements
+{
+
+    public class ClassService : IClassService
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IClassRepository _classRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ITenantRepository _tenantRepository;
+
+        public ClassService(UserManager<ApplicationUser> userManager, IClassRepository classRepository,
+            IHttpContextAccessor contextAccessor, ITenantRepository tenantRepository)
+        {
+            _userManager = userManager;
+            _classRepository = classRepository;
+            _contextAccessor = contextAccessor;
+            _tenantRepository = tenantRepository;
+        }
+
+        public async Task<AppResponse<ClassResponse>> CreateAsync(ClassRequest request)
+        {
+            var result = new AppResponse<ClassResponse>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var newClass = ClassMapper.ToEntity(request);
+                newClass.Id = Guid.NewGuid();
+                newClass.Name = request.Name;
+                newClass.TeacherId = request.TeacherId;
+                newClass.TenantId = request.TenantId;
+                newClass.Tuition = request.Tuition;
+                newClass.CreatedBy = user.Email;
+                newClass.CreatedOn = DateTime.UtcNow;
+
+                await _classRepository.AddAsync(newClass);
+                var response = ClassMapper.ToResponse(newClass);
+                if (request.TenantId.HasValue)
+                {
+                    var tenantName = _tenantRepository.FindByAsync(c => c.Id == newClass.TenantId).FirstOrDefault();
+                    response.TenantName = tenantName?.Name ?? "None";
+                }
+                result.BuildResult(response, "Class has been created successfully.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        public Task<AppResponse<string>> DeleteAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<AppResponse<ClassResponse>> GetByIdAsync(Guid id)
+        {
+            var result = new AppResponse<ClassResponse>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unthorize.");
+
+                var classes = await _classRepository.FindByAsync(cl => cl.Id == id).FirstOrDefaultAsync();
+                if (classes == null || classes.IsDeleted == true)
+                    return result.BuildError("Class was not found or has been deleted.");
+
+                var response = ClassMapper.ToResponse(classes);
+                if (response.TenantId.HasValue)
+                {
+                    var tenantName = _tenantRepository.FindByAsync(c => c.Id == classes.TenantId).FirstOrDefault();
+                    response.TenantName = tenantName?.Name ?? "None";
+                }
+                result.BuildResult(response, "Class has been found.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        public async Task<AppResponse<SearchResponse<ClassResponse>>> SearchAsync(SearchRequest request)
+        {
+            var result = new AppResponse<SearchResponse<ClassResponse>>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var query = BuildFilterExpression(request.Filters!);
+                var numOfRecords = await _classRepository.CountRecordsAsync(query);
+                var classes = _classRepository.FindByPredicate(query).AsQueryable();
+                if (request.SortBy != null)
+                    classes = _classRepository.AddSort(classes, request.SortBy);
+                else
+                    classes = classes.OrderBy(x => x.Name);
+
+                int pageIndex = request.PageIndex ?? 1;
+                int pageSize = request.PageSize ?? 1;
+                int startIndex = (pageIndex - 1) * pageSize;
+                var classList = await classes.Skip(startIndex).Take(pageSize).ToListAsync();
+                var dtoList = classList.Select(ClassMapper.ToResponse).ToList();
+                foreach (var tenants in dtoList)
+                {
+                    var tenant = _tenantRepository.FindByAsync(c => c.Id == tenants.TenantId).FirstOrDefault();
+                    tenants.TenantName = tenant?.Name ?? "None";
+                }
+                var searchResponse = new SearchResponse<ClassResponse>
+                {
+                    TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
+                    TotalRows = numOfRecords,
+                    CurrentPage = pageIndex,
+                    Data = dtoList,
+                    RowsPerPage = pageSize,
+                };
+                result.Data = searchResponse;
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private ExpressionStarter<Class> BuildFilterExpression(List<Filter> filters)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<Class>(true);
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        switch (filter.FieldName)
+                        {
+                            case "Name":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                break;
+
+                            default: break;
+                        }
+                    }
+                }
+
+                predicate = predicate.And(x => x.IsDeleted == false);
+                return predicate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
+        }
+
+        public Task<AppResponse<ClassResponse>> UpdateAsync(ClassRequest request)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

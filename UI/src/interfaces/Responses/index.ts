@@ -4,3 +4,4 @@ export type { default as Role } from '../Authentication/Responses/RoleResponse';
 export type { default as SubscriptionResponse } from './SubscriptionResponse';
 export type { default as TenantReponse } from './TenantResponse';
 export type { default as TenantSubscriptionReponse } from './TenantSubscriptionResponse';
+export type { default as ClassResponse } from './ClassResponse'

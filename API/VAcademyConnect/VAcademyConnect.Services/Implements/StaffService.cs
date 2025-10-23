@@ -44,7 +44,7 @@ namespace VAcademyConnect.Services.Implements
             _roleManager = roleManager;
         }
 
-        public async Task<AppResponse<StaffResponse>> CreateAsync(CreateStaffRequest request)
+        public async Task<AppResponse<StaffResponse>> CreateAsync(StaffRequest request)
         {
             var result = new AppResponse<StaffResponse>();
             try
@@ -55,6 +55,9 @@ namespace VAcademyConnect.Services.Implements
 
                 if (await CheckUserExists(request.Email, request.PhoneNumber))
                     return result.BuildError("Staff with this email or phone number already exists.");
+
+                if (request.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
+                    return result.BuildError("Cannot create Teacher as Staff. Teacher role is assigned to TenantAdmin only.");
 
                 var createStaff = await CreateStaff(request);
                 if (createStaff == null)
@@ -92,7 +95,7 @@ namespace VAcademyConnect.Services.Implements
             }
         }
 
-        private async Task<(IdentityResult Result, ApplicationUser? User)> CreateUser(CreateStaffRequest request, Guid staffId)
+        private async Task<(IdentityResult Result, ApplicationUser? User)> CreateUser(StaffRequest request, Guid staffId)
         {
             var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
             if (request == null)
@@ -100,7 +103,7 @@ namespace VAcademyConnect.Services.Implements
 
             var identityUser = new ApplicationUser
             {
-                UserName = request.Name,
+                UserName = request.Email,
                 Email = request.Email,
                 TenantId = user!.TenantId,
                 EmailConfirmed = true,
@@ -161,7 +164,7 @@ namespace VAcademyConnect.Services.Implements
             }
         }
 
-        public async Task<AppResponse<StaffResponse>> UpdateAsync(UpdateStaffRequest request)
+        public async Task<AppResponse<StaffResponse>> UpdateAsync(StaffRequest request)
         {
             var result = new AppResponse<StaffResponse>();
             try
@@ -182,6 +185,7 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("Email or phone number already in use");
 
                 var currentEmail = staff.Email;
+                staff.Name = request.Name;
                 staff.Email = request.Email;
                 staff.PhoneNumber = request.PhoneNumber;
                 staff.DateOfBirth = request.DateOfBirth;
@@ -233,13 +237,13 @@ namespace VAcademyConnect.Services.Implements
             return userByPhoneNumber != null;
         }
 
-        private async Task<Staff> CreateStaff(CreateStaffRequest request)
+        private async Task<Staff> CreateStaff(StaffRequest request)
         {
             var currentUser = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
             if (request == null)
                 throw new ArgumentNullException(nameof(request), "Request for Staff is invalid");
 
-            var staff = StaffMapper.ToCreateEntity(request);
+            var staff = StaffMapper.ToEntity(request);
             staff.Id = Guid.NewGuid();
             staff.CreatedBy = currentUser?.Email;
             staff.CreatedOn = DateTime.UtcNow;
@@ -271,6 +275,9 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("Unauthorize");
 
                 var query = BuildFilterExpression(request.Filters!);
+                if (user.Role != Commons.Enums.Role.SuperAdmin && user.TenantId.HasValue)
+                    query = query.And(x => x.TenantId == user.TenantId);
+                
                 var numOfRecords = await _staffRepository.CountRecordsAsync(query);
                 var staffs = _staffRepository.FindByPredicate(query).AsQueryable();
                 if (request.SortBy != null)

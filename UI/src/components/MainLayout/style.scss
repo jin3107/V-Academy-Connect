@@ -7,17 +7,13 @@
 
   .main-sider {
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-
-  /* Khối phải tịnh tiến theo bề rộng Sider */
-  .right-layout {
-    margin-left: 220px;
-    transition: margin-left .18s ease; /* mượt */
-    will-change: margin-left;
-    transform: translateZ(0); /* hint GPU */
-  }
-  .right-layout.is-collapsed {
-    margin-left: 80px;
-  }
+    // Enable hardware acceleration for smooth transitions
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: width;
+    
+    // Override Ant Design default transition for smoother animation
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     
     .logo {
       height: 64px;
@@ -26,6 +22,8 @@
       align-items: center;
       gap: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      // Smooth transition for logo elements
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
       .logo-circle {
         width: 32px;
@@ -33,6 +31,7 @@
         background: #00FF00;
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0; // Prevent shrinking during collapse
       }
 
       .logo-text {
@@ -40,6 +39,9 @@
         font-size: 18px;
         font-weight: 600;
         @include fonts.inter(600);
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       }
     }
 
@@ -64,6 +66,14 @@
         }
       }
     }
+  }
+
+  // Layout bên phải - tịnh tiến theo Sider
+  .ant-layout {
+    // Enable hardware acceleration for smooth margin-left transition
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: margin-left;
   }
 
   .main-header {

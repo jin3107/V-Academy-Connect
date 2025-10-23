@@ -11,9 +11,9 @@ namespace VAcademyConnect.Services.Mapping
 {
     public static class StaffMapper
     {
-        public static CreateStaffRequest ToCreateRequest(Staff entity)
+        public static StaffRequest ToRequest(Staff entity)
         {
-            return new CreateStaffRequest
+            return new StaffRequest
             {
                 Name = entity.Name,
                 DateOfBirth = entity.DateOfBirth,
@@ -26,7 +26,7 @@ namespace VAcademyConnect.Services.Mapping
             };
         }
 
-        public static Staff ToCreateEntity(CreateStaffRequest request)
+        public static Staff ToEntity(StaffRequest request)
         {
             return new Staff
             {
@@ -38,34 +38,6 @@ namespace VAcademyConnect.Services.Mapping
                 PhoneNumber = request.PhoneNumber,
                 Password = request.Password,
                 Role = request.Role,
-            };
-        }
-
-        public static Staff ToUpdateEntity(UpdateStaffRequest request)
-        {
-            return new Staff
-            {
-                DateOfBirth = request.DateOfBirth,
-                Gender = request.Gender,
-                Address = request.Address,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                Password = request.Password,
-                Role = request.Role,
-            };
-        }
-
-        public static UpdateStaffRequest ToUpdateRequest(Staff entity)
-        {
-            return new UpdateStaffRequest
-            {
-                DateOfBirth = entity.DateOfBirth,
-                Gender = entity.Gender,
-                Address = entity.Address,
-                Email = entity.Email,
-                PhoneNumber = entity.PhoneNumber,
-                Password = entity.Password,
-                Role = entity.Role,
             };
         }
 

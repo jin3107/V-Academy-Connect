@@ -1,7 +1,8 @@
-import { type ReactNode, useEffect, useState, useMemo } from "react";
+import { type ReactNode, useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
 import {
+  BookOutlined,
   ClusterOutlined,
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
   ShoppingOutlined, TeamOutlined, UserOutlined,
@@ -17,40 +18,95 @@ interface MainLayoutProps { children: ReactNode; }
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [userName, setUserName] = useState("User");
+  const [userRole, setUserRole] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => { setUserName("Chuong Huynh"); }, []);
+  useEffect(() => {
+    // Load user info from localStorage
+    const userInfoStr = localStorage.getItem("userInfo");
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr);
+        const displayName = userInfo.userName || userInfo.email?.split('@')[0] || userInfo.email || "User";
+        setUserName(displayName);
+        setUserRole(userInfo.role || "");
+      } catch (error) {
+        console.error("Failed to parse user info:", error);
+        setUserName("User");
+        setUserRole("");
+      }
+    }
+  }, []);
 
   const selectedKey = useMemo(() => {
     const path = location.pathname;
     if (path === "/" || path.startsWith("/home")) return ["dashboard"];
     if (path.startsWith("/staffs")) return ["staffs"];
-    if (path.startsWith("/settings")) return ["settings"];
-    if (path.startsWith("/subscriptions")) return ["subscriptions"]
+    if (path.startsWith("/classes")) return ["classes"];
+    if (path.startsWith("/subscriptions")) return ["subscriptions"];
+    if (path.startsWith("/tenants")) return ["tenants"];
+    // if (path.startsWith("/students")) return ["students"];
     return ["dashboard"];
   }, [location.pathname]);
 
-  const handleLogout = async () => {
+  // Menu items based on role
+  const getMenuItems = useMemo(() => {
+    const role = userRole;
+
+    // SuperAdmin: Can see everything
+    if (role === "SuperAdmin") {
+      return [
+        { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
+        { key: "staffs", icon: <TeamOutlined />, label: "Staffs" },
+        { key: "subscriptions", icon: <ShoppingOutlined />, label: "Subscriptions" },
+        { key: "tenants", icon: <ClusterOutlined />, label: "Tenants" },
+        { key: "classes", icon: <BookOutlined />, label: "Classes" }
+      ];
+    }
+
+    // TenantAdmin: Can see Staffs and Classes
+    if (role === "TenantAdmin") {
+      return [
+        { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
+        { key: "staffs", icon: <TeamOutlined />, label: "Staffs" },
+        { key: "classes", icon: <BookOutlined />, label: "Classes" }
+      ];
+    }
+
+    // Teacher: Can see Students (commented for future)
+    if (role === "Teacher") {
+      return [
+        { key: "classes", icon: <BookOutlined />, label: "Classes" },
+        // { key: "students", icon: <UserOutlined />, label: "Students" } // TODO: Implement later
+      ];
+    }
+
+    // Default: No menu items for users without roles
+    return [];
+  }, [userRole]);
+
+  const handleLogout = useCallback(async () => {
     try { await logOutAsync(); } catch (err) {
       console.log("Logout failed: ", err);
     } finally {
       localStorage.removeItem("token");
+      localStorage.removeItem("userInfo");
       navigate("/login");
     }
-  };
+  }, [navigate]);
 
-  const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
+  const handleMenuClick: MenuProps["onClick"] = useCallback(({ key }: { key: string }) => {
     if (key === "dashboard") navigate("/home");
     else if (key === "staffs") navigate("/staffs");
     else if (key === "subscriptions") navigate("/subscriptions");
     else if (key === "tenants") navigate("/tenants");
-    //else if (key === "settings") navigate("/settings");
-  };
+    else if (key === "classes") navigate("/classes");
+    // else if (key === "students") navigate("/students"); // TODO: Implement later
+  }, [navigate]);
 
   const userMenuItems: MenuProps["items"] = [
     { key: "profile",  icon: <UserOutlined/>,    label: "Profile",  onClick: () => navigate("/profile") },
-    //{ key: "settings", icon: <SettingOutlined/>, label: "Settings", onClick: () => navigate("/settings") },
     { type: "divider" },
     { key: "logout",   icon: <LoginOutlined/>,   label: "Logout",   onClick: handleLogout },
   ];
@@ -80,19 +136,17 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKey}
-          items={[
-            { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
-            { key: "staffs",     icon: <TeamOutlined />,      label: "Staffs" },
-            { key: "subscriptions",     icon: <ShoppingOutlined />,      label: "Subscriptions" },
-            { key: "tenants",     icon: <ClusterOutlined />,      label: "Tenants" },
-            //{ key: "settings",  icon: <SettingOutlined />,   label: "Settings" },
-          ]}
+          items={getMenuItems}
           onClick={handleMenuClick}
         />
       </Sider>
 
       {/* Khối phải tịnh tiến theo bề rộng Sider */}
-      <Layout style={{ marginLeft: siderWidth, transition: "margin-left .2s ease" }}>
+      <Layout style={{ 
+        marginLeft: siderWidth, 
+        transition: "margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        willChange: "margin-left"
+      }}>
         <Header className="main-header">
           <Button
             type="text"

@@ -58,7 +58,7 @@ type BackendTenantResponse = TenantReponse & {
   };
 };
 
-const Tenant = () => {
+const Tenants = () => {
   const [loading, setLoading] = useState(false);
   const [tenants, setTenants] = useState<TenantData[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -574,4 +574,4 @@ const Tenant = () => {
   )
 }
 
-export default Tenant;
+export default Tenants;

@@ -22,7 +22,17 @@ const LogIn = () => {
 
       const response = await logInAsync(values);
       const token = response.data.token;
+      const userInfo = {
+        email: response.data.email,
+        userId: response.data.userId,
+        role: response.data.role,
+        tenantId: response.data.tenantId,
+        phoneNumber: response.data.phoneNumber,
+        userName: response.data.userName
+      };
+      
       localStorage.setItem("token", token);
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
       
       message.success('Login successful!');
       navigate('/home');

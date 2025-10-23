@@ -16,6 +16,7 @@ namespace VAcademyConnect.Models.Entities
         public Tenant? Tenant { get; set; }
 
         public Role? Role { get; set; }
+        public string? FullName { get; set; }
 
         [InverseProperty("Student")]
         public ICollection<Attendance>? Attendances { get; set; }

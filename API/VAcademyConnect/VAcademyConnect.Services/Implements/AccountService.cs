@@ -187,7 +187,8 @@ namespace VAcademyConnect.Services.Implements
         {
             var user = new ApplicationUser
             {
-                UserName = request.Name,
+                FullName = request.Name,
+                UserName = request.Email,
                 Email = request.Email,
                 TenantId = tenantId,
                 EmailConfirmed = true,

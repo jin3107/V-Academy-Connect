@@ -12,8 +12,8 @@ using VAcademyConnect.Models.Data;
 namespace VAcademyConnect.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250904164738_Remove prop Age from Staff table")]
-    partial class RemovepropAgefromStafftable
+    [Migration("20251023023614_DbInit")]
+    partial class DbInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -175,6 +175,9 @@ namespace VAcademyConnect.Models.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");

@@ -5,4 +5,5 @@ export default interface LogInResponse {
   userId: string;  
   tenantId: string;
   role: string;
+  userName: string
 };

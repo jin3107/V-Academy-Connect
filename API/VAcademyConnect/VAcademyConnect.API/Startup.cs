@@ -16,6 +16,7 @@ namespace VAcademyConnect.API
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             builder.Services.AddScoped<IStaffRepository, StaffRepository>();
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
+            builder.Services.AddScoped<IClassStudentRepository, ClassStudentRepository>();
             #endregion
 
             #region Services
@@ -24,6 +25,7 @@ namespace VAcademyConnect.API
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
             builder.Services.AddScoped<IStaffService, StaffService>();
             builder.Services.AddScoped<IClassService, ClassService>();
+            builder.Services.AddScoped<IClassStudentService, ClassStudentService>();
             #endregion
         }
     }

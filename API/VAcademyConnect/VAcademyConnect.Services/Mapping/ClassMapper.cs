@@ -42,10 +42,11 @@ namespace VAcademyConnect.Services.Mapping
                 TeacherId= entity.TeacherId,
                 TenantId = entity.TenantId,
                 Tuition = Decimal.Parse(entity.Tuition.ToString("F2")),
-                TeacherName = entity.Teacher?.UserName,
+                TeacherName = entity.Teacher?.FullName,
                 TenantName = entity.Tenant?.Name,
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,
+                Students = entity.ClassStudents?.Select(ClassStudentMapper.ToResponse).ToList()
             };
         }
     }

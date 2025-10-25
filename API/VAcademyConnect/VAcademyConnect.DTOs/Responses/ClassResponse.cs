@@ -11,11 +11,8 @@ namespace VAcademyConnect.DTOs.Responses
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string? TeacherId { get; set; }
         public Guid? TenantId { get; set; }
         public decimal Tuition { get; set; }
-
-        public string? TeacherName { get; set; }
         public string? TenantName { get; set; }
 
         public DateTime? CreatedOn { get; set; }

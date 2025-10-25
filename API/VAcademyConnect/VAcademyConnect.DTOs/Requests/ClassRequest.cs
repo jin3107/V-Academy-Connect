@@ -16,9 +16,6 @@ namespace VAcademyConnect.DTOs.Requests
         public string Name { get; set; }
 
         [Required]
-        public string? TeacherId { get; set; }
-
-        [Required]
         public Guid? TenantId { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Tuition must be a positive number.")]

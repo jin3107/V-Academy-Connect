@@ -49,13 +49,14 @@ namespace VAcademyConnect.Services.Implements
                 var newClass = ClassMapper.ToEntity(request);
                 newClass.Id = Guid.NewGuid();
                 newClass.Name = request.Name;
-                newClass.TeacherId = request.TeacherId;
                 newClass.TenantId = request.TenantId;
                 newClass.Tuition = request.Tuition;
                 newClass.CreatedBy = user.Email;
                 newClass.CreatedOn = DateTime.UtcNow;
 
                 await _classRepository.AddAsync(newClass);
+                var createdEntity = await _classRepository.FindByAsync(c => c.Id == newClass.Id)
+                    .Include(c => c.ClassStudents).FirstOrDefaultAsync();
                 var response = ClassMapper.ToResponse(newClass);
                 if (request.TenantId.HasValue)
                 {
@@ -135,22 +136,30 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("Unauthorize");
 
                 var query = BuildFilterExpression(request.Filters!);
+                if (user.Role != Commons.Enums.Role.SuperAdmin && user.TenantId.HasValue)
+                    query = query.And(x => x.TenantId == user.TenantId);
+
                 var numOfRecords = await _classRepository.CountRecordsAsync(query);
-                var classes = _classRepository.FindByPredicate(query).AsQueryable();
+                var classes = _classRepository.FindByPredicate(query)
+                    .Include(c => c.ClassStudents).ThenInclude(cs => cs.Student).AsQueryable();
+
                 if (request.SortBy != null)
                     classes = _classRepository.AddSort(classes, request.SortBy);
                 else
                     classes = classes.OrderBy(x => x.Name);
 
                 int pageIndex = request.PageIndex ?? 1;
-                int pageSize = request.PageSize ?? 1;
+                int pageSize = request.PageSize ?? 10;
                 int startIndex = (pageIndex - 1) * pageSize;
                 var classList = await classes.Skip(startIndex).Take(pageSize).ToListAsync();
                 var dtoList = classList.Select(ClassMapper.ToResponse).ToList();
-                foreach (var tenants in dtoList)
+                foreach (var classDto in dtoList)
                 {
-                    var tenant = _tenantRepository.FindByAsync(c => c.Id == tenants.TenantId).FirstOrDefault();
-                    tenants.TenantName = tenant?.Name ?? "None";
+                    if (classDto.TenantId.HasValue)
+                    {
+                        var tenant = _tenantRepository.FindByAsync(c => c.Id == classDto.TenantId).FirstOrDefault();
+                        classDto.TenantName = tenant?.Name ?? "None";
+                    }
                 }
                 var searchResponse = new SearchResponse<ClassResponse>
                 {
@@ -186,6 +195,12 @@ namespace VAcademyConnect.Services.Implements
                                     predicate = predicate.And(x => x.Name.Contains(filter.Value));
                                 break;
 
+                            case "StudentName":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.ClassStudents!.Any(cs =>
+                                        cs.Student!.FullName!.Contains(filter.Value)));
+                                break;
+
                             default: break;
                         }
                     }
@@ -214,7 +229,6 @@ namespace VAcademyConnect.Services.Implements
                     return result.BuildError("Class was not found or has been deleted.");
 
                 classes.Name = request.Name;
-                classes.TeacherId = request.TeacherId;
                 classes.TenantId = request.TenantId;
                 classes.Tuition = request.Tuition;
                 classes.ModifiedBy = user.Email;

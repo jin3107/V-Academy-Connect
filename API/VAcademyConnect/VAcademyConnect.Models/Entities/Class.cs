@@ -12,10 +12,6 @@ namespace VAcademyConnect.Models.Entities
     {
         public string Name { get; set; }
 
-        [ForeignKey("Teacher")]
-        public string? TeacherId { get; set; }
-        public ApplicationUser? Teacher { get; set; }
-
         [ForeignKey("Tenant")]
         public Guid? TenantId { get; set; }
         public Tenant? Tenant { get; set; }

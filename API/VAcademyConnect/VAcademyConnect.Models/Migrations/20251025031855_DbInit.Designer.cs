@@ -12,7 +12,7 @@ using VAcademyConnect.Models.Data;
 namespace VAcademyConnect.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251023023614_DbInit")]
+    [Migration("20251025031855_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -342,9 +342,6 @@ namespace VAcademyConnect.Models.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TeacherId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("char(36)");
 
@@ -352,8 +349,6 @@ namespace VAcademyConnect.Models.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TeacherId");
 
                     b.HasIndex("TenantId");
 
@@ -963,17 +958,10 @@ namespace VAcademyConnect.Models.Migrations
 
             modelBuilder.Entity("VAcademyConnect.Models.Entities.Class", b =>
                 {
-                    b.HasOne("VAcademyConnect.Models.Entities.ApplicationUser", "Teacher")
-                        .WithMany("Classes")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("VAcademyConnect.Models.Entities.Tenant", "Tenant")
                         .WithMany("Classes")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Teacher");
 
                     b.Navigation("Tenant");
                 });
@@ -1110,8 +1098,6 @@ namespace VAcademyConnect.Models.Migrations
                     b.Navigation("Attendances");
 
                     b.Navigation("ClassStudents");
-
-                    b.Navigation("Classes");
 
                     b.Navigation("LessonEvaluations");
 

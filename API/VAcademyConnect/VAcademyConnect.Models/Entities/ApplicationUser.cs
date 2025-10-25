@@ -39,9 +39,6 @@ namespace VAcademyConnect.Models.Entities
         [InverseProperty("CheckedByUser")]
         public ICollection<PaymentCheck>? PaymentChecks { get; set; }
 
-        [InverseProperty("Teacher")]
-        public ICollection<Class>? Classes { get; set; }
-
         [InverseProperty("Student")]
         public ICollection<ScoreStatistic>? ScoreStatistics { get; set; }
     }

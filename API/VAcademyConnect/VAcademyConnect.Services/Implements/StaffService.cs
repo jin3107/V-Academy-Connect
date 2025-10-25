@@ -53,8 +53,8 @@ namespace VAcademyConnect.Services.Implements
                 if (currentUser == null)
                     return result.BuildError("Unauthorized");
 
-                if (await CheckUserExists(request.Email, request.PhoneNumber))
-                    return result.BuildError("Staff with this email or phone number already exists.");
+                //if (await CheckUserExists(request.Email, request.PhoneNumber))
+                //    return result.BuildError("Staff with this email or phone number already exists.");
 
                 if (request.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
                     return result.BuildError("Cannot create Teacher as Staff. Teacher role is assigned to TenantAdmin only.");
@@ -103,6 +103,7 @@ namespace VAcademyConnect.Services.Implements
 
             var identityUser = new ApplicationUser
             {
+                FullName = request.Name,
                 UserName = request.Email,
                 Email = request.Email,
                 TenantId = user!.TenantId,

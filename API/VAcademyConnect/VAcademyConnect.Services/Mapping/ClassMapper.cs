@@ -16,7 +16,6 @@ namespace VAcademyConnect.Services.Mapping
             return new ClassRequest
             {
                 Name = entity.Name,
-                TeacherId = entity.TeacherId,
                 TenantId = entity.TenantId,
                 Tuition = entity.Tuition
             };
@@ -27,7 +26,6 @@ namespace VAcademyConnect.Services.Mapping
             return new Class
             {
                 Name = request.Name,
-                TeacherId = request.TeacherId,
                 TenantId = request.TenantId,
                 Tuition = request.Tuition
             };
@@ -39,10 +37,8 @@ namespace VAcademyConnect.Services.Mapping
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                TeacherId= entity.TeacherId,
                 TenantId = entity.TenantId,
                 Tuition = Decimal.Parse(entity.Tuition.ToString("F2")),
-                TeacherName = entity.Teacher?.FullName,
                 TenantName = entity.Tenant?.Name,
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,

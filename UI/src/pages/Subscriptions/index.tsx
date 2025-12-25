@@ -107,16 +107,6 @@ const Subscriptions = () => {
     setDetailData(mapped);
 
     if (mode === "update") {
-      // let billingCycleValue = 0;
-      // if (mapped.billingCycle) {
-      //   const cycleMap: { [key: string]: number } = {
-      //     "None": 0,
-      //     "Monthly": 1,
-      //     "Yearly": 2
-      //   };
-      //   billingCycleValue = cycleMap[mapped.billingCycle] ?? 0;
-      // }
-
       form.setFieldsValue({
         id: mapped.id,
         name: mapped.name,

@@ -1,24 +1,20 @@
 import { Button, Result } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts";
 import "./style.scss";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleGoBack = () => {
-    const userInfoStr = localStorage.getItem("userInfo");
-    if (userInfoStr) {
-      try {
-        const userInfo = JSON.parse(userInfoStr);
-        // Redirect based on role
-        if (userInfo.role === "SuperAdmin" || userInfo.role === "TenantAdmin") {
-          navigate("/home");
-        } else if (userInfo.role === "Teacher") {
-          navigate("/classes");
-        } else {
-          navigate("/login");
-        }
-      } catch {
+    if (user) {
+      // Redirect based on role
+      if (user.role === "SuperAdmin" || user.role === "TenantAdmin") {
+        navigate("/home");
+      } else if (user.role === "Teacher") {
+        navigate("/classes");
+      } else {
         navigate("/login");
       }
     } else {
@@ -27,8 +23,7 @@ const Unauthorized = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userInfo");
+    logout();
     navigate("/login");
   };
 

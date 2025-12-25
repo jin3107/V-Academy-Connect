@@ -83,12 +83,11 @@ namespace VAcademyConnect.Services.Implements
 
                 var classes = await _classRepository.GetAsync(id);
                 if (classes == null || classes.IsDeleted == true)
-                    return result.BuildError($"Class with ID {id} was not found or has been deleted.");
-                classes.IsDeleted = true;
-                classes.ModifiedBy = user.Email;
+                    return result.BuildError("Class was not found or has been deleted.");
 
+                classes.IsDeleted = true;
                 await _classRepository.EditAsync(classes);
-                result.BuildResult($"Class with ID {id} has been deleted successfully.");
+                result.BuildResult("Class has been deleted successfully.");
             }
             catch (Exception ex)
             {

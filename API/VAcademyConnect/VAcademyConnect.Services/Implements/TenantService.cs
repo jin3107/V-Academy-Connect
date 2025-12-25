@@ -57,7 +57,7 @@ namespace VAcademyConnect.Services.Implements
                     .FirstOrDefaultAsync();
 
                 if (tenant == null || tenant.IsDeleted == true)
-                    return result.BuildError($"Tenant with ID {id} was not found or has been deleted.");
+                    return result.BuildError("Tenant was not found or has been deleted.");
 
                 // Kiểm tra và cập nhật status nếu subscription hết hạn
                 var statusChanged = await CheckAndUpdateTenantStatus(tenant);
@@ -68,7 +68,7 @@ namespace VAcademyConnect.Services.Implements
                         .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription).FirstOrDefaultAsync();
 
                 var response = TenantMapper.ToResponse(tenant!);
-                var message = $"Tenant with ID {id} has been found.";
+                var message = "Tenant has been found.";
                 if (statusChanged)
                     message += " Tenant has been switched to Free plan due to expired subscription.";
                 result.BuildResult(response, message);
@@ -123,8 +123,7 @@ namespace VAcademyConnect.Services.Implements
                         if (changedTenantIds.Contains(tenantList[i].Id))
                         {
                             tenantList[i] = await _tenantRepository.FindByAsync(t => t.Id == tenantList[i].Id)
-                                .Include(t => t.TenantSubscription)
-                                .ThenInclude(ts => ts!.Subscription)
+                                .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription)
                                 .FirstOrDefaultAsync() ?? tenantList[i];
                         }
                     }
@@ -211,7 +210,7 @@ namespace VAcademyConnect.Services.Implements
                     .Include(ts => ts.TenantSubscription).ThenInclude(t => t!.Subscription).FirstOrDefaultAsync();
 
                 if (tenant == null || tenant.IsDeleted == true)
-                    return result.BuildError($"Tenant with ID {request.Id} was not found or has been deleted.");
+                    return result.BuildError("Tenant was not found or has been deleted.");
 
                 if (!await ValidateStatusChange(tenant, request.Status))
                 {
@@ -365,7 +364,7 @@ namespace VAcademyConnect.Services.Implements
                     .FirstOrDefaultAsync();
 
                 var response = TenantMapper.ToResponse(tenant!);
-                result.BuildResult(response, $"Subscription renewed successfully for 1 month(s). Tenant is now active.");
+                result.BuildResult(response, "Subscription renewed successfully for 1 month(s). Tenant is now active.");
             }
             catch (Exception ex)
             {

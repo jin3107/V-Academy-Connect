@@ -1,20 +1,18 @@
 import { Form, Button, Checkbox, message } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import type { LogInRequest } from "../../interfaces";
 import { logInAsync } from "../../apis/accountAPI";
 import './style.scss'
 import { AuthFormInput } from "../../components";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useAuth } from "../../contexts";
 
 
 const LogIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    localStorage.removeItem("token");
-  }, [])
+  const { login } = useAuth();
 
   const onFinish = async (values: LogInRequest) => {
     try {
@@ -31,14 +29,15 @@ const LogIn = () => {
         userName: response.data.userName
       };
       
-      localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      // Sử dụng AuthContext để lưu thông tin vào memory
+      // Token sẽ được backend lưu vào httpOnly cookie
+      login(token, userInfo);
       
       message.success('Login successful!');
       navigate('/home');
     } catch (error) {
       console.error('Login failed: ', error);
-      message.error('Login failed. PLease check your credentials.');
+      message.error('Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

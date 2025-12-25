@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class TenantSubscriptionRequest : BaseDto
+    public class TenantSubscriptionRequest
     {
+        public Guid Id { get; set; }
+
         [Required]
         public Guid TenantId { get; set; }
 

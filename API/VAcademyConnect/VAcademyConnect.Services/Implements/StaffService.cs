@@ -53,9 +53,6 @@ namespace VAcademyConnect.Services.Implements
                 if (currentUser == null)
                     return result.BuildError("Unauthorized");
 
-                //if (await CheckUserExists(request.Email, request.PhoneNumber))
-                //    return result.BuildError("Staff with this email or phone number already exists.");
-
                 if (request.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
                     return result.BuildError("Cannot create Teacher as Staff. Teacher role is assigned to TenantAdmin only.");
 
@@ -174,10 +171,10 @@ namespace VAcademyConnect.Services.Implements
                 if (userName == null)
                     return result.BuildError("Unauthorized");
 
-                if (request.Id == null || request.Id == new Guid())
+                if (request?.Id == null || request.Id == new Guid())
                     return result.BuildError("Staff ID is required");
 
-                var staff = await _staffRepository.GetAsync(request.Id.Value);
+                var staff = await _staffRepository.GetAsync(request.Id);
                 if (staff == null || staff.IsDeleted)
                     return result.BuildError("Staff not found");
 

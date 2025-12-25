@@ -1,4 +1,5 @@
-﻿using MayNghien.Infrastructures.Models.Requests;
+﻿using LinqKit;
+using MayNghien.Infrastructures.Models.Requests;
 using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,7 @@ using VAcademyConnect.Models.Entities;
 using VAcademyConnect.Repositories.Interfaces;
 using VAcademyConnect.Services.Interfaces;
 using VAcademyConnect.Services.Mapping;
+using static MayNghien.Infrastructures.Helpers.SearchHelper;
 
 namespace VAcademyConnect.Services.Implements
 {
@@ -23,7 +25,8 @@ namespace VAcademyConnect.Services.Implements
         private  readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public ClassStudentService(IClassStudentRepository classStudentRepository, UserManager<ApplicationUser> userManager, IHttpContextAccessor contextAccessor)
+        public ClassStudentService(IClassStudentRepository classStudentRepository, UserManager<ApplicationUser> userManager, 
+            IHttpContextAccessor contextAccessor)
         {
             _classStudentRepository = classStudentRepository;
             _userManager = userManager;
@@ -66,19 +69,131 @@ namespace VAcademyConnect.Services.Implements
             return result;
         }
 
-        public Task<AppResponse<string>> DeleteAsync(Guid id)
+        public async Task<AppResponse<string>> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<string>();
+            try
+            {
+                var user = _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var classStudent = await _classStudentRepository.GetAsync(id);
+                if (classStudent == null || classStudent.IsDeleted == true)
+                    return result.BuildError("Student in class was not found or has been deleted.");
+
+                classStudent.IsDeleted = true;
+                await _classStudentRepository.EditAsync(classStudent);
+                result.BuildResult("Student in class has been deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
 
-        public Task<AppResponse<ClassStudentResponse>> GetByIdAsync(Guid id)
+        public async Task<AppResponse<ClassStudentResponse>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<ClassStudentResponse>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var classStudent = await _classStudentRepository.FindByAsync(c => c.Id == id)
+                    .Include(c => c.Student).Include(c => c.Class).FirstOrDefaultAsync();
+                if (classStudent == null || classStudent.IsDeleted == true)
+                    return result.BuildError("Student in class was not found or has been deleted.");
+
+                var response = ClassStudentMapper.ToResponse(classStudent);
+                return result.BuildResult(response, "Student in class has been found");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
         }
 
-        public Task<AppResponse<SearchResponse<ClassStudentResponse>>> SearchAsync(SearchRequest request)
+        public async Task<AppResponse<SearchResponse<ClassStudentResponse>>> SearchAsync(SearchRequest request)
         {
-            throw new NotImplementedException();
+            var result = new AppResponse<SearchResponse<ClassStudentResponse>>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(_contextAccessor.HttpContext?.User.Identity?.Name!);
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var query = BuildFilterExpression(request.Filters!);
+                var numOfRecords = await _classStudentRepository.CountRecordsAsync(query);
+                var classStudents = _classStudentRepository.FindByPredicate(query)
+                    .Include(cs => cs.Student).Include(cs => cs.Class).AsQueryable();
+
+                if (request.SortBy != null)
+                    classStudents = _classStudentRepository.AddSort(classStudents, request.SortBy);
+                else
+                    classStudents = classStudents.OrderByDescending(x => x.CreatedOn);
+
+                int pageIndex = request.PageIndex ?? 1;
+                int pageSize = request.PageSize ?? 10;
+                int startIndex = (pageIndex - 1) * pageSize;
+
+                var classStudentList = await classStudents.Skip(startIndex).Take(pageSize).ToListAsync();
+                var dtoList = classStudentList.Select(ClassStudentMapper.ToResponse).ToList();
+
+                var searchResponse = new SearchResponse<ClassStudentResponse>
+                {
+                    TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
+                    TotalRows = numOfRecords,
+                    CurrentPage = pageIndex,
+                    Data = dtoList,
+                    RowsPerPage = pageSize,
+                };
+                result.Data = searchResponse;
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private ExpressionStarter<ClassStudent> BuildFilterExpression(List<Filter> filters)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<ClassStudent>(true);
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        switch (filter.FieldName)
+                        {
+                            case "StudentName":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Student!.FullName!.Contains(filter.Value));
+                                break;
+
+                            case "ClassName":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Class!.Name!.Contains(filter.Value));
+                                break;
+
+                           default: break;
+                        }
+                    }
+                }
+
+                predicate = predicate.And(x => x.IsDeleted == false);
+                return predicate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
         }
 
         public Task<AppResponse<ClassStudentResponse>> UpdateAsync(ClassStudentRequest request)

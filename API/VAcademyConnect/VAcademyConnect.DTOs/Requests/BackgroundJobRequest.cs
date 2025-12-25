@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class BackgroundJobRequest : BaseDto
+    public class BackgroundJobRequest
     {
+        public Guid Id { get; set; }
+
         [Required]
         public DateTime RunDate { get; set; }
 

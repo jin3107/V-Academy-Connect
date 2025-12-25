@@ -9,8 +9,10 @@ using VAcademyConnect.Commons.Enums;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class StaffRequest : BaseDto
+    public class StaffRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Name is required")]
         [StringLength(100, ErrorMessage = "Name must not exceed 100 characters")]
         public string Name { get; set; }

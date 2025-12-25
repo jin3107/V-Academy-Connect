@@ -76,6 +76,27 @@ builder.Services.AddAuthentication(options => {
         ClockSkew = TimeSpan.Zero,
         RoleClaimType = ClaimTypes.Role
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.ContainsKey("AuthToken"))
+            {
+                context.Token = context.Request.Cookies["AuthToken"];
+            }
+            else if (string.IsNullOrEmpty(context.Token))
+            {
+                var authorization = context.Request.Headers["Authorization"].ToString();
+                if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
+                {
+                    context.Token = authorization.Substring("Bearer ".Length).Trim();
+                }
+            }
+            
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();

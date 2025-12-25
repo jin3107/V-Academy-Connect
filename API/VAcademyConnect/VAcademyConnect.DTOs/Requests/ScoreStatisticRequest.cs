@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class ScoreStatisticRequest : BaseDto
+    public class ScoreStatisticRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "StudentId is required.")]
         public string? StudentId { get; set; }
 

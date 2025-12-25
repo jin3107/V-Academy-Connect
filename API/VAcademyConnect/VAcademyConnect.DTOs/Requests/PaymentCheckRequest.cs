@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class PaymentCheckRequest : BaseDto
+    public class PaymentCheckRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "PaymentId is required.")]
         public Guid? PaymentId { get; set; }
 

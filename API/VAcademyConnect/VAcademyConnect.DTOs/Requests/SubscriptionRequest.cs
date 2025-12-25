@@ -9,8 +9,10 @@ using VAcademyConnect.Commons.Enums;
 
 namespace VAcademyConnect.DTOs.Requests
 {
-    public class SubscriptionRequest : BaseDto
+    public class SubscriptionRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
 

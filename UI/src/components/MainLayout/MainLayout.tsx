@@ -1,13 +1,14 @@
-import { type ReactNode, useEffect, useState, useMemo, useCallback } from "react";
+import { type ReactNode, useState, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logOutAsync } from "../../apis/accountAPI";
+import { useAuth } from "../../contexts";
 import {
   BookOutlined,
   ClusterOutlined,
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
   ShoppingOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
+import { Layout, Menu, Button, Avatar, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
 import "./style.scss";
 
@@ -17,27 +18,13 @@ interface MainLayoutProps { children: ReactNode; }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [userName, setUserName] = useState("User");
-  const [userRole, setUserRole] = useState<string>("");
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    // Load user info from localStorage
-    const userInfoStr = localStorage.getItem("userInfo");
-    if (userInfoStr) {
-      try {
-        const userInfo = JSON.parse(userInfoStr);
-        const displayName = userInfo.userName || userInfo.email?.split('@')[0] || userInfo.email || "User";
-        setUserName(displayName);
-        setUserRole(userInfo.role || "");
-      } catch (error) {
-        console.error("Failed to parse user info:", error);
-        setUserName("User");
-        setUserRole("");
-      }
-    }
-  }, []);
+  // Lấy thông tin user từ context
+  const userName = user?.userName || user?.email?.split('@')[0] || user?.email || "User";
+  const userRole = user?.role || "";
 
   const selectedKey = useMemo(() => {
     const path = location.pathname;
@@ -87,14 +74,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }, [userRole]);
 
   const handleLogout = useCallback(async () => {
-    try { await logOutAsync(); } catch (err) {
-      console.log("Logout failed: ", err);
-    } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userInfo");
+    try {
+      await logOutAsync();
+      logout();
+      message.success('Logged out successfully');
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed: ", err);
+      // Vẫn logout ở client side ngay cả khi API call thất bại
+      logout();
       navigate("/login");
     }
-  }, [navigate]);
+  }, [logout, navigate]);
 
   const handleMenuClick: MenuProps["onClick"] = useCallback(({ key }: { key: string }) => {
     if (key === "dashboard") navigate("/home");

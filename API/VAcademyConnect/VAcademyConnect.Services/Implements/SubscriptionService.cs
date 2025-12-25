@@ -27,7 +27,8 @@ namespace VAcademyConnect.Services.Implements
         private readonly ITenantRepository _tenantRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public SubscriptionService(ISubscriptionRepository subscriptionRepository, IHttpContextAccessor contextAccessor, ITenantRepository tenantRepository, UserManager<ApplicationUser> userManager)
+        public SubscriptionService(ISubscriptionRepository subscriptionRepository, IHttpContextAccessor contextAccessor, 
+            ITenantRepository tenantRepository, UserManager<ApplicationUser> userManager)
         {
             _subscriptionRepository = subscriptionRepository;
             _contextAccessor = contextAccessor;
@@ -75,12 +76,12 @@ namespace VAcademyConnect.Services.Implements
 
                 var subscription = await _subscriptionRepository.GetAsync(id);
                 if (subscription == null || subscription.IsDeleted == true)
-                    return result.BuildError($"Subscription with ID {id} was not found or has been deleted.");
+                    return result.BuildError("Subscription was not found or has been deleted.");
                 subscription.IsDeleted = true;
                 subscription.ModifiedBy = user.Email;
 
                 await _subscriptionRepository.EditAsync(subscription);
-                result.BuildResult($"Subscription with ID {id} has been deleted successfully.");
+                result.BuildResult("Subscription has been deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -100,10 +101,10 @@ namespace VAcademyConnect.Services.Implements
 
                 var subscription = await _subscriptionRepository.FindByAsync(sub => sub.Id == id).FirstOrDefaultAsync();
                 if (subscription == null || subscription.IsDeleted == true)
-                    return result.BuildError($"Subscription with ID {id} was not found or has been deleted.");
+                    return result.BuildError("Subscription was not found or has been deleted.");
 
                 var response = SubscriptionMapper.ToResponse(subscription);
-                result.BuildResult(response, $"Subscription with ID {id} has been found.");
+                result.BuildResult(response, "Subscription has been found.");
             }
             catch (Exception ex)
             {
@@ -191,9 +192,9 @@ namespace VAcademyConnect.Services.Implements
                 if (user == null)
                     return result.BuildError("Unauthorize");
 
-                var subscription = await _subscriptionRepository.GetAsync(request.Id!.Value);
+                var subscription = await _subscriptionRepository.GetAsync(request.Id);
                 if (subscription == null || subscription.IsDeleted == true)
-                    return result.BuildError($"Subscription with ID {request.Id!.Value} was not found or has been deleted.");
+                    return result.BuildError("Subscription was not found or has been deleted.");
 
                 subscription.Name = request.Name;
                 subscription.Price = request.Price;
@@ -204,7 +205,7 @@ namespace VAcademyConnect.Services.Implements
 
                 await _subscriptionRepository.EditAsync(subscription);
                 var response = SubscriptionMapper.ToResponse(subscription);
-                result.BuildResult(response, $"Subscription with ID {request.Id!.Value} has been updated successfully.");
+                result.BuildResult(response, "Subscription has been updated successfully.");
             }
             catch (Exception ex)
             {

@@ -9,6 +9,8 @@ namespace VAcademyConnect.DTOs.Requests
 {
     public class TuitionFeeRequest
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "StudentId is required.")]
         public string StudentId { get; set; }
 

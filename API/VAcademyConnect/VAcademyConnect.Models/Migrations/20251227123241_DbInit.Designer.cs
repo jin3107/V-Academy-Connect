@@ -12,7 +12,7 @@ using VAcademyConnect.Models.Data;
 namespace VAcademyConnect.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251025031855_DbInit")]
+    [Migration("20251227123241_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />

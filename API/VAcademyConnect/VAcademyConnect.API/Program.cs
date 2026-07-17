@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using VAcademyConnect.API;
 using VAcademyConnect.Models.Data;
-using VAcademyConnect.Models.Entities;
+using VAcademyConnect.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

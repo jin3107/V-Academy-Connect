@@ -1,7 +1,7 @@
 ﻿using VAcademyConnect.Repositories.Implements;
-using VAcademyConnect.Repositories.Interfaces;
+using VAcademyConnect.Application.Interfaces.Repositories;
 using VAcademyConnect.Services.Implements;
-using VAcademyConnect.Services.Interfaces;
+using VAcademyConnect.Application.Interfaces.Services;
 
 namespace VAcademyConnect.API
 {

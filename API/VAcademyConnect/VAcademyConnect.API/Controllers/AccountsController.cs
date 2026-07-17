@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VAcademyConnect.DTOs.Authentication.Requests;
-using VAcademyConnect.Services.Interfaces;
+using VAcademyConnect.Application.Interfaces.Services;
 
 namespace VAcademyConnect.API.Controllers
 {

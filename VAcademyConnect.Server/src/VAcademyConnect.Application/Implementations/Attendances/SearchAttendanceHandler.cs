@@ -34,7 +34,8 @@ namespace VAcademyConnect.Application.Implementations.Attendances
 
                 var query = BuildFilterExpression(request.Filters!);
                 var numOfRecords = await _attendanceRepository.CountRecordsAsync(query);
-                var attendances = _attendanceRepository.FindByPredicate(query).AsQueryable();
+                var attendances = _attendanceRepository.FindByPredicate(query)
+                    .Include(x => x.Class).Include(x => x.Student).AsQueryable();
 
                 if (request.SortBy != null)
                     attendances = _attendanceRepository.AddSort(attendances, request.SortBy);

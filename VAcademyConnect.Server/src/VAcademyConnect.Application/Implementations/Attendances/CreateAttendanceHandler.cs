@@ -1,4 +1,5 @@
 ﻿using MayNghien.Infrastructures.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Repositories;
@@ -34,7 +35,10 @@ namespace VAcademyConnect.Application.Implementations.Attendances
                 attendance.CreatedOn = DateTime.UtcNow;
 
                 await _attendanceRepository.AddAsync(attendance);
-                var response = AttendanceMapper.ToResponse(attendance);
+
+                var createdEntity = await _attendanceRepository.FindByAsync(a => a.Id == attendance.Id)
+                    .Include(a => a.Class).Include(a => a.Student).FirstOrDefaultAsync();
+                var response = AttendanceMapper.ToResponse(createdEntity ?? attendance);
                 result.BuildResult(response, "Attendance has been recorded successfully.");
             }
             catch (Exception ex)

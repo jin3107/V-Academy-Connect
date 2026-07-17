@@ -9,3 +9,5 @@ export type { default as LessonEvaluationRequest } from './LessonEvaluationReque
 export type { default as ScoreRequest } from './ScoreRequest';
 export type { default as ScoreStatisticRequest } from './ScoreStatisticRequest';
 export type { default as ScoreStatisticCalculateRequest } from './ScoreStatisticCalculateRequest';
+export type { default as TuitionFeeRequest } from './TuitionFeeRequest';
+export type { default as TuitionFeeEstimateRequest } from './TuitionFeeEstimateRequest';

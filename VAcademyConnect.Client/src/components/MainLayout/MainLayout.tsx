@@ -5,7 +5,7 @@ import { useAuth } from "../../contexts";
 import {
   BarChartOutlined, BookOutlined,
   ClusterOutlined,
-  DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
+  DashboardOutlined, DollarOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
   ScheduleOutlined, ShoppingOutlined, SolutionOutlined, StarOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown, message } from "antd";
@@ -36,6 +36,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (path.startsWith("/attendances")) return ["attendances"];
     if (path.startsWith("/lesson-evaluations")) return ["lesson-evaluations"];
     if (path.startsWith("/score-statistics")) return ["score-statistics"];
+    if (path.startsWith("/tuition-fees")) return ["tuition-fees"];
     if (path.startsWith("/scores")) return ["scores"];
     // if (path.startsWith("/students")) return ["students"];
     return ["dashboard"];
@@ -56,7 +57,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "attendances", icon: <ScheduleOutlined />, label: "Attendance" },
         { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
         { key: "scores", icon: <SolutionOutlined />, label: "Scores" },
-        { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" }
+        { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" },
+        { key: "tuition-fees", icon: <DollarOutlined />, label: "Tuition Fees" }
       ];
     }
 
@@ -69,7 +71,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "attendances", icon: <ScheduleOutlined />, label: "Attendance" },
         { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
         { key: "scores", icon: <SolutionOutlined />, label: "Scores" },
-        { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" }
+        { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" },
+        { key: "tuition-fees", icon: <DollarOutlined />, label: "Tuition Fees" }
       ];
     }
 
@@ -81,6 +84,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
         { key: "scores", icon: <SolutionOutlined />, label: "Scores" },
         { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" },
+        { key: "tuition-fees", icon: <DollarOutlined />, label: "Tuition Fees" },
         // { key: "students", icon: <UserOutlined />, label: "Students" } // TODO: Implement later
       ];
     }
@@ -113,6 +117,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     else if (key === "lesson-evaluations") navigate("/lesson-evaluations");
     else if (key === "scores") navigate("/scores");
     else if (key === "score-statistics") navigate("/score-statistics");
+    else if (key === "tuition-fees") navigate("/tuition-fees");
     // else if (key === "students") navigate("/students"); // TODO: Implement later
   }, [navigate]);
 

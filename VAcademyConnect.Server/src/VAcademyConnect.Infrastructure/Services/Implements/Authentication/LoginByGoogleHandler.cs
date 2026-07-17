@@ -64,7 +64,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 var user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    var tenant = await CreateTenant(payload.Email);
+                    var tenant = await CreateTenant(payload.Email, request.TenantType);
 
                     var newUser = new ApplicationUser
                     {
@@ -126,7 +126,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
             return result;
         }
 
-        private async Task<Tenant> CreateTenant(string email)
+        private async Task<Tenant> CreateTenant(string email, TenantType tenantType)
         {
             var tenant = new Tenant
             {
@@ -134,6 +134,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 ContactEmail = email,
                 ContactPhone = "",
                 Status = Status.Active,
+                Type = tenantType,
                 CreatedBy = email,
                 CreatedOn = DateTime.UtcNow
             };

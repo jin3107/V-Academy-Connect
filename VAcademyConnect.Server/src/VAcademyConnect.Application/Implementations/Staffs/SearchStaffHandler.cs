@@ -15,11 +15,14 @@ namespace VAcademyConnect.Application.Implementations.Staffs
     public class SearchStaffHandler : ISearchStaffHandler
     {
         private readonly IStaffRepository _staffRepository;
+        private readonly IClassRepository _classRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public SearchStaffHandler(IStaffRepository staffRepository, ICurrentUserService currentUserService)
+        public SearchStaffHandler(IStaffRepository staffRepository, IClassRepository classRepository,
+            ICurrentUserService currentUserService)
         {
             _staffRepository = staffRepository;
+            _classRepository = classRepository;
             _currentUserService = currentUserService;
         }
 
@@ -48,6 +51,18 @@ namespace VAcademyConnect.Application.Implementations.Staffs
                 int startIndex = (pageIndex - 1) * pageSize;
                 var staffList = await staffs.Skip(startIndex).Take(pageSize).ToListAsync();
                 var dtoList = staffList.Select(StaffMapper.ToResponse).ToList();
+                foreach (var staffDto in dtoList)
+                {
+                    staffDto.ClassesTaught = await _classRepository.FindByAsync(c => c.TeacherId == staffDto.Id && !c.IsDeleted)
+                        .Select(c => new DTOs.Responses.TeachingClassResponse
+                        {
+                            ClassId = c.Id,
+                            ClassName = c.Name,
+                            TeachingDayOfWeek = c.TeachingDayOfWeek,
+                            TeachingStartTime = c.TeachingStartTime,
+                            TeachingEndTime = c.TeachingEndTime
+                        }).ToListAsync();
+                }
                 var searchResponse = new SearchResponse<StaffResponse>
                 {
                     TotalPages = CalculateNumOfPages(numOfRecords, pageSize),

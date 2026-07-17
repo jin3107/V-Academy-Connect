@@ -87,6 +87,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                     PhoneNumber = request.PhoneNumber,
                     Name = request.Name,
                     TenantName = request.TenantName,
+                    TenantType = request.TenantType,
                     SubscriptionPlanId = standardPlan.Id
                 };
 
@@ -109,6 +110,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 ContactEmail = request.Email,
                 ContactPhone = request.PhoneNumber,
                 Status = Status.Active,
+                Type = request.TenantType,
                 CreatedBy = request.Email,
                 CreatedOn = DateTime.UtcNow
             };

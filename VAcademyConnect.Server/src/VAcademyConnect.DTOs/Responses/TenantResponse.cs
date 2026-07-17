@@ -16,6 +16,8 @@ namespace VAcademyConnect.DTOs.Responses
         public string ContactPhone { get; set; }
         public Status Status { get; set; }
         public string StatusName { get; set; }
+        public TenantType Type { get; set; }
+        public string TypeName { get; set; }
         public TenantSubscriptionStatusResponse SubscriptionStatus { get; set; }
 
         public DateTime? CreatedOn { get; set; }

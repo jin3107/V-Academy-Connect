@@ -6,3 +6,4 @@ export type { default as TenantSubscriptionRequest } from './TenantSubscriptionR
 export type { default as ClassRequest } from './ClassRequest';
 export type { default as AttendanceRequest } from './AttendanceRequest';
 export type { default as LessonEvaluationRequest } from './LessonEvaluationRequest';
+export type { default as ScoreRequest } from './ScoreRequest';

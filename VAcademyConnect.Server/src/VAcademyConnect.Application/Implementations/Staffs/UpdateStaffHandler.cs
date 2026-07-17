@@ -4,6 +4,7 @@ using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Repositories;
 using VAcademyConnect.Application.Interfaces.Staffs;
 using VAcademyConnect.Application.Mapping;
+using VAcademyConnect.Commons.Enums;
 using VAcademyConnect.DTOs.Requests;
 using VAcademyConnect.DTOs.Responses;
 
@@ -12,13 +13,15 @@ namespace VAcademyConnect.Application.Implementations.Staffs
     public class UpdateStaffHandler : IUpdateStaffHandler
     {
         private readonly IStaffRepository _staffRepository;
+        private readonly ITenantRepository _tenantRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUserAccountService _userAccountService;
 
-        public UpdateStaffHandler(IStaffRepository staffRepository, ICurrentUserService currentUserService,
-            IUserAccountService userAccountService)
+        public UpdateStaffHandler(IStaffRepository staffRepository, ITenantRepository tenantRepository,
+            ICurrentUserService currentUserService, IUserAccountService userAccountService)
         {
             _staffRepository = staffRepository;
+            _tenantRepository = tenantRepository;
             _currentUserService = currentUserService;
             _userAccountService = userAccountService;
         }
@@ -38,6 +41,16 @@ namespace VAcademyConnect.Application.Implementations.Staffs
                 var staff = await _staffRepository.GetAsync(request.Id);
                 if (staff == null || staff.IsDeleted)
                     return result.BuildError("Staff not found");
+
+                if (request.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase) &&
+                    !staff.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
+                {
+                    var tenant = staff.TenantId.HasValue
+                        ? await _tenantRepository.GetAsync(staff.TenantId.Value)
+                        : null;
+                    if (tenant == null || tenant.Type != TenantType.Center)
+                        return result.BuildError("Only Center tenants can manage Teacher staff. For a Personal tenant, the TenantAdmin itself is the teacher.");
+                }
 
                 if ((staff.Email != request.Email || staff.PhoneNumber != request.PhoneNumber) &&
                     await _userAccountService.ExistsByEmailOrPhoneAsync(request.Email, request.PhoneNumber))

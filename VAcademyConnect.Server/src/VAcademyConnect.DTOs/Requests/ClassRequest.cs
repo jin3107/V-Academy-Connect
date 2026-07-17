@@ -20,5 +20,10 @@ namespace VAcademyConnect.DTOs.Requests
 
         [Range(0, double.MaxValue, ErrorMessage = "Tuition must be a positive number.")]
         public decimal Tuition { get; set; }
+
+        public Guid? TeacherId { get; set; }
+        public DayOfWeek? TeachingDayOfWeek { get; set; }
+        public TimeSpan? TeachingStartTime { get; set; }
+        public TimeSpan? TeachingEndTime { get; set; }
     }
 }

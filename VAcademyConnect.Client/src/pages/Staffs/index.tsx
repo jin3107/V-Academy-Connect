@@ -21,6 +21,8 @@ import { getAllRoles } from "../../apis/roleAPI";
 import { Typography } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { useAuth } from "../../contexts";
+import { TenantType } from "../../commons";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -38,6 +40,9 @@ interface StaffData {
 type BackendStaffResponse = StaffResponse & { createBy?: string };
 
 const Staffs = () => {
+  const { user } = useAuth();
+  const isCenterTenant = user?.tenantType === TenantType.Center;
+
   // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [staffs, setStaffs] = useState<StaffData[]>([]);
@@ -117,7 +122,8 @@ const Staffs = () => {
       message.error(response.message || "Failed to load roles");
       return;
     }
-    setRoleOptions((response.data || []).map((r: RoleResponse) => ({ label: r.name, value: r.name })));
+    const roles = (response.data || []).filter((r: RoleResponse) => isCenterTenant || r.name !== "Teacher");
+    setRoleOptions(roles.map((r: RoleResponse) => ({ label: r.name, value: r.name })));
   };
 
   const loadDetail = async (id: string) => {

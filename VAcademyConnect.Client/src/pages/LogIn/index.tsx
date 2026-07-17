@@ -24,6 +24,7 @@ const LogIn = () => {
         userId: response.data.userId,
         role: response.data.role,
         tenantId: response.data.tenantId,
+        tenantType: response.data.tenantType,
         phoneNumber: response.data.phoneNumber,
         userName: response.data.userName
       };

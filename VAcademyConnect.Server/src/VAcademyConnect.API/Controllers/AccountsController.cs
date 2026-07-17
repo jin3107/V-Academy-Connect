@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Authentication;
+using VAcademyConnect.Application.Interfaces.Repositories;
+using VAcademyConnect.Commons.Enums;
 using VAcademyConnect.Domain.Entities;
 using VAcademyConnect.DTOs.Authentication.Requests;
 using VAcademyConnect.DTOs.Authentication.Responses;
@@ -26,6 +29,7 @@ namespace VAcademyConnect.API.Controllers
         private readonly IGetRolesHandler _getRolesHandler;
         private readonly ICurrentUserService _currentUserService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITenantRepository _tenantRepository;
 
         public AccountsController(
             ILoginHandler loginHandler,
@@ -38,7 +42,8 @@ namespace VAcademyConnect.API.Controllers
             ILoginByGoogleHandler loginByGoogleHandler,
             IGetRolesHandler getRolesHandler,
             ICurrentUserService currentUserService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ITenantRepository tenantRepository)
         {
             _loginHandler = loginHandler;
             _registerHandler = registerHandler;
@@ -51,6 +56,7 @@ namespace VAcademyConnect.API.Controllers
             _getRolesHandler = getRolesHandler;
             _currentUserService = currentUserService;
             _userManager = userManager;
+            _tenantRepository = tenantRepository;
         }
 
         private void SetAuthCookie(string token)
@@ -203,10 +209,19 @@ namespace VAcademyConnect.API.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
 
+            var tenantType = TenantType.Personal;
+            if (user.TenantId.HasValue)
+            {
+                var tenant = await _tenantRepository.FindByAsync(t => t.Id == user.TenantId).FirstOrDefaultAsync();
+                if (tenant != null)
+                    tenantType = tenant.Type;
+            }
+
             var response = new LogInResponse
             {
                 UserId = Guid.Parse(user.Id),
                 TenantId = user.TenantId ?? Guid.Empty,
+                TenantType = tenantType,
                 UserName = user.Email!,
                 Email = user.Email!,
                 PhoneNumber = user.PhoneNumber ?? string.Empty,

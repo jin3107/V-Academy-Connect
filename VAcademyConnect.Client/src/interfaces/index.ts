@@ -7,7 +7,8 @@ export type {
   CreateStaffRequest, UpdateStaffRequest, SubscriptionRequest,
   TenantRequest, TenantSubscriptionRequest,
   ClassRequest, AttendanceRequest, LessonEvaluationRequest, ScoreRequest,
-  ScoreStatisticRequest, ScoreStatisticCalculateRequest
+  ScoreStatisticRequest, ScoreStatisticCalculateRequest,
+  TuitionFeeRequest, TuitionFeeEstimateRequest
 } from './Requests';
 export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 
@@ -23,7 +24,7 @@ export type {
   StaffResponse, SubscriptionResponse,
   TenantReponse, TenantSubscriptionReponse,
   ClassResponse, AttendanceResponse, ClassStudentResponse, LessonEvaluationResponse, ScoreResponse,
-  ScoreStatisticResponse
+  ScoreStatisticResponse, TuitionFeeResponse
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';

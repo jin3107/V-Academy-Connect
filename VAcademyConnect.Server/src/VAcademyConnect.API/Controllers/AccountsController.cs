@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Authentication;
+using VAcademyConnect.Domain.Entities;
 using VAcademyConnect.DTOs.Authentication.Requests;
+using VAcademyConnect.DTOs.Authentication.Responses;
 
 namespace VAcademyConnect.API.Controllers
 {
@@ -19,6 +24,8 @@ namespace VAcademyConnect.API.Controllers
         private readonly IVerifyOtpHandler _verifyOtpHandler;
         private readonly ILoginByGoogleHandler _loginByGoogleHandler;
         private readonly IGetRolesHandler _getRolesHandler;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AccountsController(
             ILoginHandler loginHandler,
@@ -29,7 +36,9 @@ namespace VAcademyConnect.API.Controllers
             ISendOtpHandler sendOtpHandler,
             IVerifyOtpHandler verifyOtpHandler,
             ILoginByGoogleHandler loginByGoogleHandler,
-            IGetRolesHandler getRolesHandler)
+            IGetRolesHandler getRolesHandler,
+            ICurrentUserService currentUserService,
+            UserManager<ApplicationUser> userManager)
         {
             _loginHandler = loginHandler;
             _registerHandler = registerHandler;
@@ -40,6 +49,8 @@ namespace VAcademyConnect.API.Controllers
             _verifyOtpHandler = verifyOtpHandler;
             _loginByGoogleHandler = loginByGoogleHandler;
             _getRolesHandler = getRolesHandler;
+            _currentUserService = currentUserService;
+            _userManager = userManager;
         }
 
         private void SetAuthCookie(string token)
@@ -179,6 +190,30 @@ namespace VAcademyConnect.API.Controllers
         {
             var result = await _getRolesHandler.HandleAsync();
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var user = await _currentUserService.GetCurrentUserAsync();
+            if (user == null)
+                return Unauthorized();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var response = new LogInResponse
+            {
+                UserId = Guid.Parse(user.Id),
+                TenantId = user.TenantId ?? Guid.Empty,
+                UserName = user.Email!,
+                Email = user.Email!,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                Role = roles.FirstOrDefault() ?? string.Empty,
+            };
+
+            return Ok(response);
         }
     }
 }

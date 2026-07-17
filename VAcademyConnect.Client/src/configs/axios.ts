@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7241", // chỉnh theo BE
+  baseURL: "http://localhost:5177", // cùng scheme http với FE để cookie AuthToken (SameSite=Lax) được gửi kèm
   withCredentials: true, // Quan trọng: cho phép gửi cookies với mỗi request
 });
 
@@ -22,9 +22,10 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Nếu bị 401 (Unauthorized), redirect về login
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Bỏ qua /accounts/me: 401 ở đây chỉ có nghĩa là chưa đăng nhập, không phải phiên hết hạn
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/accounts/me')) {
       originalRequest._retry = true;
-      
+
       // Xóa thông tin auth và redirect về login
       // Cookie sẽ được backend xóa
       window.location.href = "/login";

@@ -24,7 +24,9 @@ namespace VAcademyConnect.Application.Mapping
             {
                 Id = entity.Id,
                 ClassId = entity.ClassId,
+                ClassName = entity.Class?.Name,
                 StudentId = entity.StudentId,
+                StudentName = entity.Student?.FullName,
                 Date = entity.Date,
                 IsPresent = entity.IsPresent,
                 CountAsPaid = entity.CountAsPaid,

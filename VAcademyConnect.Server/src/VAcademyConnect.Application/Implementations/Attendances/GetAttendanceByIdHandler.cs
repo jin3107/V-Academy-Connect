@@ -1,4 +1,5 @@
 ﻿using MayNghien.Infrastructures.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Repositories;
@@ -27,7 +28,8 @@ namespace VAcademyConnect.Application.Implementations.Attendances
                 if (user == null)
                     return result.BuildError("Unauthorize.");
 
-                var attendance = await _attendanceRepository.GetAsync(id);
+                var attendance = await _attendanceRepository.FindByAsync(a => a.Id == id)
+                    .Include(a => a.Class).Include(a => a.Student).FirstOrDefaultAsync();
                 if (attendance == null || attendance.IsDeleted)
                     return result.BuildError("Attendance record was not found or has been deleted.");
 

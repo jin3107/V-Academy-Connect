@@ -3,6 +3,7 @@ using VAcademyConnect.Application.Implementations.Attendances;
 using VAcademyConnect.Application.Implementations.Classes;
 using VAcademyConnect.Application.Implementations.ClassStudents;
 using VAcademyConnect.Application.Implementations.LessonEvaluations;
+using VAcademyConnect.Application.Implementations.Scores;
 using VAcademyConnect.Application.Implementations.Staffs;
 using VAcademyConnect.Application.Implementations.Subscriptions;
 using VAcademyConnect.Application.Implementations.Tenants;
@@ -10,6 +11,7 @@ using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
 using VAcademyConnect.Application.Interfaces.LessonEvaluations;
+using VAcademyConnect.Application.Interfaces.Scores;
 using VAcademyConnect.Application.Interfaces.Staffs;
 using VAcademyConnect.Application.Interfaces.Subscriptions;
 using VAcademyConnect.Application.Interfaces.Tenants;
@@ -50,6 +52,14 @@ namespace VAcademyConnect.Application
             services.AddScoped<IDeleteLessonEvaluationHandler, DeleteLessonEvaluationHandler>();
             services.AddScoped<IGetLessonEvaluationByIdHandler, GetLessonEvaluationByIdHandler>();
             services.AddScoped<ISearchLessonEvaluationHandler, SearchLessonEvaluationHandler>();
+            #endregion
+
+            #region Scores
+            services.AddScoped<ICreateScoreHandler, CreateScoreHandler>();
+            services.AddScoped<IUpdateScoreHandler, UpdateScoreHandler>();
+            services.AddScoped<IDeleteScoreHandler, DeleteScoreHandler>();
+            services.AddScoped<IGetScoreByIdHandler, GetScoreByIdHandler>();
+            services.AddScoped<ISearchScoreHandler, SearchScoreHandler>();
             #endregion
 
             #region Staffs

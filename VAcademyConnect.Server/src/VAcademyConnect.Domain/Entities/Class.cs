@@ -18,6 +18,14 @@ namespace VAcademyConnect.Domain.Entities
 
         public decimal Tuition { get; set; }
 
+        [ForeignKey("Teacher")]
+        public Guid? TeacherId { get; set; }
+        public Staff? Teacher { get; set; }
+
+        public DayOfWeek? TeachingDayOfWeek { get; set; }
+        public TimeSpan? TeachingStartTime { get; set; }
+        public TimeSpan? TeachingEndTime { get; set; }
+
         public ICollection<ClassStudent>? ClassStudents { get; set; }
         public ICollection<Attendance>? Attendances { get; set; }
         public ICollection<LessonEvaluation>? LessonEvaluations { get; set; }

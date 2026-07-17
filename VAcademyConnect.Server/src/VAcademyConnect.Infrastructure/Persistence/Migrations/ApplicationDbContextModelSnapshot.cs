@@ -17,7 +17,7 @@ namespace VAcademyConnect.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.18")
+                .HasAnnotation("ProductVersion", "8.0.29")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -339,6 +339,18 @@ namespace VAcademyConnect.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int?>("TeachingDayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("TeachingEndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("TeachingStartTime")
+                        .HasColumnType("time(6)");
+
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("char(36)");
 
@@ -346,6 +358,8 @@ namespace VAcademyConnect.Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
 
                     b.HasIndex("TenantId");
 
@@ -819,6 +833,9 @@ namespace VAcademyConnect.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tenants");
@@ -1001,10 +1018,17 @@ namespace VAcademyConnect.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("VAcademyConnect.Domain.Entities.Class", b =>
                 {
+                    b.HasOne("VAcademyConnect.Domain.Entities.Staff", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("VAcademyConnect.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Classes")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Teacher");
 
                     b.Navigation("Tenant");
                 });

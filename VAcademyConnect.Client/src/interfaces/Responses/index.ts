@@ -8,3 +8,4 @@ export type { default as ClassResponse } from './ClassResponse'
 export type { default as AttendanceResponse } from './AttendanceResponse';
 export type { default as ClassStudentResponse } from './ClassStudentResponse';
 export type { default as LessonEvaluationResponse } from './LessonEvaluationResponse';
+export type { default as ScoreResponse } from './ScoreResponse';

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Form, Button, message } from 'antd';
+import { Form, Button, message, Segmented } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
 import type { RegisterRequest } from "../../interfaces";
+import { TenantType } from "../../commons";
 import { registerAsync } from "../../apis/accountAPI";
 import { AuthFormInput } from "../../components";
 import './style.scss'
@@ -45,9 +46,24 @@ const Register = () => {
           onFinish={onFinish}
           layout="vertical"
           className="register-form"
+          initialValues={{ tenantType: TenantType.Personal }}
         >
+          <Form.Item
+            label="Account type"
+            name="tenantType"
+            rules={[{ required: true, message: "Please select an account type!" }]}
+          >
+            <Segmented
+              block
+              options={[
+                { label: "Personal (I am the teacher)", value: TenantType.Personal },
+                { label: "Center (I manage teachers)", value: TenantType.Center },
+              ]}
+            />
+          </Form.Item>
+
           <div className="form-row">
-            <AuthFormInput 
+            <AuthFormInput
               label="Name"
               name="name"
               type="text"

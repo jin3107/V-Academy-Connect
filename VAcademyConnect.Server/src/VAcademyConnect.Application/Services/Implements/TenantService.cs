@@ -1,0 +1,371 @@
+﻿using LinqKit;
+using MayNghien.Infrastructures.Models.Requests;
+using MayNghien.Infrastructures.Models.Responses;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VAcademyConnect.Commons.Enums;
+using VAcademyConnect.DTOs.Requests;
+using VAcademyConnect.DTOs.Responses;
+using VAcademyConnect.Domain.Entities;
+using VAcademyConnect.Application.Interfaces;
+using VAcademyConnect.Application.Interfaces.Repositories;
+using VAcademyConnect.Application.Interfaces.Services;
+using VAcademyConnect.Application.Services.Mapping;
+using static MayNghien.Infrastructures.Helpers.SearchHelper;
+
+namespace VAcademyConnect.Application.Services.Implements
+{
+    public class TenantService : ITenantService
+    {
+        private readonly ITenantRepository _tenantRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly ITenantSubscriptionRepository _tenantSubscriptionRepository;
+        private readonly ICurrentUserService _currentUserService;
+
+        public TenantService(ITenantRepository tenantRepository,
+            ICurrentUserService currentUserService,
+            ITenantSubscriptionRepository tenantSubscriptionRepository,
+            ISubscriptionRepository subscriptionRepository)
+        {
+            _tenantRepository = tenantRepository;
+            _currentUserService = currentUserService;
+            _tenantSubscriptionRepository = tenantSubscriptionRepository;
+            _subscriptionRepository = subscriptionRepository;
+        }
+
+        public async Task<AppResponse<TenantResponse>> GetByIdAsync(Guid id)
+        {
+            var result = new AppResponse<TenantResponse>();
+            try
+            {
+                var user = await _currentUserService.GetCurrentUserAsync();
+                if (user == null)
+                    return result.BuildError("Unauthorize.");
+
+                var tenant = await _tenantRepository.FindByAsync(sub => sub.Id == id)
+                    .Include(t => t.TenantSubscription)
+                    .ThenInclude(ts => ts!.Subscription)
+                    .FirstOrDefaultAsync();
+
+                if (tenant == null || tenant.IsDeleted == true)
+                    return result.BuildError("Tenant was not found or has been deleted.");
+
+                // Kiểm tra và cập nhật status nếu subscription hết hạn
+                var statusChanged = await CheckAndUpdateTenantStatus(tenant);
+
+                // Nếu có thay đổi, reload tenant để lấy subscription mới
+                if (statusChanged)
+                    tenant = await _tenantRepository.FindByAsync(sub => sub.Id == id)
+                        .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription).FirstOrDefaultAsync();
+
+                var response = TenantMapper.ToResponse(tenant!);
+                var message = "Tenant has been found.";
+                if (statusChanged)
+                    message += " Tenant has been switched to Free plan due to expired subscription.";
+                result.BuildResult(response, message);
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        public async Task<AppResponse<SearchResponse<TenantResponse>>> SearchAsync(SearchRequest request)
+        {
+            var result = new AppResponse<SearchResponse<TenantResponse>>();
+            try
+            {
+                var user = await _currentUserService.GetCurrentUserAsync();
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var query = BuildFilterExpression(request.Filters!);
+                var numOfRecords = await _tenantRepository.CountRecordsAsync(query);
+                var tenants = _tenantRepository.FindByPredicate(query)
+                    .Include(t => t.TenantSubscription)
+                        .ThenInclude(ts => ts!.Subscription)
+                    .AsQueryable();
+
+                if (request.SortBy != null)
+                    tenants = _tenantRepository.AddSort(tenants, request.SortBy);
+                else
+                    tenants = tenants.OrderBy(x => x.Name);
+
+                int pageIndex = request.PageIndex ?? 1;
+                int pageSize = request.PageSize ?? 1;
+                int startIndex = (pageIndex - 1) * pageSize;
+                var tenantList = await tenants.Skip(startIndex).Take(pageSize).ToListAsync();
+
+                // Kiểm tra và cập nhật status cho mỗi tenant
+                var changedTenantIds = new List<Guid>();
+                foreach (var tenant in tenantList)
+                {
+                    var statusChanged = await CheckAndUpdateTenantStatus(tenant);
+                    if (statusChanged)
+                        changedTenantIds.Add(tenant.Id);
+                }
+
+                // Reload những tenant đã thay đổi
+                if (changedTenantIds.Any())
+                {
+                    for (int i = 0; i < tenantList.Count; i++)
+                    {
+                        if (changedTenantIds.Contains(tenantList[i].Id))
+                        {
+                            tenantList[i] = await _tenantRepository.FindByAsync(t => t.Id == tenantList[i].Id)
+                                .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription)
+                                .FirstOrDefaultAsync() ?? tenantList[i];
+                        }
+                    }
+                }
+
+                var dtoList = tenantList.Select(TenantMapper.ToResponse).ToList();
+                var searchResponse = new SearchResponse<TenantResponse>
+                {
+                    TotalPages = CalculateNumOfPages(numOfRecords, pageSize),
+                    TotalRows = numOfRecords,
+                    CurrentPage = pageIndex,
+                    Data = dtoList,
+                    RowsPerPage = pageSize,
+                };
+                result.Data = searchResponse;
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private ExpressionStarter<Tenant> BuildFilterExpression(List<Filter> filters)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<Tenant>(true);
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        switch (filter.FieldName)
+                        {
+                            case "Name":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Name.Contains(filter.Value));
+                                break;
+
+                            case "Status":
+                                if (!string.IsNullOrEmpty(filter.Value))
+                                    predicate = predicate.And(x => x.Status.ToString().Contains(filter.Value));
+                                break;
+
+                            case "Subscription":
+                                {
+                                    var key = (filter.Value ?? "").Trim();
+                                    if (!string.IsNullOrEmpty(key))
+                                    {
+                                        predicate = predicate.And(x =>
+                                            x.TenantSubscription != null &&
+                                            x.TenantSubscription.Subscription != null &&
+                                            EF.Functions.Like(x.TenantSubscription.Subscription.Name, $"%{key}%"));
+                                    }
+                                    break;
+                                }
+
+
+                            default: break;
+                        }
+                    }
+                }
+
+                predicate = predicate.And(x => x.IsDeleted == false);
+                return predicate;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + ex.StackTrace);
+            }
+        }
+
+        public async Task<AppResponse<TenantResponse>> UpdateAsync(TenantRequest request)
+        {
+            var result = new AppResponse<TenantResponse>();
+            try
+            {
+                var user = await _currentUserService.GetCurrentUserAsync();
+                if (user == null)
+                    return result.BuildError("Unauthorize");
+
+                var tenant = await _tenantRepository.FindByAsync(t => t.Id == request.Id)
+                    .Include(ts => ts.TenantSubscription).ThenInclude(t => t!.Subscription).FirstOrDefaultAsync();
+
+                if (tenant == null || tenant.IsDeleted == true)
+                    return result.BuildError("Tenant was not found or has been deleted.");
+
+                if (!await ValidateStatusChange(tenant, request.Status))
+                {
+                    return result.BuildError("You do not have permission to change tenant status from Inactive to Active. Only administrators can perform this action.");
+                }
+
+                if (tenant.Status == Status.Inactive && request.Status == Status.Active)
+                {
+                    if (tenant.TenantSubscription == null || tenant.TenantSubscription.EndDate <= DateTime.UtcNow)
+                    {
+                        return result.BuildError("Cannot activate tenant: No active subscription found or subscription has expired. Please renew the subscription first.");
+                    }
+                }
+
+                tenant.Name = request.Name;
+                tenant.ContactEmail = request.ContactEmail;
+                tenant.ContactPhone = request.ContactPhone;
+                tenant.Status = request.Status;
+                tenant.ModifiedBy = user.Email;
+                tenant.ModifiedOn = DateTime.UtcNow;
+
+                await _tenantRepository.EditAsync(tenant);
+                var updatedResponse = TenantMapper.ToResponse(tenant);
+                
+                string message = $"Tenant has been updated successfully.";
+                if (tenant.Status == Status.Active && tenant.TenantSubscription?.EndDate != null)
+                {
+                    message += $" Subscription is valid until {tenant.TenantSubscription.EndDate.Value:yyyy-MM-dd}.";
+                }
+                
+                result.BuildResult(updatedResponse, message);
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+
+        private async Task<bool> CheckAndUpdateTenantStatus(Tenant tenant, bool saveChanges = true)
+        {
+            try
+            {
+                bool statusChanged = false;
+
+                if (tenant.TenantSubscription?.EndDate < DateTime.UtcNow && tenant.TenantSubscription?.EndDate != null)
+                {
+                    var freePlan = await _subscriptionRepository.FindByAsync(s => s.Name == "Free" && !s.IsDeleted)
+                        .FirstOrDefaultAsync();
+
+                    if (freePlan != null)
+                    {
+                        var oldSubscription = await _tenantSubscriptionRepository.GetAsync(tenant.TenantSubscription.Id);
+                        if (oldSubscription != null)
+                        {
+                            oldSubscription.SubscriptionId = freePlan.Id;
+                            oldSubscription.Subscription = freePlan;
+                            oldSubscription.IsTrial = false;
+                            oldSubscription.StartDate = DateTime.UtcNow;
+                            oldSubscription.EndDate = null;
+                            oldSubscription.ModifiedOn = DateTime.UtcNow;
+                            oldSubscription.ModifiedBy = (await _currentUserService.GetCurrentUserAsync())?.Email ?? "System";
+
+                            await _tenantSubscriptionRepository.EditAsync(oldSubscription);
+                        }
+
+                        tenant.Status = Status.Active;
+                        tenant.ModifiedOn = DateTime.UtcNow;
+                        tenant.ModifiedBy = "System - Switched to Free Plan";
+                        statusChanged = true;
+
+                        if (saveChanges)
+                        {
+                            await _tenantRepository.EditAsync(tenant);
+                        }
+                    }
+                }
+                return statusChanged;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " " + ex.StackTrace);
+            }
+            return false;
+        }
+
+        private async Task<bool> ValidateStatusChange(Tenant tenant, Status newStatus)
+        {
+            var user = await _currentUserService.GetCurrentUserAsync();
+            if (user == null)
+                return false;
+
+            if (tenant.Status == Status.Inactive && newStatus == Status.Active)
+            {
+                var roles = await _currentUserService.GetRolesAsync(user);
+                return roles.Any(r => r == "SuperAdmin" || r == "Admin");
+            }
+
+            return true;
+        }
+
+        public async Task<AppResponse<TenantResponse>> RenewStandardSubscriptionAsync(Guid tenantId)
+        {
+            var result = new AppResponse<TenantResponse>();
+            try
+            {
+                var user = await _currentUserService.GetCurrentUserAsync();
+                if (user == null)
+                    return result.BuildError("Unauthorized");
+
+                var roles = await _currentUserService.GetRolesAsync(user);
+                if (!roles.Any(r => r == "SuperAdmin" || r == "Admin"))
+                    return result.BuildError("Only administrators can renew subscriptions.");
+
+                var standardPlan = await _subscriptionRepository
+                    .FindByAsync(s => s.Name == "Standard" && !s.IsDeleted)
+                    .FirstOrDefaultAsync();
+
+                if (standardPlan == null)
+                    return result.BuildError("Standard subscription plan not found.");
+
+                var currentTenantSubscription = await _tenantSubscriptionRepository
+                    .FindByAsync(s => s.TenantId == tenantId && !s.IsDeleted)
+                    .FirstOrDefaultAsync();
+
+                if (currentTenantSubscription == null)
+                    return result.BuildError("No active subscription found for this tenant.");
+
+                currentTenantSubscription.SubscriptionId = standardPlan.Id;
+                currentTenantSubscription.StartDate = DateTime.UtcNow;
+                currentTenantSubscription.EndDate = DateTime.UtcNow.AddMonths(1);
+                currentTenantSubscription.IsTrial = false;
+                currentTenantSubscription.ModifiedOn = DateTime.UtcNow;
+                currentTenantSubscription.ModifiedBy = user.Email;
+                await _tenantSubscriptionRepository.EditAsync(currentTenantSubscription);
+
+                var tenant = await _tenantRepository.FindByAsync(t => t.Id == tenantId)
+                    .FirstOrDefaultAsync();
+
+                if (tenant != null)
+                {
+                    tenant.Status = Status.Active;
+                    tenant.ModifiedBy = user.Email;
+                    tenant.ModifiedOn = DateTime.UtcNow;
+                    await _tenantRepository.EditAsync(tenant);
+                }
+
+                tenant = await _tenantRepository.FindByAsync(t => t.Id == tenantId)
+                    .Include(t => t.TenantSubscription)
+                    .ThenInclude(ts => ts!.Subscription)
+                    .FirstOrDefaultAsync();
+
+                var response = TenantMapper.ToResponse(tenant!);
+                result.BuildResult(response, "Subscription renewed successfully for 1 month(s). Tenant is now active.");
+            }
+            catch (Exception ex)
+            {
+                result.BuildError(ex.Message + " " + ex.StackTrace);
+            }
+            return result;
+        }
+    }
+}

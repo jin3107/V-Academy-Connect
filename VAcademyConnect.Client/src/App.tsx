@@ -4,7 +4,7 @@ import { PrivateRoute } from "./components";
 import { AuthProvider } from "./contexts";
 import {
   LogIn, Register, ChangePassword, VerifyEmail, Staffs,
-  Home, Subscriptions, Tenants, Attendances, LessonEvaluations, Unauthorized
+  Home, Subscriptions, Tenants, Attendances, LessonEvaluations, Scores, Unauthorized
  } from "./pages";
 
 function App() {
@@ -79,6 +79,15 @@ function App() {
                 element={
                   <PrivateRoute allowedRoles={["SuperAdmin", "Admin", "TenantAdmin", "Teacher"]}>
                     <LessonEvaluations />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/scores"
+                element={
+                  <PrivateRoute allowedRoles={["SuperAdmin", "Admin", "TenantAdmin", "Teacher"]}>
+                    <Scores />
                   </PrivateRoute>
                 }
               />

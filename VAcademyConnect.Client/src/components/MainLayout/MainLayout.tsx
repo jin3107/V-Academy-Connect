@@ -6,7 +6,7 @@ import {
   BookOutlined,
   ClusterOutlined,
   DashboardOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
-  ScheduleOutlined, ShoppingOutlined, StarOutlined, TeamOutlined, UserOutlined,
+  ScheduleOutlined, ShoppingOutlined, SolutionOutlined, StarOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, Avatar, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
@@ -35,6 +35,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (path.startsWith("/tenants")) return ["tenants"];
     if (path.startsWith("/attendances")) return ["attendances"];
     if (path.startsWith("/lesson-evaluations")) return ["lesson-evaluations"];
+    if (path.startsWith("/scores")) return ["scores"];
     // if (path.startsWith("/students")) return ["students"];
     return ["dashboard"];
   }, [location.pathname]);
@@ -52,7 +53,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "tenants", icon: <ClusterOutlined />, label: "Tenants" },
         { key: "classes", icon: <BookOutlined />, label: "Classes" },
         { key: "attendances", icon: <ScheduleOutlined />, label: "Attendance" },
-        { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" }
+        { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
+        { key: "scores", icon: <SolutionOutlined />, label: "Scores" }
       ];
     }
 
@@ -63,7 +65,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "staffs", icon: <TeamOutlined />, label: "Staffs" },
         { key: "classes", icon: <BookOutlined />, label: "Classes" },
         { key: "attendances", icon: <ScheduleOutlined />, label: "Attendance" },
-        { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" }
+        { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
+        { key: "scores", icon: <SolutionOutlined />, label: "Scores" }
       ];
     }
 
@@ -73,6 +76,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "classes", icon: <BookOutlined />, label: "Classes" },
         { key: "attendances", icon: <ScheduleOutlined />, label: "Attendance" },
         { key: "lesson-evaluations", icon: <StarOutlined />, label: "Lesson Evaluation" },
+        { key: "scores", icon: <SolutionOutlined />, label: "Scores" },
         // { key: "students", icon: <UserOutlined />, label: "Students" } // TODO: Implement later
       ];
     }
@@ -103,6 +107,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     else if (key === "classes") navigate("/classes");
     else if (key === "attendances") navigate("/attendances");
     else if (key === "lesson-evaluations") navigate("/lesson-evaluations");
+    else if (key === "scores") navigate("/scores");
     // else if (key === "students") navigate("/students"); // TODO: Implement later
   }, [navigate]);
 

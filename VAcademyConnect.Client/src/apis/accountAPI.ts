@@ -16,6 +16,11 @@ export const logOutAsync = async () => {
   return await axios.post('/accounts/logout').then(res => res.data);
 }
 
+export const getMeAsync = async (): Promise<LogInResponse> => {
+  const response = await axios.get<LogInResponse>('/accounts/me');
+  return response.data;
+}
+
 export const verifyEmailAsync = async (data: VerifyEmailRequest) : Promise<AppResponse<VerifyEmailResponse>> => {
   const response = await axios.post<AppResponse<VerifyEmailResponse>>('/accounts/verify-email', data);
   return response.data;

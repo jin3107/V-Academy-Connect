@@ -52,12 +52,15 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 if (!roles.Any())
                     return result.BuildError("User has no role assigned.");
 
+                var tenantType = TenantType.Personal;
                 if (user.TenantId.HasValue)
                 {
                     var tenant = await _tenantRepository.FindByAsync(t => t.Id == user.TenantId)
                         .Include(t => t.TenantSubscription).FirstOrDefaultAsync();
                     if (tenant != null)
                     {
+                        tenantType = tenant.Type;
+
                         if (tenant.Status == Status.Inactive ||
                             (tenant.TenantSubscription?.EndDate != null && tenant.TenantSubscription.EndDate < DateTime.UtcNow))
                         {
@@ -74,6 +77,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 {
                     UserId = Guid.Parse(user.Id),
                     TenantId = user.TenantId ?? Guid.Empty,
+                    TenantType = tenantType,
                     PhoneNumber = user.PhoneNumber ?? string.Empty,
                     UserName = user.Email!,
                     Email = user.Email!,

@@ -88,6 +88,11 @@ namespace VAcademyConnect.Application.Implementations.ClassStudents
                                     predicate = predicate.And(x => x.Class!.Name!.Contains(filter.Value));
                                 break;
 
+                            case "ClassId":
+                                if (Guid.TryParse(filter.Value, out var classId))
+                                    predicate = predicate.And(x => x.ClassId == classId);
+                                break;
+
                             default: break;
                         }
                     }

@@ -1,9 +1,8 @@
 ﻿using MayNghien.Infrastructures.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.DTOs.Requests;
-using VAcademyConnect.Application.Interfaces.Services;
 
 namespace VAcademyConnect.API.Controllers
 {
@@ -12,25 +11,35 @@ namespace VAcademyConnect.API.Controllers
     [Authorize(Roles = "SuperAdmin, Admin, TenantAdmin, Teacher")]
     public class ClassesController : ControllerBase
     {
-        private readonly IClassService _classService;
+        private readonly ICreateClassHandler _createClassHandler;
+        private readonly IUpdateClassHandler _updateClassHandler;
+        private readonly IDeleteClassHandler _deleteClassHandler;
+        private readonly IGetClassByIdHandler _getClassByIdHandler;
+        private readonly ISearchClassHandler _searchClassHandler;
 
-        public ClassesController(IClassService classService)
+        public ClassesController(ICreateClassHandler createClassHandler, IUpdateClassHandler updateClassHandler,
+            IDeleteClassHandler deleteClassHandler, IGetClassByIdHandler getClassByIdHandler,
+            ISearchClassHandler searchClassHandler)
         {
-            _classService = classService;
+            _createClassHandler = createClassHandler;
+            _updateClassHandler = updateClassHandler;
+            _deleteClassHandler = deleteClassHandler;
+            _getClassByIdHandler = getClassByIdHandler;
+            _searchClassHandler = searchClassHandler;
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var result = await _classService.GetByIdAsync(id);
+            var result = await _getClassByIdHandler.HandleAsync(id);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ClassRequest request)
         {
-            var result = await _classService.CreateAsync(request);
+            var result = await _createClassHandler.HandleAsync(request);
             return Ok(result);
         }
 
@@ -38,14 +47,14 @@ namespace VAcademyConnect.API.Controllers
         [Route("search")]
         public async Task<IActionResult> Search([FromBody] SearchRequest request)
         {
-            var result = await _classService.SearchAsync(request);
+            var result = await _searchClassHandler.HandleAsync(request);
             return Ok(result);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ClassRequest request)
         {
-            var result = await _classService.UpdateAsync(request);
+            var result = await _updateClassHandler.HandleAsync(request);
             return Ok(result);
         }
 
@@ -53,7 +62,7 @@ namespace VAcademyConnect.API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var result = await _classService.DeleteAsync(id);
+            var result = await _deleteClassHandler.HandleAsync(id);
             return Ok(result);
         }
     }

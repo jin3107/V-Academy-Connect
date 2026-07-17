@@ -7,7 +7,7 @@ using VAcademyConnect.DTOs.Requests;
 using VAcademyConnect.DTOs.Responses;
 using VAcademyConnect.Domain.Entities;
 
-namespace VAcademyConnect.Application.Services.Mapping
+namespace VAcademyConnect.Application.Mapping
 {
     public static class SubscriptionMapper
     {

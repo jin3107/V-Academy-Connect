@@ -1,4 +1,5 @@
 ﻿using MayNghien.Infrastructures.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.Repositories;
@@ -13,13 +14,15 @@ namespace VAcademyConnect.Application.Implementations.Classes
         private readonly ICurrentUserService _currentUserService;
         private readonly IClassRepository _classRepository;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IStaffRepository _staffRepository;
 
         public UpdateClassHandler(ICurrentUserService currentUserService, IClassRepository classRepository,
-            ITenantRepository tenantRepository)
+            ITenantRepository tenantRepository, IStaffRepository staffRepository)
         {
             _currentUserService = currentUserService;
             _classRepository = classRepository;
             _tenantRepository = tenantRepository;
+            _staffRepository = staffRepository;
         }
 
         public async Task<AppResponse<ClassResponse>> HandleAsync(ClassRequest request)
@@ -35,14 +38,30 @@ namespace VAcademyConnect.Application.Implementations.Classes
                 if (classes == null || classes.IsDeleted == true)
                     return result.BuildError("Class was not found or has been deleted.");
 
+                if (request.TeacherId.HasValue)
+                {
+                    var teacher = await _staffRepository.GetAsync(request.TeacherId.Value);
+                    if (teacher == null || teacher.IsDeleted || !teacher.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
+                        return result.BuildError("TeacherId must reference an existing Staff with Teacher role.");
+                    if (teacher.TenantId != request.TenantId)
+                        return result.BuildError("Teacher must belong to the same tenant as the class.");
+                }
+
                 classes.Name = request.Name;
                 classes.TenantId = request.TenantId;
                 classes.Tuition = request.Tuition;
+                classes.TeacherId = request.TeacherId;
+                classes.TeachingDayOfWeek = request.TeachingDayOfWeek;
+                classes.TeachingStartTime = request.TeachingStartTime;
+                classes.TeachingEndTime = request.TeachingEndTime;
                 classes.ModifiedBy = user.Email;
                 classes.ModifiedOn = DateTime.UtcNow;
 
                 await _classRepository.EditAsync(classes);
-                var response = ClassMapper.ToResponse(classes);
+
+                var updatedEntity = await _classRepository.FindByAsync(c => c.Id == classes.Id)
+                    .Include(c => c.Teacher).FirstOrDefaultAsync();
+                var response = ClassMapper.ToResponse(updatedEntity ?? classes);
                 if (response.TenantId.HasValue)
                 {
                     var tenantName = _tenantRepository.FindByAsync(c => c.Id == classes.TenantId).FirstOrDefault();

@@ -15,6 +15,12 @@ namespace VAcademyConnect.DTOs.Responses
         public decimal Tuition { get; set; }
         public string? TenantName { get; set; }
 
+        public Guid? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+        public DayOfWeek? TeachingDayOfWeek { get; set; }
+        public TimeSpan? TeachingStartTime { get; set; }
+        public TimeSpan? TeachingEndTime { get; set; }
+
         public DateTime? CreatedOn { get; set; }
         public string? CreatedBy { get; set; }
 

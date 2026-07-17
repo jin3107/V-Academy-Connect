@@ -134,6 +134,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 ContactEmail = email,
                 ContactPhone = "",
                 Status = Status.Active,
+                Type = TenantType.Personal,
                 CreatedBy = email,
                 CreatedOn = DateTime.UtcNow
             };

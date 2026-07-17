@@ -14,13 +14,15 @@ namespace VAcademyConnect.Application.Implementations.Staffs
     public class CreateStaffHandler : ICreateStaffHandler
     {
         private readonly IStaffRepository _staffRepository;
+        private readonly ITenantRepository _tenantRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUserAccountService _userAccountService;
 
-        public CreateStaffHandler(IStaffRepository staffRepository, ICurrentUserService currentUserService,
-            IUserAccountService userAccountService)
+        public CreateStaffHandler(IStaffRepository staffRepository, ITenantRepository tenantRepository,
+            ICurrentUserService currentUserService, IUserAccountService userAccountService)
         {
             _staffRepository = staffRepository;
+            _tenantRepository = tenantRepository;
             _currentUserService = currentUserService;
             _userAccountService = userAccountService;
         }
@@ -35,7 +37,13 @@ namespace VAcademyConnect.Application.Implementations.Staffs
                     return result.BuildError("Unauthorized");
 
                 if (request.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
-                    return result.BuildError("Cannot create Teacher as Staff. Teacher role is assigned to TenantAdmin only.");
+                {
+                    var tenant = currentUser.TenantId.HasValue
+                        ? await _tenantRepository.GetAsync(currentUser.TenantId.Value)
+                        : null;
+                    if (tenant == null || tenant.Type != TenantType.Center)
+                        return result.BuildError("Only Center tenants can manage Teacher staff. For a Personal tenant, the TenantAdmin itself is the teacher.");
+                }
 
                 var createStaff = await CreateStaff(request, currentUser);
                 if (createStaff == null)

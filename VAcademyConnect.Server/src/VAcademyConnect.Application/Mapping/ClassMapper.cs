@@ -17,7 +17,11 @@ namespace VAcademyConnect.Application.Mapping
             {
                 Name = entity.Name,
                 TenantId = entity.TenantId,
-                Tuition = entity.Tuition
+                Tuition = entity.Tuition,
+                TeacherId = entity.TeacherId,
+                TeachingDayOfWeek = entity.TeachingDayOfWeek,
+                TeachingStartTime = entity.TeachingStartTime,
+                TeachingEndTime = entity.TeachingEndTime
             };
         }
 
@@ -27,7 +31,11 @@ namespace VAcademyConnect.Application.Mapping
             {
                 Name = request.Name,
                 TenantId = request.TenantId,
-                Tuition = request.Tuition
+                Tuition = request.Tuition,
+                TeacherId = request.TeacherId,
+                TeachingDayOfWeek = request.TeachingDayOfWeek,
+                TeachingStartTime = request.TeachingStartTime,
+                TeachingEndTime = request.TeachingEndTime
             };
         }
 
@@ -40,6 +48,11 @@ namespace VAcademyConnect.Application.Mapping
                 TenantId = entity.TenantId,
                 Tuition = Decimal.Parse(entity.Tuition.ToString("F2")),
                 TenantName = entity.Tenant?.Name,
+                TeacherId = entity.TeacherId,
+                TeacherName = entity.Teacher?.Name,
+                TeachingDayOfWeek = entity.TeachingDayOfWeek,
+                TeachingStartTime = entity.TeachingStartTime,
+                TeachingEndTime = entity.TeachingEndTime,
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn,
                 Students = entity.ClassStudents?.Select(ClassStudentMapper.ToResponse).ToList()

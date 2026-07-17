@@ -41,7 +41,8 @@ namespace VAcademyConnect.Application.Implementations.Classes
 
                 var numOfRecords = await _classRepository.CountRecordsAsync(query);
                 var classes = _classRepository.FindByPredicate(query)
-                    .Include(c => c.ClassStudents).ThenInclude(cs => cs.Student).AsQueryable();
+                    .Include(c => c.ClassStudents).ThenInclude(cs => cs.Student)
+                    .Include(c => c.Teacher).AsQueryable();
 
                 if (request.SortBy != null)
                     classes = _classRepository.AddSort(classes, request.SortBy);

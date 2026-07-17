@@ -32,7 +32,8 @@ namespace VAcademyConnect.Application.Implementations.Classes
                     return result.BuildError("Unthorize.");
 
                 var classes = await _classRepository.FindByAsync(c => c.Id == id)
-                    .Include(c => c.ClassStudents)!.ThenInclude(cs => cs.Student).FirstOrDefaultAsync();
+                    .Include(c => c.ClassStudents)!.ThenInclude(cs => cs.Student)
+                    .Include(c => c.Teacher).FirstOrDefaultAsync();
                 if (classes == null || classes.IsDeleted == true)
                     return result.BuildError("Class was not found or has been deleted.");
 

@@ -25,5 +25,7 @@ namespace VAcademyConnect.DTOs.Responses
         public string? ModifiedBy { get; set; }
 
         public string? Password { get; set; }
+
+        public List<TeachingClassResponse>? ClassesTaught { get; set; }
     }
 }

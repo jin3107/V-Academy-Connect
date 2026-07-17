@@ -25,5 +25,8 @@ namespace VAcademyConnect.DTOs.Requests
 
         [Required(ErrorMessage = "Status is required.")]
         public Status Status { get; set; }
+
+        [Required(ErrorMessage = "Type is required.")]
+        public TenantType Type { get; set; }
     }
 }

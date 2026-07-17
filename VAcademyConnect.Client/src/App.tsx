@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import "./App.css";
 import { PrivateRoute } from "./components";
 import { AuthProvider } from "./contexts";
-import { 
+import {
   LogIn, Register, ChangePassword, VerifyEmail, Staffs,
-  Home, Subscriptions, Tenants, Unauthorized
+  Home, Subscriptions, Tenants, Attendances, Unauthorized
  } from "./pages";
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
                 }
               />
 
-              {/* <Route 
+              {/* <Route
                 path="/classes"
                 element={
                   <PrivateRoute allowedRoles={["SuperAdmin", "TenantAdmin", "Teacher"]}>
@@ -64,6 +64,15 @@ function App() {
                   </PrivateRoute>
                 }
               /> */}
+
+              <Route
+                path="/attendances"
+                element={
+                  <PrivateRoute allowedRoles={["SuperAdmin", "Admin", "TenantAdmin", "Teacher"]}>
+                    <Attendances />
+                  </PrivateRoute>
+                }
+              />
 
               {/* TODO: Students page for Teachers */}
               {/* <Route 

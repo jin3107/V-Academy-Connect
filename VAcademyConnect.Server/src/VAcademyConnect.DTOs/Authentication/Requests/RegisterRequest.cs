@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VAcademyConnect.Commons.Enums;
 
 namespace VAcademyConnect.DTOs.Authentication.Requests
 {
@@ -33,5 +34,9 @@ namespace VAcademyConnect.DTOs.Authentication.Requests
 
         [Required(ErrorMessage = "Tenant name is required.")]
         public string TenantName { get; set; }
+
+        // Personal: TenantAdmin chính là giáo viên, không quản lý Staff Teacher.
+        // Center: TenantAdmin được phép tạo Staff với Role=Teacher và gán lớp dạy.
+        public TenantType TenantType { get; set; } = TenantType.Personal;
     }
 }

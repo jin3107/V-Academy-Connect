@@ -3,10 +3,10 @@ export type {
   LogInRequest, RegisterRequest,
   VerifyEmailRequest, ChangePasswordRequest
 } from './Authentication/Requests';
-export type { 
-  CreateStaffRequest, UpdateStaffRequest, SubscriptionRequest, 
+export type {
+  CreateStaffRequest, UpdateStaffRequest, SubscriptionRequest,
   TenantRequest, TenantSubscriptionRequest,
-  ClassRequest
+  ClassRequest, AttendanceRequest
 } from './Requests';
 export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 
@@ -18,10 +18,10 @@ export type {
   VerifyEmailResponse, ChangePasswordResponse
 } from './Authentication/Responses';
 
-export type { 
+export type {
   StaffResponse, SubscriptionResponse,
   TenantReponse, TenantSubscriptionReponse,
-  ClassResponse
+  ClassResponse, AttendanceResponse, ClassStudentResponse
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';

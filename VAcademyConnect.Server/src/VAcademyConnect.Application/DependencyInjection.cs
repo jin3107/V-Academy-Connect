@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using VAcademyConnect.Application.Implementations.Attendances;
 using VAcademyConnect.Application.Implementations.Classes;
 using VAcademyConnect.Application.Implementations.ClassStudents;
 using VAcademyConnect.Application.Implementations.Staffs;
 using VAcademyConnect.Application.Implementations.Subscriptions;
 using VAcademyConnect.Application.Implementations.Tenants;
+using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
 using VAcademyConnect.Application.Interfaces.Staffs;
@@ -16,6 +18,14 @@ namespace VAcademyConnect.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            #region Attendances
+            services.AddScoped<ICreateAttendanceHandler, CreateAttendanceHandler>();
+            services.AddScoped<IUpdateAttendanceHandler, UpdateAttendanceHandler>();
+            services.AddScoped<IDeleteAttendanceHandler, DeleteAttendanceHandler>();
+            services.AddScoped<IGetAttendanceByIdHandler, GetAttendanceByIdHandler>();
+            services.AddScoped<ISearchAttendanceHandler, SearchAttendanceHandler>();
+            #endregion
+
             #region Classes
             services.AddScoped<ICreateClassHandler, CreateClassHandler>();
             services.AddScoped<IUpdateClassHandler, UpdateClassHandler>();

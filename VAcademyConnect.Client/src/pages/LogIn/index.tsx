@@ -19,7 +19,6 @@ const LogIn = () => {
       setLoading(true);
 
       const response = await logInAsync(values);
-      const token = response.data.token;
       const userInfo = {
         email: response.data.email,
         userId: response.data.userId,
@@ -28,10 +27,10 @@ const LogIn = () => {
         phoneNumber: response.data.phoneNumber,
         userName: response.data.userName
       };
-      
+
       // Sử dụng AuthContext để lưu thông tin vào memory
       // Token sẽ được backend lưu vào httpOnly cookie
-      login(token, userInfo);
+      login(userInfo);
       
       message.success('Login successful!');
       navigate('/home');

@@ -23,6 +23,7 @@ namespace VAcademyConnect.Infrastructure
             services.AddScoped<IClassStudentRepository, ClassStudentRepository>();
             services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            services.AddScoped<ILessonEvaluationRepository, LessonEvaluationRepository>();
             #endregion
 
             #region Identity

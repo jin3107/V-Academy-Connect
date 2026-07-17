@@ -5,3 +5,4 @@ export type { default as TenantRequest } from './TenantRequest';
 export type { default as TenantSubscriptionRequest } from './TenantSubscriptionRequest';
 export type { default as ClassRequest } from './ClassRequest';
 export type { default as AttendanceRequest } from './AttendanceRequest';
+export type { default as LessonEvaluationRequest } from './LessonEvaluationRequest';

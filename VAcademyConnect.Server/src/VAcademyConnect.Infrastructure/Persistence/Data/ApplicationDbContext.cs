@@ -28,5 +28,6 @@ namespace VAcademyConnect.Infrastructure.Persistence.Data
         public DbSet<ScoreStatistic> ScoreStatistics { get; set; }
         public DbSet<BackgroundJob> BackgroundJobs { get; set; }
         public DbSet<RefreshTokenModel> RefreshTokenModels { get; set; }
+        public DbSet<OtpCode> OtpCodes { get; set; }
     }
 }

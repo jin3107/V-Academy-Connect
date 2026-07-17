@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { getMeAsync } from '../apis/accountAPI';
+import { TenantType } from '../commons';
 
 interface UserInfo {
   email: string;
   userId: string;
   role: string;
   tenantId?: string;
+  tenantType?: TenantType;
   phoneNumber?: string;
   userName: string;
 }
@@ -36,6 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           userId: me.userId,
           role: me.role,
           tenantId: me.tenantId,
+          tenantType: me.tenantType,
           phoneNumber: me.phoneNumber,
           userName: me.userName,
         });

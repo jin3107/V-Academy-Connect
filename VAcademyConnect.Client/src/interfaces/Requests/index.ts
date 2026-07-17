@@ -7,3 +7,5 @@ export type { default as ClassRequest } from './ClassRequest';
 export type { default as AttendanceRequest } from './AttendanceRequest';
 export type { default as LessonEvaluationRequest } from './LessonEvaluationRequest';
 export type { default as ScoreRequest } from './ScoreRequest';
+export type { default as ScoreStatisticRequest } from './ScoreStatisticRequest';
+export type { default as ScoreStatisticCalculateRequest } from './ScoreStatisticCalculateRequest';

@@ -3,6 +3,7 @@ using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
@@ -89,6 +90,14 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 if (!roles.Any())
                     return result.BuildError("User has no role assigned.");
 
+                var tenantType = TenantType.Personal;
+                if (user!.TenantId.HasValue)
+                {
+                    var tenant = await _tenantRepository.FindByAsync(t => t.Id == user.TenantId).FirstOrDefaultAsync();
+                    if (tenant != null)
+                        tenantType = tenant.Type;
+                }
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user!.UserName!),
@@ -110,6 +119,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 {
                     UserId = Guid.Parse(user.Id),
                     TenantId = user.TenantId ?? Guid.Empty,
+                    TenantType = tenantType,
                     UserName = user.UserName!,
                     Email = user.Email!,
                     Role = roles.FirstOrDefault()!,

@@ -18,7 +18,8 @@ namespace VAcademyConnect.Application.Mapping
                 Name = entity.Name,
                 ContactEmail = entity.ContactEmail,
                 ContactPhone = entity.ContactPhone,
-                Status = entity.Status
+                Status = entity.Status,
+                Type = entity.Type
             };
         }
 
@@ -29,7 +30,8 @@ namespace VAcademyConnect.Application.Mapping
                 Name = request.Name,
                 ContactEmail = request.ContactEmail,
                 ContactPhone = request.ContactPhone,
-                Status = request.Status
+                Status = request.Status,
+                Type = request.Type
             };
         }
 
@@ -78,6 +80,8 @@ namespace VAcademyConnect.Application.Mapping
                 ContactPhone = entity.ContactPhone,
                 Status = entity.Status,
                 StatusName = entity.Status.ToString(),
+                Type = entity.Type,
+                TypeName = entity.Type.ToString(),
                 SubscriptionStatus = new TenantSubscriptionStatusResponse
                 {
                     HasActiveSubscription = hasActiveSubscription,

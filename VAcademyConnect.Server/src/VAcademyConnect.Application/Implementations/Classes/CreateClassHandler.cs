@@ -14,13 +14,15 @@ namespace VAcademyConnect.Application.Implementations.Classes
         private readonly ICurrentUserService _currentUserService;
         private readonly IClassRepository _classRepository;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IStaffRepository _staffRepository;
 
         public CreateClassHandler(ICurrentUserService currentUserService, IClassRepository classRepository,
-            ITenantRepository tenantRepository)
+            ITenantRepository tenantRepository, IStaffRepository staffRepository)
         {
             _currentUserService = currentUserService;
             _classRepository = classRepository;
             _tenantRepository = tenantRepository;
+            _staffRepository = staffRepository;
         }
 
         public async Task<AppResponse<ClassResponse>> HandleAsync(ClassRequest request)
@@ -32,6 +34,15 @@ namespace VAcademyConnect.Application.Implementations.Classes
                 if (user == null)
                     return result.BuildError("Unauthorize.");
 
+                if (request.TeacherId.HasValue)
+                {
+                    var teacher = await _staffRepository.GetAsync(request.TeacherId.Value);
+                    if (teacher == null || teacher.IsDeleted || !teacher.Role.Equals("Teacher", StringComparison.OrdinalIgnoreCase))
+                        return result.BuildError("TeacherId must reference an existing Staff with Teacher role.");
+                    if (teacher.TenantId != request.TenantId)
+                        return result.BuildError("Teacher must belong to the same tenant as the class.");
+                }
+
                 var newClass = ClassMapper.ToEntity(request);
                 newClass.Id = Guid.NewGuid();
                 newClass.Name = request.Name;
@@ -41,7 +52,10 @@ namespace VAcademyConnect.Application.Implementations.Classes
                 newClass.CreatedOn = DateTime.UtcNow;
 
                 await _classRepository.AddAsync(newClass);
-                var response = ClassMapper.ToResponse(newClass);
+
+                var createdEntity = await _classRepository.FindByAsync(c => c.Id == newClass.Id)
+                    .Include(c => c.Teacher).FirstOrDefaultAsync();
+                var response = ClassMapper.ToResponse(createdEntity ?? newClass);
                 if (request.TenantId.HasValue)
                 {
                     var tenantName = _tenantRepository.FindByAsync(c => c.Id == newClass.TenantId).FirstOrDefault();

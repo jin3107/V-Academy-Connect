@@ -109,6 +109,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 ContactEmail = request.Email,
                 ContactPhone = request.PhoneNumber,
                 Status = Status.Active,
+                Type = TenantType.Personal,
                 CreatedBy = request.Email,
                 CreatedOn = DateTime.UtcNow
             };

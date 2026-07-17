@@ -14,6 +14,7 @@ namespace VAcademyConnect.Domain.Entities
         public string ContactEmail { get; set; }
         public string ContactPhone { get; set; }
         public Status Status { get; set; }
+        public TenantType Type { get; set; }
 
         public TenantSubscription? TenantSubscription { get; set; }
         public ICollection<Staff>? Staffs { get; set; }

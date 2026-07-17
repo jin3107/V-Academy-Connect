@@ -8,6 +8,7 @@ using VAcademyConnect.Application.Implementations.ScoreStatistics;
 using VAcademyConnect.Application.Implementations.Staffs;
 using VAcademyConnect.Application.Implementations.Subscriptions;
 using VAcademyConnect.Application.Implementations.Tenants;
+using VAcademyConnect.Application.Implementations.TuitionFees;
 using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
@@ -17,6 +18,7 @@ using VAcademyConnect.Application.Interfaces.ScoreStatistics;
 using VAcademyConnect.Application.Interfaces.Staffs;
 using VAcademyConnect.Application.Interfaces.Subscriptions;
 using VAcademyConnect.Application.Interfaces.Tenants;
+using VAcademyConnect.Application.Interfaces.TuitionFees;
 
 namespace VAcademyConnect.Application
 {
@@ -95,6 +97,15 @@ namespace VAcademyConnect.Application
             services.AddScoped<IGetTenantByIdHandler, GetTenantByIdHandler>();
             services.AddScoped<ISearchTenantHandler, SearchTenantHandler>();
             services.AddScoped<IRenewTenantStandardSubscriptionHandler, RenewTenantStandardSubscriptionHandler>();
+            #endregion
+
+            #region TuitionFees
+            services.AddScoped<ICreateTuitionFeeHandler, CreateTuitionFeeHandler>();
+            services.AddScoped<IUpdateTuitionFeeHandler, UpdateTuitionFeeHandler>();
+            services.AddScoped<IDeleteTuitionFeeHandler, DeleteTuitionFeeHandler>();
+            services.AddScoped<IGetTuitionFeeByIdHandler, GetTuitionFeeByIdHandler>();
+            services.AddScoped<ISearchTuitionFeeHandler, SearchTuitionFeeHandler>();
+            services.AddScoped<IEstimateTuitionFeeHandler, EstimateTuitionFeeHandler>();
             #endregion
 
             return services;

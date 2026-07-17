@@ -7,3 +7,4 @@ export type { default as TenantSubscriptionReponse } from './TenantSubscriptionR
 export type { default as ClassResponse } from './ClassResponse'
 export type { default as AttendanceResponse } from './AttendanceResponse';
 export type { default as ClassStudentResponse } from './ClassStudentResponse';
+export type { default as LessonEvaluationResponse } from './LessonEvaluationResponse';

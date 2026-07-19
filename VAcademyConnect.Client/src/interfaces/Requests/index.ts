@@ -11,3 +11,5 @@ export type { default as ScoreStatisticRequest } from './ScoreStatisticRequest';
 export type { default as ScoreStatisticCalculateRequest } from './ScoreStatisticCalculateRequest';
 export type { default as TuitionFeeRequest } from './TuitionFeeRequest';
 export type { default as TuitionFeeEstimateRequest } from './TuitionFeeEstimateRequest';
+export type { default as PaymentRequest } from './PaymentRequest';
+export type { default as PaymentCheckRequest } from './PaymentCheckRequest';

@@ -3,6 +3,8 @@ using VAcademyConnect.Application.Implementations.Attendances;
 using VAcademyConnect.Application.Implementations.Classes;
 using VAcademyConnect.Application.Implementations.ClassStudents;
 using VAcademyConnect.Application.Implementations.LessonEvaluations;
+using VAcademyConnect.Application.Implementations.PaymentChecks;
+using VAcademyConnect.Application.Implementations.Payments;
 using VAcademyConnect.Application.Implementations.Scores;
 using VAcademyConnect.Application.Implementations.ScoreStatistics;
 using VAcademyConnect.Application.Implementations.Staffs;
@@ -13,6 +15,8 @@ using VAcademyConnect.Application.Interfaces.Attendances;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
 using VAcademyConnect.Application.Interfaces.LessonEvaluations;
+using VAcademyConnect.Application.Interfaces.PaymentChecks;
+using VAcademyConnect.Application.Interfaces.Payments;
 using VAcademyConnect.Application.Interfaces.Scores;
 using VAcademyConnect.Application.Interfaces.ScoreStatistics;
 using VAcademyConnect.Application.Interfaces.Staffs;
@@ -106,6 +110,20 @@ namespace VAcademyConnect.Application
             services.AddScoped<IGetTuitionFeeByIdHandler, GetTuitionFeeByIdHandler>();
             services.AddScoped<ISearchTuitionFeeHandler, SearchTuitionFeeHandler>();
             services.AddScoped<IEstimateTuitionFeeHandler, EstimateTuitionFeeHandler>();
+            #endregion
+
+            #region Payments
+            services.AddScoped<ICreatePaymentHandler, CreatePaymentHandler>();
+            services.AddScoped<IUpdatePaymentHandler, UpdatePaymentHandler>();
+            services.AddScoped<IDeletePaymentHandler, DeletePaymentHandler>();
+            services.AddScoped<IGetPaymentByIdHandler, GetPaymentByIdHandler>();
+            services.AddScoped<ISearchPaymentHandler, SearchPaymentHandler>();
+            #endregion
+
+            #region PaymentChecks
+            services.AddScoped<ICreatePaymentCheckHandler, CreatePaymentCheckHandler>();
+            services.AddScoped<IGetPaymentCheckByIdHandler, GetPaymentCheckByIdHandler>();
+            services.AddScoped<ISearchPaymentCheckHandler, SearchPaymentCheckHandler>();
             #endregion
 
             return services;

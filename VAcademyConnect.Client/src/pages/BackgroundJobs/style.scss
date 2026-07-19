@@ -1,0 +1,93 @@
+@use "../../scss/colors" as colors;
+@use "../../scss/fonts" as fonts;
+@use "../../scss/variables" as variables;
+@use "sass:color";
+
+.background-job-page {
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
+
+  .background-job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+
+      @media (min-width: 768px) {
+        font-size: 24px;
+      }
+    }
+  }
+
+  .background-job-search {
+    margin-bottom: 24px;
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+    .search-container {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .ant-select {
+        @media (max-width: 640px) {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+
+  .background-job-table {
+    width: 100%;
+    overflow-x: auto;
+
+    .ant-table {
+      min-width: 720px;
+    }
+
+    .ant-table-thead {
+      tr {
+        th {
+          background: #fafafa;
+          font-weight: 600;
+          white-space: nowrap;
+          position: relative;
+          user-select: none;
+
+          .column-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover {
+              color: colors.$primary;
+            }
+
+            .anticon {
+              margin-left: 5px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+
+    .ant-table-tbody {
+      tr:hover {
+        td {
+          background: #f0f7ff;
+        }
+      }
+    }
+  }
+}

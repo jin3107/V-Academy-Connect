@@ -13,3 +13,4 @@ export type { default as ScoreStatisticResponse } from './ScoreStatisticResponse
 export type { default as TuitionFeeResponse } from './TuitionFeeResponse';
 export type { default as PaymentResponse } from './PaymentResponse';
 export type { default as PaymentCheckResponse } from './PaymentCheckResponse';
+export type { default as BackgroundJobResponse } from './BackgroundJobResponse';

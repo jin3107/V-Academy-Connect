@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VAcademyConnect.Application.Implementations.Attendances;
+using VAcademyConnect.Application.Implementations.BackgroundJobs;
 using VAcademyConnect.Application.Implementations.Classes;
 using VAcademyConnect.Application.Implementations.ClassStudents;
 using VAcademyConnect.Application.Implementations.LessonEvaluations;
@@ -12,6 +13,7 @@ using VAcademyConnect.Application.Implementations.Subscriptions;
 using VAcademyConnect.Application.Implementations.Tenants;
 using VAcademyConnect.Application.Implementations.TuitionFees;
 using VAcademyConnect.Application.Interfaces.Attendances;
+using VAcademyConnect.Application.Interfaces.BackgroundJobs;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
 using VAcademyConnect.Application.Interfaces.LessonEvaluations;
@@ -124,6 +126,12 @@ namespace VAcademyConnect.Application
             services.AddScoped<ICreatePaymentCheckHandler, CreatePaymentCheckHandler>();
             services.AddScoped<IGetPaymentCheckByIdHandler, GetPaymentCheckByIdHandler>();
             services.AddScoped<ISearchPaymentCheckHandler, SearchPaymentCheckHandler>();
+            #endregion
+
+            #region BackgroundJobs
+            services.AddScoped<IRunTenantSubscriptionBillingJobHandler, RunTenantSubscriptionBillingJobHandler>();
+            services.AddScoped<IGetBackgroundJobByIdHandler, GetBackgroundJobByIdHandler>();
+            services.AddScoped<ISearchBackgroundJobHandler, SearchBackgroundJobHandler>();
             #endregion
 
             return services;

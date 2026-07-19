@@ -10,6 +10,7 @@ builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddIdentityConfiguration();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfiguration();
+builder.Services.AddQuartzConfiguration();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();

@@ -9,7 +9,8 @@ export type {
   ClassRequest, AttendanceRequest, LessonEvaluationRequest, ScoreRequest,
   ScoreStatisticRequest, ScoreStatisticCalculateRequest,
   TuitionFeeRequest, TuitionFeeEstimateRequest,
-  PaymentRequest, PaymentCheckRequest
+  PaymentRequest, PaymentCheckRequest,
+  StudentRequest, ClassStudentRequest
 } from './Requests';
 export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 
@@ -26,7 +27,8 @@ export type {
   TenantReponse, TenantSubscriptionReponse,
   ClassResponse, AttendanceResponse, ClassStudentResponse, LessonEvaluationResponse, ScoreResponse,
   ScoreStatisticResponse, TuitionFeeResponse,
-  PaymentResponse, PaymentCheckResponse, BackgroundJobResponse
+  PaymentResponse, PaymentCheckResponse, BackgroundJobResponse,
+  StudentResponse
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';

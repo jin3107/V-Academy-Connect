@@ -13,3 +13,5 @@ export type { default as TuitionFeeRequest } from './TuitionFeeRequest';
 export type { default as TuitionFeeEstimateRequest } from './TuitionFeeEstimateRequest';
 export type { default as PaymentRequest } from './PaymentRequest';
 export type { default as PaymentCheckRequest } from './PaymentCheckRequest';
+export type { default as StudentRequest } from './StudentRequest';
+export type { default as ClassStudentRequest } from './ClassStudentRequest';

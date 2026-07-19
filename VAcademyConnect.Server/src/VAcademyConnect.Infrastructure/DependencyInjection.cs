@@ -29,6 +29,7 @@ namespace VAcademyConnect.Infrastructure
             services.AddScoped<ITuitionFeeRepository, TuitionFeeRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPaymentCheckRepository, PaymentCheckRepository>();
+            services.AddScoped<IBackgroundJobRepository, BackgroundJobRepository>();
             #endregion
 
             #region Identity

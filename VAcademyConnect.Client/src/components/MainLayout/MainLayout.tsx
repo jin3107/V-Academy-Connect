@@ -4,7 +4,7 @@ import { logOutAsync } from "../../apis/accountAPI";
 import { useAuth } from "../../contexts";
 import {
   BarChartOutlined, BookOutlined,
-  ClusterOutlined, CheckCircleOutlined,
+  ClusterOutlined, CheckCircleOutlined, HistoryOutlined,
   DashboardOutlined, DollarOutlined, LoginOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
   ScheduleOutlined, ShoppingOutlined, SolutionOutlined, StarOutlined, TeamOutlined, UserOutlined,
 } from "@ant-design/icons";
@@ -38,6 +38,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (path.startsWith("/score-statistics")) return ["score-statistics"];
     if (path.startsWith("/tuition-fees")) return ["tuition-fees"];
     if (path.startsWith("/payments")) return ["payments"];
+    if (path.startsWith("/background-jobs")) return ["background-jobs"];
     if (path.startsWith("/scores")) return ["scores"];
     // if (path.startsWith("/students")) return ["students"];
     return ["dashboard"];
@@ -60,7 +61,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "scores", icon: <SolutionOutlined />, label: "Scores" },
         { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" },
         { key: "tuition-fees", icon: <DollarOutlined />, label: "Tuition Fees" },
-        { key: "payments", icon: <CheckCircleOutlined />, label: "Payments" }
+        { key: "payments", icon: <CheckCircleOutlined />, label: "Payments" },
+        { key: "background-jobs", icon: <HistoryOutlined />, label: "Billing Job History" }
       ];
     }
 
@@ -123,6 +125,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     else if (key === "score-statistics") navigate("/score-statistics");
     else if (key === "tuition-fees") navigate("/tuition-fees");
     else if (key === "payments") navigate("/payments");
+    else if (key === "background-jobs") navigate("/background-jobs");
     // else if (key === "students") navigate("/students"); // TODO: Implement later
   }, [navigate]);
 

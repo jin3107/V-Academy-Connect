@@ -26,7 +26,7 @@ export type {
   TenantReponse, TenantSubscriptionReponse,
   ClassResponse, AttendanceResponse, ClassStudentResponse, LessonEvaluationResponse, ScoreResponse,
   ScoreStatisticResponse, TuitionFeeResponse,
-  PaymentResponse, PaymentCheckResponse
+  PaymentResponse, PaymentCheckResponse, BackgroundJobResponse
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';

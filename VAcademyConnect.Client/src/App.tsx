@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { PrivateRoute } from "./components";
 import { AuthProvider } from "./contexts";
 import {
-  LogIn, Register, ChangePassword, VerifyEmail, Staffs,
+  Landing, LogIn, Register, ChangePassword, VerifyEmail, Staffs,
   Home, Profile, Subscriptions, Tenants, Classes, Attendances, LessonEvaluations, Scores, ScoreStatistics, TuitionFees, Payments,
   BackgroundJobs, Unauthorized
  } from "./pages";
@@ -15,6 +15,7 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<LogIn />} />
 
               <Route path="/register" element={<Register />} />
@@ -149,8 +150,6 @@ function App() {
               /> */}
 
               <Route path="/unauthorized" element={<Unauthorized />} />
-
-              <Route path="/" element={<Navigate to="/login" replace />} />
             </Routes>
           </AuthProvider>
         </Router>

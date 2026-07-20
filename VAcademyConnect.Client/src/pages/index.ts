@@ -1,3 +1,4 @@
+export { default as Landing } from './Landing'
 export { default as LogIn } from './LogIn'
 export { default as Register } from './Register'
 export { default as VerifyEmail } from './VerifyEmail'

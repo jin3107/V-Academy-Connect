@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
@@ -6,8 +6,6 @@ namespace VAcademyConnect.Infrastructure.Persistence.Data
 {
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        // Matches <UserSecretsId> in VAcademyConnect.API.csproj — design-time tools (dotnet ef)
-        // don't run through the API's composition root, so the secrets store has to be located explicitly.
         private const string ApiUserSecretsId = "7d0c2f9e-5e27-42d5-98ba-9125f0a4296e";
 
         public ApplicationDbContext CreateDbContext(string[] args)

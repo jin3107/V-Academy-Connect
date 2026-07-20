@@ -10,5 +10,6 @@ namespace VAcademyConnect.Application.Interfaces
         Task<(bool Succeeded, IEnumerable<string> Errors)> UpdateAsync(ApplicationUser user);
         Task DeleteAsync(ApplicationUser user);
         Task AssignRoleAsync(ApplicationUser user, string role);
+        Task<List<ApplicationUser>> GetUsersInRoleAsync(string role);
     }
 }

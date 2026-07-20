@@ -8,5 +8,6 @@ export default interface LogInResponse {
   tenantId: string;
   tenantType: TenantType;
   role: string;
-  userName: string
+  userName: string;
+  fullName?: string;
 };

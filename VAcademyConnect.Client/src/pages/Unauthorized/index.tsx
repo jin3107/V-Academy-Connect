@@ -9,7 +9,6 @@ const Unauthorized = () => {
 
   const handleGoBack = () => {
     if (user) {
-      // Redirect based on role
       if (user.role === "SuperAdmin" || user.role === "TenantAdmin") {
         navigate("/home");
       } else if (user.role === "Teacher") {

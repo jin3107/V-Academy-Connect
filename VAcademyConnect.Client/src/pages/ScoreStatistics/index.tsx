@@ -35,7 +35,6 @@ interface CalculateFormValues {
 }
 
 const ScoreStatistics = () => {
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [scoreStatistics, setScoreStatistics] = useState<ScoreStatisticResponse[]>([]);
   const [filterMonth, setFilterMonth] = useState<Dayjs | null>(null);
@@ -45,26 +44,21 @@ const ScoreStatistics = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm<ScoreStatisticFormValues>();
 
-  // ===== Calculate modal state =====
   const [calculateOpen, setCalculateOpen] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [calculateForm] = Form.useForm<CalculateFormValues>();
 
-  // ===== Student options (all students across classes) =====
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
 
-  // ===== Class options (for calculate filter) =====
   const [classOptions, setClassOptions] = useState<{ label: string; value: string }[]>([]);
 
-  // ===== Loaders =====
   const loadStudents = useCallback(async () => {
     setStudentsLoading(true);
     const response = await searchClassStudents({ filters: [], pageIndex: 1, pageSize: 500 });
@@ -100,7 +94,6 @@ const ScoreStatistics = () => {
     loadClasses();
   }, [loadStudents, loadClasses]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -120,7 +113,6 @@ const ScoreStatistics = () => {
     }, 0);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: ScoreStatisticFormValues) => {
     try {
       setSubmitting(true);
@@ -147,7 +139,6 @@ const ScoreStatistics = () => {
     }
   };
 
-  // ===== Calculate =====
   const onCalculate = async (values: CalculateFormValues) => {
     try {
       setCalculating(true);
@@ -170,7 +161,6 @@ const ScoreStatistics = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchScoreStatistics = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -210,7 +200,6 @@ const ScoreStatistics = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchScoreStatistics]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -231,7 +220,6 @@ const ScoreStatistics = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: "Student",
@@ -288,7 +276,6 @@ const ScoreStatistics = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="score-statistic-page">

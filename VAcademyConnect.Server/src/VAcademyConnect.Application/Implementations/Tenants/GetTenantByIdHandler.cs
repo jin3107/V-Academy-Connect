@@ -1,4 +1,4 @@
-﻿using MayNghien.Infrastructures.Models.Responses;
+using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 using VAcademyConnect.Application.Interfaces;
 using VAcademyConnect.Application.Interfaces.Repositories;
@@ -39,10 +39,8 @@ namespace VAcademyConnect.Application.Implementations.Tenants
                 if (tenant == null || tenant.IsDeleted == true)
                     return result.BuildError("Tenant was not found or has been deleted.");
 
-                // Kiểm tra và cập nhật status nếu subscription hết hạn
                 var statusChanged = await _tenantStatusService.CheckAndUpdateExpiredSubscriptionAsync(tenant);
 
-                // Nếu có thay đổi, reload tenant để lấy subscription mới
                 if (statusChanged)
                     tenant = await _tenantRepository.FindByAsync(sub => sub.Id == id)
                         .Include(t => t.TenantSubscription).ThenInclude(ts => ts!.Subscription).FirstOrDefaultAsync();

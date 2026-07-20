@@ -26,11 +26,10 @@ const LogIn = () => {
         tenantId: response.data.tenantId,
         tenantType: response.data.tenantType,
         phoneNumber: response.data.phoneNumber,
-        userName: response.data.userName
+        userName: response.data.userName,
+        fullName: response.data.fullName
       };
 
-      // Sử dụng AuthContext để lưu thông tin vào memory
-      // Token sẽ được backend lưu vào httpOnly cookie
       login(userInfo);
       
       message.success('Login successful!');
@@ -47,7 +46,7 @@ const LogIn = () => {
     <div className="login-container">
       <div className="login-form-wrapper">
         <div className="login-logo">
-          <div className="login-circle"></div>
+          <div className="logo-mark">V</div>
         </div>
         <h1 className="login-title">Welcome back</h1>
         <p className="login-subtitle">Please enter your details to login.</p>

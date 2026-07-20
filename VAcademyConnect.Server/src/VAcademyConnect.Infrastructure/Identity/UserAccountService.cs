@@ -54,5 +54,11 @@ namespace VAcademyConnect.Infrastructure.Identity
 
             await _userManager.AddToRoleAsync(user, role);
         }
+
+        public async Task<List<ApplicationUser>> GetUsersInRoleAsync(string role)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(role);
+            return users.ToList();
+        }
     }
 }

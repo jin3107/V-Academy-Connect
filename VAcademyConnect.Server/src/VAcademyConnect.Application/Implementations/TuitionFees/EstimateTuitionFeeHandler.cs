@@ -10,10 +10,6 @@ using VAcademyConnect.Domain.Entities;
 
 namespace VAcademyConnect.Application.Implementations.TuitionFees
 {
-    // Ước tính hạn đóng tiền dựa trên nhịp điểm danh thực tế của học sinh:
-    // - Chuẩn: 12 buổi/tháng => 3 buổi/tuần => đủ 12 buổi sau 4 tuần (hạn = ngày 1 tháng sau).
-    // - Có 1 buổi nghỉ phép/tuần (không tính tiền buổi đó) => chỉ còn 2 buổi/tuần được tính
-    //   => cần 6 tuần mới đủ 12 buổi (hạn ~ ngày 15 tháng sau nữa).
     public class EstimateTuitionFeeHandler : IEstimateTuitionFeeHandler
     {
         private const int SessionsPerCycle = 12;

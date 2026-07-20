@@ -35,7 +35,7 @@ const Register = () => {
     <div className="register-container">
       <div className="register-form-wrapper">
         <div className="register-logo">
-          <div className="logo-circle"></div>
+          <div className="logo-mark">V</div>
         </div>
 
         <h1 className="register-title">Create an account</h1>

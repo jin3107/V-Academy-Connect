@@ -1,6 +1,6 @@
 import axios from '../configs/axios';
 import type { AppResponse } from '../helpers';
-import type { ChangePasswordRequest, ChangePasswordResponse, LogInRequest, LogInResponse, RegisterRequest, RegisterResponse, VerifyEmailRequest, VerifyEmailResponse } from '../interfaces';
+import type { ChangePasswordRequest, ChangePasswordResponse, LogInRequest, LogInResponse, RegisterRequest, RegisterResponse, SendOtpRequest, SendOtpResponse, VerifyOtpRequest, UpdateProfileRequest, UpdateProfileResponse } from '../interfaces';
 
 export const logInAsync = async (data: LogInRequest) : Promise<AppResponse<LogInResponse>> => {
   const response = await axios.post<AppResponse<LogInResponse>>('/accounts/login', data);
@@ -21,12 +21,22 @@ export const getMeAsync = async (): Promise<LogInResponse> => {
   return response.data;
 }
 
-export const verifyEmailAsync = async (data: VerifyEmailRequest) : Promise<AppResponse<VerifyEmailResponse>> => {
-  const response = await axios.post<AppResponse<VerifyEmailResponse>>('/accounts/verify-email', data);
+export const sendOtpAsync = async (data: SendOtpRequest) : Promise<AppResponse<SendOtpResponse>> => {
+  const response = await axios.post<AppResponse<SendOtpResponse>>('/accounts/send-otp', data);
+  return response.data;
+}
+
+export const verifyOtpAsync = async (data: VerifyOtpRequest) : Promise<AppResponse<boolean>> => {
+  const response = await axios.post<AppResponse<boolean>>('/accounts/verify-otp', data);
   return response.data;
 }
 
 export const changePasswordAsync = async (data: ChangePasswordRequest) : Promise<AppResponse<ChangePasswordResponse>> => {
   const response = await axios.post<AppResponse<ChangePasswordResponse>>('/accounts/change-password', data);
+  return response.data;
+}
+
+export const updateProfileAsync = async (data: UpdateProfileRequest) : Promise<AppResponse<UpdateProfileResponse>> => {
+  const response = await axios.put<AppResponse<UpdateProfileResponse>>('/accounts/profile', data);
   return response.data;
 }

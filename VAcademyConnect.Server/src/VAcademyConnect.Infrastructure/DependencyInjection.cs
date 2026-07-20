@@ -29,6 +29,7 @@ namespace VAcademyConnect.Infrastructure
             services.AddScoped<ITuitionFeeRepository, TuitionFeeRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPaymentCheckRepository, PaymentCheckRepository>();
+            services.AddScoped<IBackgroundJobRepository, BackgroundJobRepository>();
             #endregion
 
             #region Identity
@@ -51,6 +52,7 @@ namespace VAcademyConnect.Infrastructure
             services.AddScoped<IVerifyOtpHandler, VerifyOtpHandler>();
             services.AddScoped<ILoginByGoogleHandler, LoginByGoogleHandler>();
             services.AddScoped<IGetRolesHandler, GetRolesHandler>();
+            services.AddScoped<IUpdateProfileHandler, UpdateProfileHandler>();
             #endregion
 
             return services;

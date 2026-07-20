@@ -1,7 +1,6 @@
-//#region Requests
-export type { 
+export type {
   LogInRequest, RegisterRequest,
-  VerifyEmailRequest, ChangePasswordRequest
+  SendOtpRequest, VerifyOtpRequest, ChangePasswordRequest, UpdateProfileRequest
 } from './Authentication/Requests';
 export type {
   CreateStaffRequest, UpdateStaffRequest, SubscriptionRequest,
@@ -9,16 +8,14 @@ export type {
   ClassRequest, AttendanceRequest, LessonEvaluationRequest, ScoreRequest,
   ScoreStatisticRequest, ScoreStatisticCalculateRequest,
   TuitionFeeRequest, TuitionFeeEstimateRequest,
-  PaymentRequest, PaymentCheckRequest
+  PaymentRequest, PaymentCheckRequest,
+  StudentRequest, ClassStudentRequest
 } from './Requests';
 export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 
-//#endregion
-
-//#region Responses
-export type { 
+export type {
   LogInResponse, RegisterResponse,
-  VerifyEmailResponse, ChangePasswordResponse
+  SendOtpResponse, ChangePasswordResponse, UpdateProfileResponse
 } from './Authentication/Responses';
 
 export type {
@@ -26,8 +23,8 @@ export type {
   TenantReponse, TenantSubscriptionReponse,
   ClassResponse, AttendanceResponse, ClassStudentResponse, LessonEvaluationResponse, ScoreResponse,
   ScoreStatisticResponse, TuitionFeeResponse,
-  PaymentResponse, PaymentCheckResponse
+  PaymentResponse, PaymentCheckResponse, BackgroundJobResponse,
+  StudentResponse
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';
-//#endregion

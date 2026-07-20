@@ -80,6 +80,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                     TenantType = tenantType,
                     PhoneNumber = user.PhoneNumber ?? string.Empty,
                     UserName = user.Email!,
+                    FullName = user.FullName,
                     Email = user.Email!,
                     Role = roles.FirstOrDefault()!,
                     Token = accessToken,

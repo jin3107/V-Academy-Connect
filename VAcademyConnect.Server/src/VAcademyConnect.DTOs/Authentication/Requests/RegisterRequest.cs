@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -35,8 +35,6 @@ namespace VAcademyConnect.DTOs.Authentication.Requests
         [Required(ErrorMessage = "Tenant name is required.")]
         public string TenantName { get; set; }
 
-        // Personal: TenantAdmin chính là giáo viên, không quản lý Staff Teacher.
-        // Center: TenantAdmin được phép tạo Staff với Role=Teacher và gán lớp dạy.
         public TenantType TenantType { get; set; } = TenantType.Personal;
     }
 }

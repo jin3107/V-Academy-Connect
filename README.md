@@ -9,8 +9,6 @@
 
 A multi-tenant management platform for tutoring centers and academies: classes, staff, attendance, lesson evaluations, scores, tuition billing, and automated subscription billing, behind cookie-based JWT authentication with an OTP password-reset flow.
 
-> This is a personal learning project. It is public for reference, but it is not currently maintained as a community contribution project.
-
 ## Table Of Contents
 
 - [Features](#features)

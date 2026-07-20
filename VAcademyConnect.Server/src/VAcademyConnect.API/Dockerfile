@@ -1,9 +1,4 @@
 # See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-#
-# Build context is VAcademyConnect.Server/src (the folder containing this Dockerfile's parent and its sibling projects).
-# Secrets (DB connection string, JWT key, Google client secret) are NOT baked into the image via appsettings.json.
-# Supply them at runtime as environment variables, e.g.:
-#   ConnectionStrings__DefaultConnection, Jwt__Key, Authentication__Google__ClientSecret
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base

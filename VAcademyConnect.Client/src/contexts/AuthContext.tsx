@@ -1,29 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { getMeAsync } from '../apis/accountAPI';
-import { TenantType } from '../commons';
-
-interface UserInfo {
-  email: string;
-  userId: string;
-  role: string;
-  tenantId?: string;
-  tenantType?: TenantType;
-  phoneNumber?: string;
-  userName: string;
-  fullName?: string;
-}
-
-interface AuthContextType {
-  user: UserInfo | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (userInfo: UserInfo) => void;
-  logout: () => void;
-  getUserRoles: () => string[];
-  updateUser: (partial: Partial<UserInfo>) => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext, type UserInfo } from './authContextValue';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserInfo | null>(null);
@@ -96,12 +73,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

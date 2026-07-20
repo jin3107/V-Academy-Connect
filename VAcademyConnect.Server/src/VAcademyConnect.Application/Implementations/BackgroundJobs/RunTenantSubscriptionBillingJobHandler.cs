@@ -7,9 +7,6 @@ using VAcademyConnect.Domain.Entities;
 
 namespace VAcademyConnect.Application.Implementations.BackgroundJobs
 {
-    // Chạy hằng ngày (Quartz): quét mọi tenant có TenantSubscription đã hết hạn (EndDate < now)
-    // và áp dụng logic hạ xuống gói Free hiện có (TenantStatusService), thay vì chỉ chạy bị động
-    // khi có người gọi GetTenantById/SearchTenant. Mỗi tenant bị xử lý được ghi 1 dòng BackgroundJob.
     public class RunTenantSubscriptionBillingJobHandler : IRunTenantSubscriptionBillingJobHandler
     {
         private readonly ITenantRepository _tenantRepository;

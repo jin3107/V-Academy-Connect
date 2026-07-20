@@ -60,7 +60,6 @@ const Classes = () => {
   const { user } = useAuth();
   const isSuperAdmin = user?.role === "SuperAdmin";
 
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [classes, setClasses] = useState<ClassResponse[]>([]);
   const [searchName, setSearchName] = useState("");
@@ -70,36 +69,30 @@ const Classes = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm<ClassFormValues>();
 
-  // ===== Roster modal state =====
   const [rosterOpen, setRosterOpen] = useState(false);
   const [rosterClass, setRosterClass] = useState<ClassResponse | undefined>(undefined);
   const [rosterLoading, setRosterLoading] = useState(false);
   const [roster, setRoster] = useState<ClassStudentResponse[]>([]);
 
-  // ===== Add existing student state =====
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentSearchLoading, setStudentSearchLoading] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState<string | undefined>(undefined);
   const [addingStudent, setAddingStudent] = useState(false);
 
-  // ===== New student modal state =====
   const [newStudentOpen, setNewStudentOpen] = useState(false);
   const [newStudentForm] = Form.useForm<NewStudentFormValues>();
   const [creatingStudent, setCreatingStudent] = useState(false);
 
-  // ===== Options =====
   const [tenantOptions, setTenantOptions] = useState<{ label: string; value: string }[]>([]);
   const [teacherOptions, setTeacherOptions] = useState<{ label: string; value: string }[]>([]);
   const [teachersLoading, setTeachersLoading] = useState(false);
 
-  // ===== Loaders =====
   const loadTenants = useCallback(async () => {
     if (!isSuperAdmin) return;
     const response = await searchTenants({ filters: [], pageIndex: 1, pageSize: 200 });
@@ -130,7 +123,6 @@ const Classes = () => {
     loadTeachers();
   }, [loadTenants, loadTeachers]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -156,7 +148,6 @@ const Classes = () => {
     }, 0);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: ClassFormValues) => {
     try {
       setSubmitting(true);
@@ -187,7 +178,6 @@ const Classes = () => {
     }
   };
 
-  // ===== Roster =====
   const loadRoster = useCallback(async (classId: string) => {
     setRosterLoading(true);
     const response = await searchClassStudents({
@@ -287,7 +277,6 @@ const Classes = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchClasses = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -327,7 +316,6 @@ const Classes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchClasses]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -348,7 +336,6 @@ const Classes = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: (
@@ -422,7 +409,6 @@ const Classes = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="class-page page">

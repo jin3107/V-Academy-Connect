@@ -1,4 +1,3 @@
-// /pages/Home/style.scss
 @use '../../scss/colors' as colors;
 @use '../../scss/fonts' as fonts;
 @use '../../scss/variables' as variables;
@@ -97,7 +96,6 @@
   }
 }
 
-// Responsive design
 @include variables.tablet {
   .home-page {
     .dashboard-stats {

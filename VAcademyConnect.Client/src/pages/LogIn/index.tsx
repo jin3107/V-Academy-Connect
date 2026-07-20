@@ -30,8 +30,6 @@ const LogIn = () => {
         fullName: response.data.fullName
       };
 
-      // Sử dụng AuthContext để lưu thông tin vào memory
-      // Token sẽ được backend lưu vào httpOnly cookie
       login(userInfo);
       
       message.success('Login successful!');

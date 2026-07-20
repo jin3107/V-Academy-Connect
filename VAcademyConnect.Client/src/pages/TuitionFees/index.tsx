@@ -37,7 +37,6 @@ interface EstimateFormValues {
 }
 
 const TuitionFees = () => {
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [tuitionFees, setTuitionFees] = useState<TuitionFeeResponse[]>([]);
   const [filterMonth, setFilterMonth] = useState<Dayjs | null>(null);
@@ -47,14 +46,12 @@ const TuitionFees = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm<TuitionFeeFormValues>();
 
-  // ===== Estimate modal state =====
   const [estimateOpen, setEstimateOpen] = useState(false);
   const [estimating, setEstimating] = useState(false);
   const [estimateForm] = Form.useForm<EstimateFormValues>();
@@ -62,14 +59,11 @@ const TuitionFees = () => {
   const [estimateStudentOptions, setEstimateStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [estimateRosterLoading, setEstimateRosterLoading] = useState(false);
 
-  // ===== Student options (all students across classes, for manual entry) =====
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
 
-  // ===== Class options (for estimate) =====
   const [classOptions, setClassOptions] = useState<{ label: string; value: string }[]>([]);
 
-  // ===== Loaders =====
   const loadStudents = useCallback(async () => {
     setStudentsLoading(true);
     const response = await searchClassStudents({ filters: [], pageIndex: 1, pageSize: 500 });
@@ -126,7 +120,6 @@ const TuitionFees = () => {
     loadClasses();
   }, [loadStudents, loadClasses]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -147,7 +140,6 @@ const TuitionFees = () => {
     }, 0);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: TuitionFeeFormValues) => {
     try {
       setSubmitting(true);
@@ -175,7 +167,6 @@ const TuitionFees = () => {
     }
   };
 
-  // ===== Estimate =====
   const onEstimate = async (values: EstimateFormValues) => {
     try {
       setEstimating(true);
@@ -199,7 +190,6 @@ const TuitionFees = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchTuitionFees = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -239,7 +229,6 @@ const TuitionFees = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchTuitionFees]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -260,7 +249,6 @@ const TuitionFees = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: "Student",
@@ -327,7 +315,6 @@ const TuitionFees = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="tuition-fee-page">

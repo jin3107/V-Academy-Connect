@@ -136,7 +136,7 @@ namespace VAcademyConnect.API.Extensions
                 q.AddTrigger(opts => opts
                     .ForJob(jobKey)
                     .WithIdentity(nameof(TenantSubscriptionBillingJob) + "-trigger")
-                    .WithCronSchedule("0 5 0 * * ?")); // 00:05 UTC mỗi ngày
+                    .WithCronSchedule("0 5 0 * * ?"));
             });
 
             services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);

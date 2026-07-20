@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -94,10 +94,8 @@ namespace VAcademyConnect.API.Controllers
 
             if (result.IsSuccess && result.Data != null)
             {
-                // Lưu token vào httpOnly cookie
                 SetAuthCookie(result.Data.Token);
 
-                // KHÔNG trả token trong response body
                 result.Data.Token = null!;
                 result.Data.RefreshToken = null!;
             }
@@ -121,10 +119,8 @@ namespace VAcademyConnect.API.Controllers
 
             if (result.IsSuccess && result.Data != null)
             {
-                // Lưu token vào httpOnly cookie
                 SetAuthCookie(result.Data.Token);
 
-                // KHÔNG trả token trong response body
                 result.Data.Token = null!;
             }
 
@@ -164,7 +160,6 @@ namespace VAcademyConnect.API.Controllers
         {
             await _logoutHandler.HandleAsync();
 
-            // Xóa cookie
             DeleteAuthCookie();
 
             return Ok(new { message = "Logged out successfully" });
@@ -182,10 +177,8 @@ namespace VAcademyConnect.API.Controllers
 
             if (result.Data != null)
             {
-                // Lưu token vào httpOnly cookie
                 SetAuthCookie(result.Data.Token);
 
-                // KHÔNG trả token trong response body
                 result.Data.Token = null!;
                 result.Data.RefreshToken = null!;
             }

@@ -20,8 +20,8 @@
   max-width: 620px;
   max-height: 100%;
   overflow-y: auto;
-  scrollbar-width: none; // Firefox
-  &::-webkit-scrollbar { display: none; } // Chrome/Safari/Edge
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
   background-color: colors.$bg-card;
   border: 1px solid colors.$gray-300;
   border-radius: 16px;

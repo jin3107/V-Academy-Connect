@@ -35,7 +35,6 @@ interface PaymentFormValues {
 const Payments = () => {
   const { user } = useAuth();
 
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [payments, setPayments] = useState<PaymentResponse[]>([]);
   const [filterStudentId, setFilterStudentId] = useState<string | undefined>(undefined);
@@ -45,14 +44,12 @@ const Payments = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm<PaymentFormValues>();
 
-  // ===== Verify (PaymentCheck) modal state =====
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [verifyPayment, setVerifyPayment] = useState<PaymentResponse | undefined>(undefined);
   const [verifyLoading, setVerifyLoading] = useState(false);
@@ -60,11 +57,9 @@ const Payments = () => {
   const [paymentChecks, setPaymentChecks] = useState<PaymentCheckResponse[]>([]);
   const [verifyNote, setVerifyNote] = useState("");
 
-  // ===== Student options =====
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
 
-  // ===== Loaders =====
   const loadStudents = useCallback(async () => {
     setStudentsLoading(true);
     const response = await searchClassStudents({ filters: [], pageIndex: 1, pageSize: 500 });
@@ -88,7 +83,6 @@ const Payments = () => {
     loadStudents();
   }, [loadStudents]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -110,7 +104,6 @@ const Payments = () => {
     }, 0);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: PaymentFormValues) => {
     try {
       setSubmitting(true);
@@ -139,7 +132,6 @@ const Payments = () => {
     }
   };
 
-  // ===== Verify =====
   const loadPaymentChecks = useCallback(async (paymentId: string) => {
     setVerifyLoading(true);
     const response = await searchPaymentChecks({
@@ -189,7 +181,6 @@ const Payments = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchPayments = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -229,7 +220,6 @@ const Payments = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchPayments]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -250,7 +240,6 @@ const Payments = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: "Student",
@@ -317,7 +306,6 @@ const Payments = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="payment-page">

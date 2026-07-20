@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Khôi phục session từ httpOnly cookie khi app khởi động (vd: F5 reload)
   useEffect(() => {
     const restoreSession = async () => {
       try {
@@ -47,7 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
         setIsAuthenticated(true);
       } catch {
-        // Chưa đăng nhập hoặc cookie đã hết hạn
         setUser(null);
         setIsAuthenticated(false);
       } finally {
@@ -59,19 +57,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (userInfo: UserInfo) => {
-    // Token đã được backend lưu vào httpOnly cookie, frontend không nhận
-    // và không cần decode - chỉ lưu user info vào memory (React state)
     setUser(userInfo);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    // Xóa thông tin user khỏi memory
     setUser(null);
     setIsAuthenticated(false);
-
-    // Cookie sẽ được xóa bởi backend khi call logout API
-    // Hoặc bạn có thể xóa cookie ở client side (nếu không phải httpOnly)
   };
 
   const updateUser = (partial: Partial<UserInfo>) => {
@@ -81,7 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getUserRoles = (): string[] => {
     if (!user) return [];
 
-    // Parse roles từ user info
     const roles: string[] = [];
     if (user.role) {
       roles.push(user.role);

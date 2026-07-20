@@ -6,7 +6,6 @@
 .subscription-page {
   padding: 16px;
   
-  // Responsive padding
   @media (min-width: 768px) {
     padding: 24px;
   }
@@ -28,7 +27,6 @@
       }
     }
     
-    // Mobile: Stack vertically
     @media (max-width: 640px) {
       flex-direction: column;
       align-items: flex-start;
@@ -62,7 +60,6 @@
         flex-wrap: wrap;
       }
       
-      // Mobile: Stack search elements
       @media (max-width: 640px) {
         flex-direction: column;
         gap: 12px;
@@ -89,7 +86,6 @@
         }
       }
       
-      // Tablet: Partial stacking
       @media (min-width: 641px) and (max-width: 1023px) {
         .ant-input-affix-wrapper {
           flex: 1;
@@ -160,10 +156,8 @@
       }
       
       td {
-        // Handle long text overflow
         word-break: break-word;
         
-        // Email column specific
         &:nth-child(2) {
           max-width: 200px;
           @media (max-width: 640px) {
@@ -211,7 +205,6 @@
     }
     
     .ant-pagination {
-      // Mobile: Smaller pagination
       @media (max-width: 640px) {
         .ant-pagination-item,
         .ant-pagination-prev,
@@ -237,7 +230,6 @@
   }
 }
 
-// Table responsive utilities
 .ant-table-wrapper {
   @media (max-width: 1023px) {
     .ant-table-pagination {
@@ -250,14 +242,12 @@
   }
 }
 
-// Custom responsive table for mobile
 @media (max-width: 640px) {
   .subscription-table {
     .ant-table-container {
       -webkit-overflow-scrolling: touch;
       
       .ant-table-body {
-        // Alternative: Card-like view for mobile
         &.mobile-card-view {
           .ant-table-tbody {
             tr {
@@ -315,7 +305,6 @@
     }
   }
   
-  // Responsive form
   @media (max-width: 640px) {
     margin-top: 16px;
     

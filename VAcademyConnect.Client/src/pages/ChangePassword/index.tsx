@@ -12,11 +12,9 @@ const ChangePassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Lấy email từ /verify-email sau khi OTP đã được xác thực
   const { email } = (location.state as { email?: string }) || {};
 
   useEffect(() => {
-    // Không cho vào thẳng trang này nếu chưa qua bước xác thực OTP
     if (!email) {
       navigate('/verify-email', { replace: true });
     }

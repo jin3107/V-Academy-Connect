@@ -31,7 +31,6 @@ interface AttendanceFormValues {
 }
 
 const Attendances = () => {
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [attendances, setAttendances] = useState<AttendanceResponse[]>([]);
   const [filterClassId, setFilterClassId] = useState<string | undefined>(undefined);
@@ -42,7 +41,6 @@ const Attendances = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
@@ -50,12 +48,10 @@ const Attendances = () => {
   const [form] = Form.useForm<AttendanceFormValues>();
   const [formClassId, setFormClassId] = useState<string | undefined>(undefined);
 
-  // ===== Class / roster options =====
   const [classOptions, setClassOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [rosterLoading, setRosterLoading] = useState(false);
 
-  // ===== Loaders =====
   const loadClasses = useCallback(async () => {
     const response = await searchClasses({ filters: [], pageIndex: 1, pageSize: 200 });
     if (!response.isSuccess) {
@@ -92,7 +88,6 @@ const Attendances = () => {
     loadClasses();
   }, [loadClasses]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -108,7 +103,6 @@ const Attendances = () => {
     setOpen(true);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: AttendanceFormValues) => {
     try {
       setSubmitting(true);
@@ -137,7 +131,6 @@ const Attendances = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchAttendances = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -178,7 +171,6 @@ const Attendances = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAttendances]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -199,7 +191,6 @@ const Attendances = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: "Class",
@@ -265,7 +256,6 @@ const Attendances = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="attendance-page">

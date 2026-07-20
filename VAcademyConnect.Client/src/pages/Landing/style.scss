@@ -23,7 +23,6 @@
     margin-bottom: 12px;
   }
 
-  // ===== Nav =====
   .landing-nav {
     position: sticky;
     top: 0;
@@ -119,7 +118,6 @@
       }
     }
 
-    // Mobile: collapse links + actions into a dropdown panel
     @media (max-width: #{variables.$tablet-width - 1px}) {
       .landing-nav-actions.desktop-only {
         display: none;
@@ -168,7 +166,6 @@
     }
   }
 
-  // ===== Hero =====
   .landing-hero {
     padding: 96px 24px;
     text-align: center;
@@ -239,7 +236,6 @@
     }
   }
 
-  // ===== Features =====
   .landing-features {
     max-width: 1120px;
     margin: 0 auto;
@@ -301,7 +297,6 @@
     }
   }
 
-  // ===== About =====
   .landing-about {
     background: colors.$bg-card;
     border-top: 1px solid colors.$border-color;
@@ -357,7 +352,6 @@
     }
   }
 
-  // ===== Contact =====
   .landing-contact {
     max-width: 1120px;
     margin: 0 auto;
@@ -407,7 +401,6 @@
     }
   }
 
-  // ===== Footer =====
   .landing-footer {
     text-align: center;
     padding: 24px;

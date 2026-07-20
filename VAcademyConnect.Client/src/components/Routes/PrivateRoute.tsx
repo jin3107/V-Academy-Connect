@@ -10,17 +10,14 @@ interface PrivateRouteProps {
 const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
   const { isAuthenticated, isLoading, user, getUserRoles } = useAuth();
 
-  // Đang khôi phục session từ cookie (F5 reload) - chưa vội kết luận là chưa đăng nhập
   if (isLoading) {
     return null;
   }
 
-  // Kiểm tra xem user đã đăng nhập chưa
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Kiểm tra quyền truy cập
   if (allowedRoles && allowedRoles.length > 0) {
     const userRoles = getUserRoles();
     const hasPermission = allowedRoles.some(role => 

@@ -153,8 +153,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         }}
       >
         <div className="logo">
-          <div className="logo-circle"></div>
-          {!collapsed && <span className="logo-text">Dashboard</span>}
+          <div className="logo-mark">V</div>
+          {!collapsed && <span className="logo-text">V-Academy</span>}
         </div>
         <Menu
           theme="dark"

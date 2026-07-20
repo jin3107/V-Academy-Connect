@@ -26,7 +26,8 @@ const LogIn = () => {
         tenantId: response.data.tenantId,
         tenantType: response.data.tenantType,
         phoneNumber: response.data.phoneNumber,
-        userName: response.data.userName
+        userName: response.data.userName,
+        fullName: response.data.fullName
       };
 
       // Sử dụng AuthContext để lưu thông tin vào memory

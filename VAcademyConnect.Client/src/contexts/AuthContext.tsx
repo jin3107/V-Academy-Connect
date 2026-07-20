@@ -10,6 +10,7 @@ interface UserInfo {
   tenantType?: TenantType;
   phoneNumber?: string;
   userName: string;
+  fullName?: string;
 }
 
 interface AuthContextType {
@@ -19,6 +20,7 @@ interface AuthContextType {
   login: (userInfo: UserInfo) => void;
   logout: () => void;
   getUserRoles: () => string[];
+  updateUser: (partial: Partial<UserInfo>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,6 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           tenantType: me.tenantType,
           phoneNumber: me.phoneNumber,
           userName: me.userName,
+          fullName: me.fullName,
         });
         setIsAuthenticated(true);
       } catch {
@@ -71,6 +74,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Hoặc bạn có thể xóa cookie ở client side (nếu không phải httpOnly)
   };
 
+  const updateUser = (partial: Partial<UserInfo>) => {
+    setUser((prev) => (prev ? { ...prev, ...partial } : prev));
+  };
+
   const getUserRoles = (): string[] => {
     if (!user) return [];
 
@@ -91,7 +98,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         login,
         logout,
-        getUserRoles
+        getUserRoles,
+        updateUser
       }}
     >
       {children}

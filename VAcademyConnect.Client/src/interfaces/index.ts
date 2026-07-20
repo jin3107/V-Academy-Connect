@@ -1,7 +1,7 @@
 //#region Requests
-export type { 
+export type {
   LogInRequest, RegisterRequest,
-  VerifyEmailRequest, ChangePasswordRequest
+  VerifyEmailRequest, ChangePasswordRequest, UpdateProfileRequest
 } from './Authentication/Requests';
 export type {
   CreateStaffRequest, UpdateStaffRequest, SubscriptionRequest,
@@ -17,9 +17,9 @@ export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 //#endregion
 
 //#region Responses
-export type { 
+export type {
   LogInResponse, RegisterResponse,
-  VerifyEmailResponse, ChangePasswordResponse
+  VerifyEmailResponse, ChangePasswordResponse, UpdateProfileResponse
 } from './Authentication/Responses';
 
 export type {

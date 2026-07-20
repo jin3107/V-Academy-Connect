@@ -1,6 +1,6 @@
 import axios from '../configs/axios';
 import type { AppResponse } from '../helpers';
-import type { ChangePasswordRequest, ChangePasswordResponse, LogInRequest, LogInResponse, RegisterRequest, RegisterResponse, VerifyEmailRequest, VerifyEmailResponse } from '../interfaces';
+import type { ChangePasswordRequest, ChangePasswordResponse, LogInRequest, LogInResponse, RegisterRequest, RegisterResponse, VerifyEmailRequest, VerifyEmailResponse, UpdateProfileRequest, UpdateProfileResponse } from '../interfaces';
 
 export const logInAsync = async (data: LogInRequest) : Promise<AppResponse<LogInResponse>> => {
   const response = await axios.post<AppResponse<LogInResponse>>('/accounts/login', data);
@@ -28,5 +28,10 @@ export const verifyEmailAsync = async (data: VerifyEmailRequest) : Promise<AppRe
 
 export const changePasswordAsync = async (data: ChangePasswordRequest) : Promise<AppResponse<ChangePasswordResponse>> => {
   const response = await axios.post<AppResponse<ChangePasswordResponse>>('/accounts/change-password', data);
+  return response.data;
+}
+
+export const updateProfileAsync = async (data: UpdateProfileRequest) : Promise<AppResponse<UpdateProfileResponse>> => {
+  const response = await axios.put<AppResponse<UpdateProfileResponse>>('/accounts/profile', data);
   return response.data;
 }

@@ -27,6 +27,7 @@ namespace VAcademyConnect.API.Controllers
         private readonly IVerifyOtpHandler _verifyOtpHandler;
         private readonly ILoginByGoogleHandler _loginByGoogleHandler;
         private readonly IGetRolesHandler _getRolesHandler;
+        private readonly IUpdateProfileHandler _updateProfileHandler;
         private readonly ICurrentUserService _currentUserService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITenantRepository _tenantRepository;
@@ -41,6 +42,7 @@ namespace VAcademyConnect.API.Controllers
             IVerifyOtpHandler verifyOtpHandler,
             ILoginByGoogleHandler loginByGoogleHandler,
             IGetRolesHandler getRolesHandler,
+            IUpdateProfileHandler updateProfileHandler,
             ICurrentUserService currentUserService,
             UserManager<ApplicationUser> userManager,
             ITenantRepository tenantRepository)
@@ -54,6 +56,7 @@ namespace VAcademyConnect.API.Controllers
             _verifyOtpHandler = verifyOtpHandler;
             _loginByGoogleHandler = loginByGoogleHandler;
             _getRolesHandler = getRolesHandler;
+            _updateProfileHandler = updateProfileHandler;
             _currentUserService = currentUserService;
             _userManager = userManager;
             _tenantRepository = tenantRepository;
@@ -223,12 +226,22 @@ namespace VAcademyConnect.API.Controllers
                 TenantId = user.TenantId ?? Guid.Empty,
                 TenantType = tenantType,
                 UserName = user.Email!,
+                FullName = user.FullName,
                 Email = user.Email!,
                 PhoneNumber = user.PhoneNumber ?? string.Empty,
                 Role = roles.FirstOrDefault() ?? string.Empty,
             };
 
             return Ok(response);
+        }
+
+        [HttpPut]
+        [Route("profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+        {
+            var result = await _updateProfileHandler.HandleAsync(request);
+            return Ok(result);
         }
     }
 }

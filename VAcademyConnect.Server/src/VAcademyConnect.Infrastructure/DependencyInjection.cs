@@ -52,6 +52,7 @@ namespace VAcademyConnect.Infrastructure
             services.AddScoped<IVerifyOtpHandler, VerifyOtpHandler>();
             services.AddScoped<ILoginByGoogleHandler, LoginByGoogleHandler>();
             services.AddScoped<IGetRolesHandler, GetRolesHandler>();
+            services.AddScoped<IUpdateProfileHandler, UpdateProfileHandler>();
             #endregion
 
             return services;

@@ -425,50 +425,52 @@ const Classes = () => {
   // ===== Render =====
   return (
     <MainLayout>
-      <div className="class-page">
-        <div className="class-header">
-          <h2>Classes</h2>
-          <div className="header-actions">
+      <div className="class-page page">
+        <div className="page-header">
+          <div className="page-title">
+            <h2>Classes</h2>
+            <p>Manage classes, teacher assignments and schedules</p>
+          </div>
+          <div className="page-actions">
             <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
               Add Class
             </Button>
           </div>
         </div>
 
-        <div className="class-search">
-          <div className="search-container">
-            <Input
-              placeholder="Search by class name"
-              prefix={<SearchOutlined />}
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              onPressEnter={() => fetchClasses(1, pageSize)}
-              allowClear
-              style={{ width: 260 }}
-            />
-          </div>
+        <div className="page-toolbar">
+          <Input
+            placeholder="Search by class name"
+            prefix={<SearchOutlined />}
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            onPressEnter={() => fetchClasses(1, pageSize)}
+            allowClear
+            style={{ width: 280 }}
+          />
         </div>
 
-        <Table
-          className="class-table"
-          columns={columns}
-          dataSource={classes}
-          rowKey={(record) => record.id || record.name}
-          pagination={{
-            current: currentPage,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showTotal: (t) => `Total ${t} items`,
-          }}
-          loading={loading}
-          onChange={(newPagination) =>
-            handleTableChange({
-              current: newPagination.current || 1,
-              pageSize: newPagination.pageSize || 10,
-            })
-          }
-        />
+        <div className="page-card">
+          <Table
+            columns={columns}
+            dataSource={classes}
+            rowKey={(record) => record.id || record.name}
+            pagination={{
+              current: currentPage,
+              pageSize,
+              total,
+              showSizeChanger: true,
+              showTotal: (t) => `Total ${t} items`,
+            }}
+            loading={loading}
+            onChange={(newPagination) =>
+              handleTableChange({
+                current: newPagination.current || 1,
+                pageSize: newPagination.pageSize || 10,
+              })
+            }
+          />
+        </div>
 
         <Modal
           title={mode === "create" ? "Add Class" : "Update Class"}

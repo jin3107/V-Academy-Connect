@@ -62,7 +62,9 @@ const Profile = () => {
           <div className="page-card profile-summary">
             <Avatar size={72} className="profile-avatar">{initials}</Avatar>
             <div className="profile-name">{user?.fullName || user?.userName}</div>
-            <div className="profile-email">{user?.email}</div>
+            {user?.email && user.email !== (user?.fullName || user?.userName) && (
+              <div className="profile-email">{user.email}</div>
+            )}
             <div className="profile-tags">
               {user?.role && <Tag color="blue">{user.role}</Tag>}
               {tenantTypeLabel(user?.tenantType) && <Tag>{tenantTypeLabel(user?.tenantType)}</Tag>}

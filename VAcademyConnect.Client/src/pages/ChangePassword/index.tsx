@@ -1,53 +1,68 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './style.scss';
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import type { ChangePasswordRequest } from '../../interfaces';
 import { changePasswordAsync } from '../../apis/accountAPI';
 import { Form, message, Button } from 'antd';
 import { AuthFormInput } from '../../components';
-import { LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
-
-
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 
 const ChangePassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Lấy state từ /verify-email (cụ thể là email, phoneNumber)
-  const { email, phoneNumber } = location.state || {};
+  // Lấy email từ /verify-email sau khi OTP đã được xác thực
+  const { email } = (location.state as { email?: string }) || {};
 
-  const onFinish = async (values: ChangePasswordRequest) => {
+  useEffect(() => {
+    // Không cho vào thẳng trang này nếu chưa qua bước xác thực OTP
+    if (!email) {
+      navigate('/verify-email', { replace: true });
+    }
+  }, [email, navigate]);
+
+  const onFinish = async (values: Omit<ChangePasswordRequest, 'email'>) => {
+    if (!email) return;
+
     try {
       setLoading(true);
-      await changePasswordAsync(values);
+      const response = await changePasswordAsync({ ...values, email });
+      if (!response.isSuccess) {
+        message.error(response.message || 'Change password failed.');
+        return;
+      }
+      message.success('Password changed successfully. Please log in.');
       navigate('/login');
     } catch (error) {
-      console.log('Change password failed: ', error);
-      message.error('Change password failed. Please check your password.');
+      console.error('Change password failed: ', error);
+      message.error('Change password failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!email) return null;
 
   return (
     <div className="change-password-container">
       <div className='change-password-form-wrapper'>
         <div className='change-password-logo'>
           <div className='change-password-circle'>
-            <i className='fa-solid fa-envelope'></i>
+            <LockOutlined />
           </div>
         </div>
         <h1 className='change-password-title'>Change Password</h1>
+        <p className='change-password-subtitle'>Set a new password for your account.</p>
 
         <Form
           name='changePassword'
           onFinish={onFinish}
           layout='vertical'
           className='change-password-form'
-          initialValues={{ email, phoneNumber }}
+          initialValues={{ email }}
         >
-          <AuthFormInput 
+          <AuthFormInput
             label='Email'
             name='email'
             type='email'
@@ -55,17 +70,7 @@ const ChangePassword = () => {
             readonly
           />
 
-          <AuthFormInput 
-            type='text'
-            name='phoneNumber'
-            label='Phone Number'
-            required
-            message='Please enter your phone number!'
-            prefix={<span className='input-prefix'><PhoneOutlined /></span>}
-            readonly
-          />
-
-          <AuthFormInput 
+          <AuthFormInput
             type='password'
             name='newPassword'
             label='New Password'
@@ -75,7 +80,7 @@ const ChangePassword = () => {
             prefix={<span className='input-prefix'><LockOutlined /></span>}
           />
 
-          <AuthFormInput 
+          <AuthFormInput
             type='password'
             name='confirmNewPassword'
             label='Confirm New Password'
@@ -92,15 +97,13 @@ const ChangePassword = () => {
               loading={loading}
               className="change-password-button"
             >
-              Verify
+              Change Password
             </Button>
           </Form.Item>
 
           <div className="back-link">
             <Link to="/verify-email">Back</Link>
           </div>
-          {/* Dùng tạm */}
-          {/* Sau này có thể dùng Redux hoặc Context nếu muốn lưu email, phoneNumber khi Back hay refresh page */}
         </Form>
       </div>
     </div>

@@ -1,26 +1,32 @@
 @use '../../scss/colors' as colors;
 @use '../../scss/fonts' as fonts;
 @use '../../scss/variables' as variables;
-@use 'sass:color';
 
 .verify-email-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-image: url('../../assets/background-images/mountain-background.jpg');
-  background-size: cover;
-  background-position: center;
+  height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.20), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(124, 58, 237, 0.16), transparent 55%),
+    colors.$bg-page;
   padding: 20px;
+  overflow: hidden;
 }
 
 .verify-email-form-wrapper {
   width: 100%;
-  max-width: 450px;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 40px 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 420px;
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none; // Firefox
+  &::-webkit-scrollbar { display: none; } // Chrome/Safari/Edge
+  background-color: colors.$bg-card;
+  border: 1px solid colors.$gray-300;
+  border-radius: 16px;
+  padding: 40px 32px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   text-align: center;
 }
 
@@ -31,72 +37,125 @@
 }
 
 .verify-email-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #00FF00;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: colors.$primary;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  i {
+  .anticon {
     color: #fff;
-    font-size: 24px;
+    font-size: 20px;
   }
 }
 
 .verify-email-title {
-  @include fonts.inter(600);
+  @include fonts.inter(700);
   font-size: 24px;
-  margin-bottom: 25px;
-  color: #333;
+  margin-bottom: 8px;
+  color: colors.$text-primary;
+}
+
+.verify-email-subtitle {
+  @include fonts.inter(400);
+  font-size: 14px;
+  color: colors.$text-secondary;
+  margin-bottom: 28px;
 }
 
 .verify-email-form {
   text-align: left;
 
+  .ant-form-item-label > label {
+    @include fonts.inter(500);
+    color: colors.$text-primary;
+  }
+
   .ant-input {
-    height: 45px;
+    height: 44px;
     border-radius: 8px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid colors.$border-color;
   }
 }
 
 .verify-button {
   width: 100%;
-  height: 45px;
-  background-color: colors.$success;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  @include fonts.inter(500);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover, 
-  &:focus {
-    background-color: color.adjust(colors.$success, $lightness: -10%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  }
+  height: 44px;
+  border-radius: 8px;
+  font-size: 15px;
+  @include fonts.inter(600);
+  margin-top: 6px;
 }
-
 
 .back-link {
   text-align: center;
-  margin-top: 15px;
-  a {
+  margin-top: 16px;
+
+  a, .link-button {
     color: colors.$primary;
     text-decoration: none;
     font-size: 14px;
-    @include fonts.inter(400);
+    font-weight: 500;
+    @include fonts.inter(500);
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  .link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+}
+
+.otp-input-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+
+  .ant-otp {
+    gap: 8px;
+  }
+
+  .ant-otp-input {
+    width: 44px;
+    height: 52px;
+    font-size: 20px;
+    border-radius: 8px;
+    border: 1px solid colors.$border-color;
+    @include fonts.inter(600);
+  }
+}
+
+.resend-row {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: colors.$text-secondary;
+  @include fonts.inter(400);
+
+  .resend-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: colors.$primary;
+    font-weight: 500;
+    @include fonts.inter(500);
+    cursor: pointer;
+    font-size: 13px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      color: colors.$text-secondary;
+      cursor: not-allowed;
     }
   }
 }
@@ -106,6 +165,12 @@
   align-items: center;
   padding-right: 8px;
   margin-right: 8px;
-  border-right: 1px solid #d9d9d9;
-  color: rgba(0, 0, 0, 0.45);
+  border-right: 1px solid colors.$border-color;
+  color: colors.$text-secondary;
+}
+
+@include variables.mobile {
+  .verify-email-form-wrapper {
+    padding: 28px 20px;
+  }
 }

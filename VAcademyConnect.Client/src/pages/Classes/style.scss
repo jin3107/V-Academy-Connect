@@ -1,0 +1,20 @@
+@use "../../scss/colors" as colors;
+@use "../../scss/page" as page;
+
+.class-page {
+  @include page.page;
+}
+
+.add-student-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.new-student-link {
+  padding: 4px 0;
+  margin-top: 8px;
+  height: auto;
+  white-space: normal;
+  text-align: left;
+}

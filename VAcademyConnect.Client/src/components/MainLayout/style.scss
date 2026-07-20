@@ -4,39 +4,42 @@
 
 .main-layout {
   min-height: 100vh;
+  background: colors.$bg-page;
 
   .main-sider {
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    // Enable hardware acceleration for smooth transitions
+    background: colors.$sider-bg !important;
     transform: translateZ(0);
     backface-visibility: hidden;
     will-change: width;
-    
-    // Override Ant Design default transition for smoother animation
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    
+
     .logo {
       height: 64px;
-      padding: 16px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      // Smooth transition for logo elements
+      gap: 10px;
+      flex-shrink: 0;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-      .logo-circle {
+      .logo-mark {
         width: 32px;
         height: 32px;
-        background: #00FF00;
-        border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        flex-shrink: 0; // Prevent shrinking during collapse
+        background: colors.$primary;
+        border-radius: 8px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        @include fonts.inter(700);
+        font-size: 16px;
       }
 
       .logo-text {
-        color: white;
-        font-size: 18px;
+        color: #fff;
+        font-size: 16px;
         font-weight: 600;
         @include fonts.inter(600);
         white-space: nowrap;
@@ -45,21 +48,30 @@
       }
     }
 
-    // Custom menu styles
     .ant-menu {
+      background: transparent;
       border-right: none;
-      
+      padding: 8px;
+
       .ant-menu-item {
-        margin: 4px 8px;
-        border-radius: 6px;
-        
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.1);
+        margin: 2px 0;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.65);
+        @include fonts.inter(500);
+
+        .anticon {
+          font-size: 16px;
         }
-        
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          color: #fff;
+        }
+
         &.ant-menu-item-selected {
-          background-color: #1677ff;
-          
+          background-color: colors.$primary;
+          color: #fff;
+
           &::after {
             display: none;
           }
@@ -68,62 +80,65 @@
     }
   }
 
-  // Layout bên phải - tịnh tiến theo Sider
   .ant-layout {
-    // Enable hardware acceleration for smooth margin-left transition
     transform: translateZ(0);
     backface-visibility: hidden;
     will-change: margin-left;
+    background: colors.$bg-page;
   }
 
   .main-header {
     padding: 0;
-    background: #fff;
+    background: colors.$bg-card;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid colors.$border-color;
     position: sticky;
     top: 0;
     z-index: 100;
 
     .trigger-button {
-      padding: 0 24px;
-      font-size: 18px;
+      padding: 0 20px;
+      font-size: 16px;
+      color: colors.$text-secondary;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       height: 64px;
       display: flex;
       align-items: center;
 
       &:hover {
-        color: #1677ff;
-        background-color: rgba(22, 119, 255, 0.04);
+        color: colors.$primary;
+        background-color: colors.$primary-light;
       }
     }
 
     .header-right {
-      padding-right: 24px;
+      padding-right: 20px;
+      display: flex;
+      justify-content: flex-end;
 
       .user-info {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         cursor: pointer;
-        padding: 8px 12px;
+        padding: 6px 12px;
         border-radius: 8px;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
 
         &:hover {
-          background-color: rgba(0, 0, 0, 0.04);
+          background-color: colors.$gray-100;
         }
 
         .ant-avatar {
-          border: 2px solid #f0f0f0;
+          background: colors.$primary-light;
+          color: colors.$primary;
         }
 
         .user-name {
-          color: rgba(0, 0, 0, 0.85);
+          color: colors.$text-primary;
           font-weight: 500;
           @include fonts.inter(500);
         }
@@ -135,26 +150,22 @@
     margin: 24px;
     padding: 0;
     background: transparent;
-    border-radius: 0;
     overflow: auto;
 
     .content-wrapper {
-      background: #fff;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      min-height: calc(100vh - 64px - 24px - 24px);
+      background: transparent;
+      padding: 0;
+      min-height: calc(100vh - 64px - 48px);
     }
   }
 }
 
-// Responsive design
 @include variables.tablet {
   .main-layout {
     .main-header {
       .header-right {
         .user-info .user-name {
-          display: none; // Ẩn trên tablet và mobile
+          display: none;
         }
       }
     }
@@ -163,44 +174,16 @@
 
 @include variables.mobile {
   .main-layout {
+    .main-content {
+      margin: 16px;
+    }
+
     .main-header {
       .header-right {
         .user-info .user-name {
-          display: none; // Ẩn trên mobile
+          display: none;
         }
       }
     }
-  }
-}
-
-// Dark mode support (optional)
-.main-layout.dark-mode {
-  .main-header {
-    background: #1f1f1f;
-    border-bottom: 1px solid #303030;
-    
-    .trigger-button {
-      color: rgba(255, 255, 255, 0.85);
-      
-      &:hover {
-        color: #1677ff;
-        background-color: rgba(22, 119, 255, 0.1);
-      }
-    }
-    
-    .user-info {
-      .user-name {
-        color: rgba(255, 255, 255, 0.85);
-      }
-      
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.06);
-      }
-    }
-  }
-  
-  .main-content .content-wrapper {
-    background: #1f1f1f;
-    color: rgba(255, 255, 255, 0.85);
   }
 }

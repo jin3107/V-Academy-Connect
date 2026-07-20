@@ -43,7 +43,6 @@ const Staffs = () => {
   const { user } = useAuth();
   const isCenterTenant = user?.tenantType === TenantType.Center;
 
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [staffs, setStaffs] = useState<StaffData[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -54,18 +53,15 @@ const Staffs = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [form] = Form.useForm<StaffResponse>(); // Form dùng StaffResponse
+  const [form] = Form.useForm<StaffResponse>();
 
-  // Detail data (hiển thị đẹp ở chế độ detail)
   const [detailData, setDetailData] = useState<StaffResponse | null>(null);
 
-  // ===== Roles =====
   const [roleOptions, setRoleOptions] = useState<{ label: string; value: string }[]>([]);
   const [roleLoading, setRoleLoading] = useState(false);
 
@@ -74,7 +70,6 @@ const Staffs = () => {
     { label: "Female", value: 1 },
   ];
 
-  // ===== Helpers =====
   const toDayjs = (v: string | Dayjs | undefined): Dayjs | undefined => {
     if (!v) return undefined;
     return typeof v === "string" ? dayjs(v) : v;
@@ -92,7 +87,6 @@ const Staffs = () => {
     return "-";
   };
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -113,7 +107,6 @@ const Staffs = () => {
     setOpen(true);
   };
 
-  // ===== Loaders =====
   const loadRoles = async () => {
     setRoleLoading(true);
     const response = await getAllRoles();
@@ -135,7 +128,6 @@ const Staffs = () => {
       return;
     }
 
-    // Map CreateBy -> createdBy, convert date fields
     const raw = response.data as BackendStaffResponse;
     const mapped: StaffResponse = {
       ...raw,
@@ -145,7 +137,6 @@ const Staffs = () => {
     };
     setDetailData(mapped);
 
-    // nếu là Update thì fill vào Form
     if (mode === "update") {
       form.setFieldsValue({
         id: mapped.id,
@@ -162,7 +153,6 @@ const Staffs = () => {
     }
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: StaffResponse) => {
     try {
       setSubmitting(true);
@@ -215,7 +205,6 @@ const Staffs = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchStaffs = useCallback(
     async (page = 1, pageSizeArg = 10, searchValue = "") => {
       try {
@@ -271,7 +260,6 @@ const Staffs = () => {
     fetchStaffs(currentPage, pageSize, searchText);
   }, [fetchStaffs, currentPage, pageSize, searchText]);
 
-  // ===== Handlers =====
   const handleSearch = () => {
     fetchStaffs(1, pageSize, searchText);
   };
@@ -297,7 +285,6 @@ const Staffs = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: (
@@ -383,7 +370,6 @@ const Staffs = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="staff-page">
@@ -470,7 +456,6 @@ const Staffs = () => {
               await loadRoles();
             }
 
-            // Load detail cho detail/update
             if ((mode === "detail" || mode === "update") && selectedId) {
               await loadDetail(selectedId);
             }

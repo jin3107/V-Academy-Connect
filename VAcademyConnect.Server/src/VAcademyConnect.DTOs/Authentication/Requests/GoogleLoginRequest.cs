@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,6 @@ namespace VAcademyConnect.DTOs.Authentication.Requests
     {
         public string IdToken { get; set; }
 
-        // Chỉ áp dụng khi tài khoản Google đăng nhập lần đầu (tạo tenant mới).
         public TenantType TenantType { get; set; } = TenantType.Personal;
     }
 }

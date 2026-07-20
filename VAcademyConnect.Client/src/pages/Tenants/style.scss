@@ -6,7 +6,6 @@
 .tenant-page {
   padding: 16px;
   
-  // Responsive padding
   @media (min-width: 768px) {
     padding: 24px;
   }
@@ -28,7 +27,6 @@
       }
     }
     
-    // Mobile: Stack vertically
     @media (max-width: 640px) {
       flex-direction: column;
       align-items: flex-start;
@@ -62,7 +60,6 @@
         flex-wrap: wrap;
       }
       
-      // Mobile: Stack search elements
       @media (max-width: 640px) {
         flex-direction: column;
         gap: 12px;
@@ -89,7 +86,6 @@
         }
       }
       
-      // Tablet: Partial stacking
       @media (min-width: 641px) and (max-width: 1023px) {
         .ant-input-affix-wrapper {
           flex: 1;
@@ -160,10 +156,8 @@
       }
       
       td {
-        // Handle long text overflow
         word-break: break-word;
         
-        // Email column specific
         &:nth-child(2) {
           max-width: 200px;
           @media (max-width: 640px) {
@@ -171,7 +165,6 @@
           }
         }
         
-        // Phone column
         &:nth-child(3) {
           max-width: 150px;
         }
@@ -203,7 +196,6 @@
           }
         }
         
-        // Renew button styling
         &:last-child {
           color: #52c41a;
           
@@ -229,7 +221,6 @@
     }
     
     .ant-pagination {
-      // Mobile: Smaller pagination
       @media (max-width: 640px) {
         .ant-pagination-item,
         .ant-pagination-prev,
@@ -255,7 +246,6 @@
   }
 }
 
-// Table responsive utilities
 .ant-table-wrapper {
   @media (max-width: 1023px) {
     .ant-table-pagination {
@@ -268,14 +258,12 @@
   }
 }
 
-// Custom responsive table for mobile
 @media (max-width: 640px) {
   .tenant-table {
     .ant-table-container {
       -webkit-overflow-scrolling: touch;
       
       .ant-table-body {
-        // Alternative: Card-like view for mobile
         &.mobile-card-view {
           .ant-table-tbody {
             tr {
@@ -333,7 +321,6 @@
     }
   }
   
-  // Responsive form
   @media (max-width: 640px) {
     margin-top: 16px;
     
@@ -356,12 +343,10 @@
   color: rgba(0, 0, 0, 0.45);
 }
 
-// Status badge styling
 .tenant-table {
   .ant-table-tbody {
     td {
       &:nth-child(4) {
-        // Status column
         font-weight: 500;
         
         &:has(> :contains("Active")) {
@@ -380,7 +365,6 @@
   }
 }
 
-// Modal customization for tenant
 .ant-modal {
   .ant-descriptions-item-label {
     font-weight: 600;
@@ -392,7 +376,6 @@
   }
 }
 
-// Renew subscription modal
 .ant-modal-confirm {
   .ant-modal-confirm-title {
     font-weight: 600;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VAcademyConnect.Application.Implementations.Attendances;
+using VAcademyConnect.Application.Implementations.BackgroundJobs;
 using VAcademyConnect.Application.Implementations.Classes;
 using VAcademyConnect.Application.Implementations.ClassStudents;
 using VAcademyConnect.Application.Implementations.LessonEvaluations;
@@ -8,10 +9,12 @@ using VAcademyConnect.Application.Implementations.Payments;
 using VAcademyConnect.Application.Implementations.Scores;
 using VAcademyConnect.Application.Implementations.ScoreStatistics;
 using VAcademyConnect.Application.Implementations.Staffs;
+using VAcademyConnect.Application.Implementations.Students;
 using VAcademyConnect.Application.Implementations.Subscriptions;
 using VAcademyConnect.Application.Implementations.Tenants;
 using VAcademyConnect.Application.Implementations.TuitionFees;
 using VAcademyConnect.Application.Interfaces.Attendances;
+using VAcademyConnect.Application.Interfaces.BackgroundJobs;
 using VAcademyConnect.Application.Interfaces.Classes;
 using VAcademyConnect.Application.Interfaces.ClassStudents;
 using VAcademyConnect.Application.Interfaces.LessonEvaluations;
@@ -20,6 +23,7 @@ using VAcademyConnect.Application.Interfaces.Payments;
 using VAcademyConnect.Application.Interfaces.Scores;
 using VAcademyConnect.Application.Interfaces.ScoreStatistics;
 using VAcademyConnect.Application.Interfaces.Staffs;
+using VAcademyConnect.Application.Interfaces.Students;
 using VAcademyConnect.Application.Interfaces.Subscriptions;
 using VAcademyConnect.Application.Interfaces.Tenants;
 using VAcademyConnect.Application.Interfaces.TuitionFees;
@@ -124,6 +128,17 @@ namespace VAcademyConnect.Application
             services.AddScoped<ICreatePaymentCheckHandler, CreatePaymentCheckHandler>();
             services.AddScoped<IGetPaymentCheckByIdHandler, GetPaymentCheckByIdHandler>();
             services.AddScoped<ISearchPaymentCheckHandler, SearchPaymentCheckHandler>();
+            #endregion
+
+            #region BackgroundJobs
+            services.AddScoped<IRunTenantSubscriptionBillingJobHandler, RunTenantSubscriptionBillingJobHandler>();
+            services.AddScoped<IGetBackgroundJobByIdHandler, GetBackgroundJobByIdHandler>();
+            services.AddScoped<ISearchBackgroundJobHandler, SearchBackgroundJobHandler>();
+            #endregion
+
+            #region Students
+            services.AddScoped<ICreateStudentHandler, CreateStudentHandler>();
+            services.AddScoped<ISearchStudentHandler, SearchStudentHandler>();
             #endregion
 
             return services;

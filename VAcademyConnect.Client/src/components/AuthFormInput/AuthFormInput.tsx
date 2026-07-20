@@ -24,18 +24,15 @@ const AuthFormInput = ({
   prefix,
   readonly = false
 }: AuthFormInputProps) => {
-  // Tạo rules cho validation
   const validationRules: Rule[] = [];
-  
-  // Nếu required thì thêm rule required
+
   if (required) {
     validationRules.push({
       required: true,
       message: message || `Please enter your ${label.toLowerCase()}!`
     });
   }
-  
-  // Thêm các rules custom
+
   validationRules.push(...rules);
 
   return (

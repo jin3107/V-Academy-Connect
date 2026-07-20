@@ -30,7 +30,6 @@ interface LessonEvaluationFormValues {
   comment?: string;
 }
 
-// Mẫu câu đánh giá sẵn - click vào sẽ tự động thêm vào ô nhận xét
 const COMMENT_TEMPLATES = [
   "Học sinh tích cực phát biểu trong buổi học.",
   "Học sinh hoàn thành tốt bài tập được giao.",
@@ -45,7 +44,6 @@ const COMMENT_TEMPLATES = [
 const { TextArea } = Input;
 
 const LessonEvaluations = () => {
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [lessonEvaluations, setLessonEvaluations] = useState<LessonEvaluationResponse[]>([]);
   const [filterClassId, setFilterClassId] = useState<string | undefined>(undefined);
@@ -56,7 +54,6 @@ const LessonEvaluations = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Modal / form state =====
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("create");
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
@@ -64,12 +61,10 @@ const LessonEvaluations = () => {
   const [form] = Form.useForm<LessonEvaluationFormValues>();
   const [formClassId, setFormClassId] = useState<string | undefined>(undefined);
 
-  // ===== Class / roster options =====
   const [classOptions, setClassOptions] = useState<{ label: string; value: string }[]>([]);
   const [studentOptions, setStudentOptions] = useState<{ label: string; value: string }[]>([]);
   const [rosterLoading, setRosterLoading] = useState(false);
 
-  // ===== Loaders =====
   const loadClasses = useCallback(async () => {
     const response = await searchClasses({ filters: [], pageIndex: 1, pageSize: 200 });
     if (!response.isSuccess) {
@@ -106,7 +101,6 @@ const LessonEvaluations = () => {
     loadClasses();
   }, [loadClasses]);
 
-  // ===== Openers =====
   const openCreate = () => {
     setMode("create");
     setSelectedId(undefined);
@@ -122,14 +116,12 @@ const LessonEvaluations = () => {
     setOpen(true);
   };
 
-  // Click vào mẫu câu -> nối chuỗi vào ô nhận xét hiện tại
   const applyCommentTemplate = (template: string) => {
     const current = form.getFieldValue("comment") as string | undefined;
     const next = current && current.trim().length > 0 ? `${current} ${template}` : template;
     form.setFieldValue("comment", next);
   };
 
-  // ===== Submit (Create / Update) =====
   const onFinish = async (values: LessonEvaluationFormValues) => {
     try {
       setSubmitting(true);
@@ -158,7 +150,6 @@ const LessonEvaluations = () => {
     }
   };
 
-  // ===== Table data loader =====
   const fetchLessonEvaluations = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -199,7 +190,6 @@ const LessonEvaluations = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchLessonEvaluations]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -220,7 +210,6 @@ const LessonEvaluations = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: "Class",
@@ -287,7 +276,6 @@ const LessonEvaluations = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="lesson-evaluation-page">

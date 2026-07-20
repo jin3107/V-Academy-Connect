@@ -1,0 +1,128 @@
+@use 'colors';
+@use 'fonts';
+@use 'variables';
+
+@mixin page {
+  padding: 0;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 12px;
+
+    .page-title {
+      h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+        @include fonts.inter(600);
+        color: colors.$text-primary;
+      }
+
+      p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: colors.$text-secondary;
+        @include fonts.inter(400);
+      }
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    @include variables.mobile {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .page-actions {
+        width: 100%;
+
+        .ant-btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  .page-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    background: colors.$bg-card;
+    border: 1px solid colors.$border-color;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+
+    .ant-input-affix-wrapper,
+    .ant-select,
+    .ant-picker {
+      @include variables.mobile {
+        width: 100% !important;
+      }
+    }
+  }
+
+  .page-card {
+    background: colors.$bg-card;
+    border: 1px solid colors.$border-color;
+    border-radius: 12px;
+    overflow: hidden;
+
+    .ant-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .ant-table {
+      min-width: 720px;
+    }
+
+    .ant-table-thead > tr > th {
+      font-weight: 600;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .ant-pagination {
+      padding: 0 16px;
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      &:hover {
+        color: colors.$primary;
+      }
+
+      .anticon {
+        margin-left: 5px;
+        font-size: 12px;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
+
+      @include variables.mobile {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .ant-btn-link {
+        padding: 4px 8px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+    }
+  }
+}

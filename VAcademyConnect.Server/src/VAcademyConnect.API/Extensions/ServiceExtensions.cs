@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Security.Claims;
 using System.Text;
 using VAcademyConnect.Domain.Entities;
+using VAcademyConnect.Infrastructure.Jobs;
 using VAcademyConnect.Infrastructure.Persistence.Data;
 
 namespace VAcademyConnect.API.Extensions
@@ -121,6 +123,23 @@ namespace VAcademyConnect.API.Extensions
             });
 
             services.AddAuthorization();
+
+            return services;
+        }
+
+        public static IServiceCollection AddQuartzConfiguration(this IServiceCollection services)
+        {
+            services.AddQuartz(q =>
+            {
+                var jobKey = new JobKey(nameof(TenantSubscriptionBillingJob));
+                q.AddJob<TenantSubscriptionBillingJob>(opts => opts.WithIdentity(jobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity(nameof(TenantSubscriptionBillingJob) + "-trigger")
+                    .WithCronSchedule("0 5 0 * * ?"));
+            });
+
+            services.AddQuartzHostedService(opts => opts.WaitForJobsToComplete = true);
 
             return services;
         }

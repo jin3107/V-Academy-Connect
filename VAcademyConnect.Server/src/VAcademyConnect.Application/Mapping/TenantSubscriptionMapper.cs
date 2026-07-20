@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,7 +52,6 @@ namespace VAcademyConnect.Application.Mapping
             };
         }
 
-        // Tạo trial subscription Standard cho tenant mới (30 ngày miễn phí)
         public static TenantSubscription ToTrialSubscription(Guid tenantId, Subscription standardPlan)
         {
             return new TenantSubscription
@@ -65,7 +64,6 @@ namespace VAcademyConnect.Application.Mapping
             };
         }
 
-        // Tạo subscription Free khi Standard hết hạn (ko có EndDate)
         public static TenantSubscription ToFreeSubscription(Guid tenantId, Subscription freePlan)
         {
             return new TenantSubscription
@@ -78,7 +76,6 @@ namespace VAcademyConnect.Application.Mapping
             };
         }
 
-        // Gia hạn subscription Standard (ko phải trial)
         public static TenantSubscription ToRenewedStandardSubscription(Guid tenantId, Subscription standardPlan, 
             string createdBy, int months = 1)
         {

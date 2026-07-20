@@ -14,15 +14,13 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
     public class LoginHandler : ILoginHandler
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITenantRepository _tenantRepository;
         private readonly ITokenService _tokenService;
 
-        public LoginHandler(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+        public LoginHandler(UserManager<ApplicationUser> userManager,
             ITenantRepository tenantRepository, ITokenService tokenService)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _tenantRepository = tenantRepository;
             _tokenService = tokenService;
         }
@@ -34,14 +32,7 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
             {
                 var user = await _userManager.FindByNameAsync(request.UserName);
                 if (user == null)
-                {
                     user = await _userManager.FindByEmailAsync(request.UserName);
-                    if (user == null && request.UserName == "tanchuonghuynh3@gmail.com")
-                    {
-                        await CreateAdminUserAsync(request.UserName);
-                        user = await _userManager.FindByEmailAsync(request.UserName);
-                    }
-                }
 
                 if (user == null)
                     return result.BuildError("User not found. Please check your username or email.");
@@ -94,24 +85,6 @@ namespace VAcademyConnect.Infrastructure.Services.Implements.Authentication
                 result.BuildError(ex.Message + " " + ex.StackTrace);
             }
             return result;
-        }
-
-        private async Task CreateAdminUserAsync(string email)
-        {
-            var admin = new ApplicationUser
-            {
-                Email = email,
-                EmailConfirmed = true,
-                UserName = email,
-                Role = Role.SuperAdmin
-            };
-
-            await _userManager.CreateAsync(admin);
-            await _userManager.AddPasswordAsync(admin, "Abc@123");
-            if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
-                await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
-
-            await _userManager.AddToRoleAsync(admin, "SuperAdmin");
         }
     }
 }

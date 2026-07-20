@@ -1,0 +1,189 @@
+@use '../../scss/colors' as colors;
+@use '../../scss/fonts' as fonts;
+@use '../../scss/variables' as variables;
+
+.main-layout {
+  min-height: 100vh;
+  background: colors.$bg-page;
+
+  .main-sider {
+    background: colors.$sider-bg !important;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: width;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    .logo {
+      height: 64px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      .logo-mark {
+        width: 32px;
+        height: 32px;
+        background: colors.$primary;
+        border-radius: 8px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        @include fonts.inter(700);
+        font-size: 16px;
+      }
+
+      .logo-text {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        @include fonts.inter(600);
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+
+    .ant-menu {
+      background: transparent;
+      border-right: none;
+      padding: 8px;
+
+      .ant-menu-item {
+        margin: 2px 0;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.65);
+        @include fonts.inter(500);
+
+        .anticon {
+          font-size: 16px;
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          color: #fff;
+        }
+
+        &.ant-menu-item-selected {
+          background-color: colors.$primary;
+          color: #fff;
+
+          &::after {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .ant-layout {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: margin-left;
+    background: colors.$bg-page;
+  }
+
+  .main-header {
+    padding: 0;
+    background: colors.$bg-card;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid colors.$border-color;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    .trigger-button {
+      padding: 0 20px;
+      font-size: 16px;
+      color: colors.$text-secondary;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 64px;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        color: colors.$primary;
+        background-color: colors.$primary-light;
+      }
+    }
+
+    .header-right {
+      padding-right: 20px;
+      display: flex;
+      justify-content: flex-end;
+
+      .user-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: colors.$gray-100;
+        }
+
+        .ant-avatar {
+          background: colors.$primary-light;
+          color: colors.$primary;
+        }
+
+        .user-name {
+          color: colors.$text-primary;
+          font-weight: 500;
+          @include fonts.inter(500);
+        }
+      }
+    }
+  }
+
+  .main-content {
+    margin: 24px;
+    padding: 0;
+    background: transparent;
+    overflow: auto;
+
+    .content-wrapper {
+      background: transparent;
+      padding: 0;
+      min-height: calc(100vh - 64px - 48px);
+    }
+  }
+}
+
+@include variables.tablet {
+  .main-layout {
+    .main-header {
+      .header-right {
+        .user-info .user-name {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@include variables.mobile {
+  .main-layout {
+    .main-content {
+      margin: 16px;
+    }
+
+    .main-header {
+      .header-right {
+        .user-info .user-name {
+          display: none;
+        }
+      }
+    }
+  }
+}

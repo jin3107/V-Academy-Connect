@@ -1,0 +1,169 @@
+@use '../../scss/colors' as colors;
+@use '../../scss/fonts' as fonts;
+@use '../../scss/variables' as variables;
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.20), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(124, 58, 237, 0.16), transparent 55%),
+    colors.$bg-page;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.register-form-wrapper {
+  width: 100%;
+  max-width: 620px;
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  background-color: colors.$bg-card;
+  border: 1px solid colors.$gray-300;
+  border-radius: 16px;
+  padding: 40px 32px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  text-align: center;
+}
+
+.register-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  .logo-mark {
+    width: 48px;
+    height: 48px;
+    background: colors.$primary;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    @include fonts.inter(700);
+    font-size: 22px;
+  }
+}
+
+.register-title {
+  @include fonts.inter(700);
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: colors.$text-primary;
+}
+
+.register-subtitle {
+  @include fonts.inter(400);
+  font-size: 14px;
+  color: colors.$text-secondary;
+  margin-bottom: 28px;
+}
+
+.register-form {
+  text-align: left;
+
+  .ant-form-item-label > label {
+    @include fonts.inter(500);
+    color: colors.$text-primary;
+  }
+
+  .ant-input, .ant-input-password {
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid colors.$border-color;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 0;
+
+    .ant-form-item {
+      flex: 1;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.register-button {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 15px;
+  @include fonts.inter(600);
+  margin-top: 6px;
+}
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 16px;
+  color: colors.$text-secondary;
+  font-size: 13px;
+  @include fonts.inter(400);
+
+  &::before, &::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid colors.$border-color;
+  }
+
+  span {
+    padding: 0 12px;
+  }
+}
+
+.login-link {
+  text-align: center;
+  font-size: 14px;
+  color: colors.$text-secondary;
+  @include fonts.inter(400);
+  margin-top: 0;
+  line-height: 1.4;
+
+  a {
+    color: colors.$primary;
+    font-weight: 500;
+    @include fonts.inter(500);
+    text-decoration: none;
+    padding: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@include variables.mobile {
+  .register-form-wrapper {
+    padding: 28px 20px;
+  }
+
+  .register-form {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+
+      .ant-form-item {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+    }
+  }
+}
+
+.input-prefix {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+  margin-right: 8px;
+  border-right: 1px solid colors.$border-color;
+  color: colors.$text-secondary;
+}

@@ -1,4 +1,3 @@
-//#region Requests
 export type {
   LogInRequest, RegisterRequest,
   SendOtpRequest, VerifyOtpRequest, ChangePasswordRequest, UpdateProfileRequest
@@ -14,9 +13,6 @@ export type {
 } from './Requests';
 export type { SearchRequest, Filter, SortBy } from './Searchs/Requests';
 
-//#endregion
-
-//#region Responses
 export type {
   LogInResponse, RegisterResponse,
   SendOtpResponse, ChangePasswordResponse, UpdateProfileResponse
@@ -32,4 +28,3 @@ export type {
 } from './Responses';
 export type { RoleResponse } from './Responses';
 export type { SearchResponse } from './Searchs/Responses';
-//#endregion

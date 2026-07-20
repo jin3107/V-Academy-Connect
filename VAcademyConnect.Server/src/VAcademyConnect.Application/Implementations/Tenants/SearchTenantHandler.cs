@@ -1,4 +1,4 @@
-﻿using LinqKit;
+using LinqKit;
 using MayNghien.Infrastructures.Models.Requests;
 using MayNghien.Infrastructures.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +52,6 @@ namespace VAcademyConnect.Application.Implementations.Tenants
                 int startIndex = (pageIndex - 1) * pageSize;
                 var tenantList = await tenants.Skip(startIndex).Take(pageSize).ToListAsync();
 
-                // Kiểm tra và cập nhật status cho mỗi tenant
                 var changedTenantIds = new List<Guid>();
                 foreach (var tenant in tenantList)
                 {
@@ -61,7 +60,6 @@ namespace VAcademyConnect.Application.Implementations.Tenants
                         changedTenantIds.Add(tenant.Id);
                 }
 
-                // Reload những tenant đã thay đổi
                 if (changedTenantIds.Any())
                 {
                     for (int i = 0; i < tenantList.Count; i++)

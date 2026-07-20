@@ -19,7 +19,6 @@ const resultColor = (result?: string) => {
 };
 
 const BackgroundJobs = () => {
-  // ===== Table state =====
   const [loading, setLoading] = useState(false);
   const [backgroundJobs, setBackgroundJobs] = useState<BackgroundJobResponse[]>([]);
   const [filterTenantId, setFilterTenantId] = useState<string | undefined>(undefined);
@@ -29,7 +28,6 @@ const BackgroundJobs = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ===== Tenant options =====
   const [tenantOptions, setTenantOptions] = useState<{ label: string; value: string }[]>([]);
   const [tenantsLoading, setTenantsLoading] = useState(false);
 
@@ -50,7 +48,6 @@ const BackgroundJobs = () => {
     loadTenants();
   }, [loadTenants]);
 
-  // ===== Table data loader =====
   const fetchBackgroundJobs = useCallback(
     async (page = 1, pageSizeArg = 10) => {
       try {
@@ -90,7 +87,6 @@ const BackgroundJobs = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchBackgroundJobs]);
 
-  // ===== Handlers =====
   const handleSortChange = (field: string) => {
     if (sortField === field) {
       setSortDirection(!sortDirection);
@@ -111,7 +107,6 @@ const BackgroundJobs = () => {
   const renderSortIcon = (field: string) =>
     sortField === field ? (sortDirection ? <SortAscendingOutlined /> : <SortDescendingOutlined />) : null;
 
-  // ===== Columns =====
   const columns = [
     {
       title: (
@@ -143,7 +138,6 @@ const BackgroundJobs = () => {
     },
   ];
 
-  // ===== Render =====
   return (
     <MainLayout>
       <div className="background-job-page">

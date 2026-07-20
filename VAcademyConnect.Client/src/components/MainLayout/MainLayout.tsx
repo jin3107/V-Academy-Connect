@@ -22,7 +22,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Lấy thông tin user từ context
   const userName = user?.userName || user?.email?.split('@')[0] || user?.email || "User";
   const userRole = user?.role || "";
 
@@ -40,15 +39,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (path.startsWith("/payments")) return ["payments"];
     if (path.startsWith("/background-jobs")) return ["background-jobs"];
     if (path.startsWith("/scores")) return ["scores"];
-    // if (path.startsWith("/students")) return ["students"];
     return ["dashboard"];
   }, [location.pathname]);
 
-  // Menu items based on role
   const getMenuItems = useMemo(() => {
     const role = userRole;
 
-    // SuperAdmin: Can see everything
     if (role === "SuperAdmin") {
       return [
         { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
@@ -66,7 +62,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       ];
     }
 
-    // TenantAdmin: Can see Staffs and Classes
     if (role === "TenantAdmin") {
       return [
         { key: "dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
@@ -81,7 +76,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       ];
     }
 
-    // Teacher: Can see Classes and Attendance (Students commented for future)
     if (role === "Teacher") {
       return [
         { key: "classes", icon: <BookOutlined />, label: "Classes" },
@@ -91,11 +85,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         { key: "score-statistics", icon: <BarChartOutlined />, label: "Score Statistics" },
         { key: "tuition-fees", icon: <DollarOutlined />, label: "Tuition Fees" },
         { key: "payments", icon: <CheckCircleOutlined />, label: "Payments" },
-        // { key: "students", icon: <UserOutlined />, label: "Students" } // TODO: Implement later
       ];
     }
 
-    // Default: No menu items for users without roles
     return [];
   }, [userRole]);
 
@@ -107,7 +99,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       navigate("/login");
     } catch (err) {
       console.error("Logout failed: ", err);
-      // Vẫn logout ở client side ngay cả khi API call thất bại
       logout();
       navigate("/login");
     }
@@ -126,7 +117,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     else if (key === "tuition-fees") navigate("/tuition-fees");
     else if (key === "payments") navigate("/payments");
     else if (key === "background-jobs") navigate("/background-jobs");
-    // else if (key === "students") navigate("/students"); // TODO: Implement later
   }, [navigate]);
 
   const userMenuItems: MenuProps["items"] = [
@@ -165,8 +155,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         />
       </Sider>
 
-      {/* Khối phải tịnh tiến theo bề rộng Sider */}
-      <Layout style={{ 
+      <Layout style={{
         marginLeft: siderWidth, 
         transition: "margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         willChange: "margin-left"
@@ -188,7 +177,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           </div>
         </Header>
 
-        {/* Content tự cuộn, không làm Sider cuộn */}
         <Content className="main-content" style={{ overflow: "auto" }}>
           <div className="content-wrapper">{children}</div>
         </Content>

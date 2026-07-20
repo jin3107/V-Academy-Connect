@@ -2,7 +2,6 @@
 @use 'fonts';
 @use 'variables';
 
-// Khung ngoài cùng của mọi trang nội dung (bên trong MainLayout content-wrapper)
 @mixin page {
   padding: 0;
 
@@ -50,7 +49,6 @@
     }
   }
 
-  // Thanh filter/search — 1 card nhẹ phía trên bảng
   .page-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -71,7 +69,6 @@
     }
   }
 
-  // Card bao bảng dữ liệu
   .page-card {
     background: colors.$bg-card;
     border: 1px solid colors.$border-color;
